@@ -110,18 +110,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\CameraController.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\DrawableComponent.cs" />
     <Compile Include="Components\DrawableTextComponent.cs" />
     <Compile Include="Components\GamePlay\Generator.cs" />
     <Compile Include="Components\GamePlay\Inventory.cs" />
+    <Compile Include="Components\InputController.cs" />
     <Compile Include="Components\PositionComponent.cs" />
+    <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
+    <Compile Include="DataStructures\Json\JsonListConfig.cs" />
+    <Compile Include="DataStructures\Json\JsonTexture.cs" />
+    <Compile Include="DataStructures\Json\JsonTextureLoader.cs" />
+    <Compile Include="DataStructures\Textures.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="GamePlay\Item.cs" />
+    <Compile Include="GamePlay\Map\IsoMap.cs" />
+    <Compile Include="GamePlay\Map\Tiles.cs" />
     <Compile Include="GamePlay\Recipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Systems\CameraSystem.cs" />
+    <Compile Include="Systems\InputSystem.cs" />
     <Compile Include="Systems\ISystem.cs" />
     <Compile Include="Systems\ProductionSystem.cs" />
     <Compile Include="Systems\RenderSystem.cs" />

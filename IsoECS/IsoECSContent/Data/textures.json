@@ -1,0 +1,6 @@
+{
+  "Name" : "Textures",
+  "List" : [
+    "Content/Data/Sprites/isometric_tiles.json"
+  ]
+}

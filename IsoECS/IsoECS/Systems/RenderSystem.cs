@@ -24,6 +24,11 @@ namespace IsoECS.Systems
             // TODO: render any background
             // TODO: render the map
             // TODO: render any sprites
+            // sort the drawables by layer
+            drawables.Sort(delegate(Entity a, Entity b)
+            {
+                return b.Get<DrawableComponent>().Layer.CompareTo(a.Get<DrawableComponent>().Layer);
+            });
             foreach (Entity e in drawables)
             {
                 // if this entity is not visible continue to next

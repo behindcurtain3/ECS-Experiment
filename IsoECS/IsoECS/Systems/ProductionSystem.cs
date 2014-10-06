@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using IsoECS.Entities;
 using IsoECS.Components.GamePlay;
+using IsoECS.GamePlay;
 
 namespace IsoECS.Systems
 {
@@ -15,26 +16,57 @@ namespace IsoECS.Systems
             {
                 Generator g = e.Get<Generator>();
 
-                // TODO: check to make sure the generator has the required inputs in inventory before
-                // continuing the countdown
-                g.RateCountdown -= dt;
+                // check the inputs to see if this producer should run
+                bool doGeneration = true;
 
-                // if the countdown is less than zero a new unit has been produced
-                if (g.RateCountdown < 1)
+                // if this generator runs on percentage it always generates
+                // else check the inventories
+                if(!g.GeneratesPercentage)
                 {
-                    // reset the countdown
-                    g.RateCountdown += g.Rate;
-
-                    // Add the outputs to the inventory
                     Inventory inv = e.Get<Inventory>();
 
-                    if (inv.Items.ContainsKey(g.Recipe.Output.Name))
+                    // check each input item
+                    foreach (Item item in g.Recipe.Input)
                     {
-                        inv.Items[g.Recipe.Output.Name] += g.Recipe.Output.Amount;
+                        // if it doesn't exist don't proceed
+                        if (!inv.Items.ContainsKey(item.Name))
+                        {
+                            doGeneration = false;
+                            break;
+                        }
+
+                        // if there isn't enough don't proceed
+                        if (inv.Items[item.Name] < item.Amount)
+                        {
+                            doGeneration = false;
+                            break;
+                        }
+
                     }
-                    else
+                }
+
+                if (doGeneration)
+                {
+                    // continuing the countdown
+                    g.RateCountdown -= dt;
+
+                    // if the countdown is less than zero a new unit has been produced
+                    if (g.RateCountdown < 1)
                     {
-                        inv.Items.Add(g.Recipe.Output.Name, g.Recipe.Output.Amount);
+                        // reset the countdown
+                        g.RateCountdown += g.Rate;
+
+                        // Add the outputs to the inventory
+                        Inventory inv = e.Get<Inventory>();
+
+                        if (inv.Items.ContainsKey(g.Recipe.Output.Name))
+                        {
+                            inv.Items[g.Recipe.Output.Name] += g.Recipe.Output.Amount;
+                        }
+                        else
+                        {
+                            inv.Items.Add(g.Recipe.Output.Name, g.Recipe.Output.Amount);
+                        }
                     }
                 }
             }

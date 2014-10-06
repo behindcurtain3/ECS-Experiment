@@ -17,5 +17,9 @@ namespace IsoECS.Components.GamePlay
         // rate counter
         public int RateCountdown { get; set; }
 
+        // used for some generators who was to still generate output even if
+        // the inputs aren't 100% filled.
+        public bool GeneratesPercentage { get; set; }
+
     }
 }

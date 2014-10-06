@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using IsoECS.Components.GamePlay;
+using IsoECS.DataStructures;
+using IsoECS.GamePlay.Map;
 
 namespace IsoECS
 {
@@ -23,6 +25,11 @@ namespace IsoECS
         Random random;
 
         RenderSystem renderSystem;
+
+        IsoMap map;
+        Entity mapEntity;
+        Entity cameraEntity;
+
 
         Dictionary<String, Texture2D> textures;
 
@@ -45,7 +52,16 @@ namespace IsoECS
 
             random = new Random();
 
+            // Add the content to the textures singleton
+            Textures.Instance.Graphics = GraphicsDevice;
+            Textures.Instance.Content = Content;
+
+            // Load textures from config
+            Textures.Instance.LoadFromJson("Content/Data/textures.json", true);
+
             systems = new List<ISystem>();
+            systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
+            systems.Add(new CameraSystem());
             systems.Add(new ProductionSystem());
 
             entities = new List<Entity>();
@@ -71,7 +87,8 @@ namespace IsoECS
 
                 node.AddComponent(new PositionComponent()
                 {
-                    Position = new Vector2((float)random.Next(GraphicsDevice.Viewport.Width), (float)random.Next(GraphicsDevice.Viewport.Height))
+                    X = random.Next(GraphicsDevice.Viewport.Width),
+                    Y = random.Next(GraphicsDevice.Viewport.Height)
                 });
 
                 node.AddComponent(new DrawableComponent()
@@ -107,6 +124,31 @@ namespace IsoECS
                 Graphics = GraphicsDevice,
                 ClearColor = Color.White
             };
+
+            mapEntity = new Entity();
+            mapEntity.AddComponent(new DrawableComponent() 
+            {
+                Visible = true,
+                Color = Color.White
+            });
+            mapEntity.AddComponent(new PositionComponent());
+            entities.Add(mapEntity);
+
+            cameraEntity = new Entity();
+            cameraEntity.AddComponent(new PositionComponent());
+            cameraEntity.AddComponent(new CameraController());
+            cameraEntity.Get<CameraController>().Up.AddRange(new List<Keys>() { Keys.W, Keys.Up });
+            cameraEntity.Get<CameraController>().Down.AddRange(new List<Keys>() { Keys.S, Keys.Down });
+            cameraEntity.Get<CameraController>().Left.AddRange(new List<Keys>() { Keys.A, Keys.Left });
+            cameraEntity.Get<CameraController>().Right.AddRange(new List<Keys>() { Keys.D, Keys.Right });
+            entities.Add(cameraEntity);
+
+            Entity inputEntity = new Entity();
+            inputEntity.AddComponent(new InputController());
+            entities.Add(inputEntity);
+
+            map = new IsoMap(GraphicsDevice);
+            map.CreateMap("isometric_tiles", 32, 32, 16, 9);
         }
 
         /// <summary>
@@ -120,7 +162,7 @@ namespace IsoECS
             spriteFont = Content.Load<SpriteFont>("Default");
 
             textures = new Dictionary<string, Texture2D>();
-            textures.Add("Nodes", Content.Load<Texture2D>("Sprites/Nodes"));
+            textures.Add("Nodes", Content.Load<Texture2D>("Data/Sprites/Nodes"));
         }
 
         /// <summary>
@@ -158,9 +200,29 @@ namespace IsoECS
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            // render the map to texture
+            map.RenderToTexture(spriteBatch, cameraEntity.Get<PositionComponent>().X, cameraEntity.Get<PositionComponent>().Y, MapRenderComplete);
+
+            // render everything
             renderSystem.Draw(entities, spriteBatch, spriteFont);
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Callback for when the map has completed rendering, update the map entity texture
+        /// </summary>
+        /// <param name="map"></param>
+        private void MapRenderComplete(IsoMap map)
+        {
+            if (mapEntity.HasComponent<DrawableComponent>())
+            {
+                DrawableComponent drawable = mapEntity.Get<DrawableComponent>();
+
+                drawable.Layer = 99;
+                drawable.Texture = (Texture2D)map.Buffer;
+                drawable.Source = new Rectangle(0, 0, map.Buffer.Width, map.Buffer.Height);
+            }
         }
     }
 }

@@ -4,16 +4,30 @@ namespace IsoECS.Components
 {
     public class PositionComponent : Component
     {
-        public Vector2 Position { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+
+        public Vector2 Position 
+        {
+            get { return new Vector2(X, Y); }
+        }
 
         public PositionComponent()
         {
-            Position = Vector2.Zero;
+            X = 0;
+            Y = 0;
         }
 
         public PositionComponent(Vector2 position)
         {
-            Position = position;
+            X = position.X;
+            Y = position.Y;                
+        }
+
+        public PositionComponent(float x, float y)
+        {
+            X = x;
+            Y = y;
         }
 
     }

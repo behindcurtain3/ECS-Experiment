@@ -1,0 +1,14 @@
+{
+    "Texture": "Data/Sprites/isometric_tiles",
+	"Name": "isometric_tiles",
+    "Sources": [
+        {
+            "ID": "none",
+			"Source": {"x":0,"y":0,"width":16,"height":9}
+        },
+        {
+            "ID": "grass",
+			"Source": {"x":16,"y":0,"width":16,"height":9}
+        }
+	]
+}
