@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsoECS", "IsoECS\IsoECS\IsoECS.csproj", "{565D5D36-5F5D-49EB-AE6D-7C29D399C9DA}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "IsoECSContent", "IsoECS\IsoECSContent\IsoECSContent.contentproj", "{97BD93D0-8640-4D9B-975E-2B0EFCD8341C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{565D5D36-5F5D-49EB-AE6D-7C29D399C9DA}.Debug|x86.ActiveCfg = Debug|x86
+		{565D5D36-5F5D-49EB-AE6D-7C29D399C9DA}.Debug|x86.Build.0 = Debug|x86
+		{565D5D36-5F5D-49EB-AE6D-7C29D399C9DA}.Release|x86.ActiveCfg = Release|x86
+		{565D5D36-5F5D-49EB-AE6D-7C29D399C9DA}.Release|x86.Build.0 = Release|x86
+		{97BD93D0-8640-4D9B-975E-2B0EFCD8341C}.Debug|x86.ActiveCfg = Debug|x86
+		{97BD93D0-8640-4D9B-975E-2B0EFCD8341C}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
