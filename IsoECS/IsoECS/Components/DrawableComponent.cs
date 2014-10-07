@@ -11,6 +11,9 @@ namespace IsoECS.Components
         // which part of the source texture to draw
         public Rectangle Source { get; set; }
 
+        // destination rectangle
+        public Rectangle Destination { get; set; }
+
         // the color
         public Color Color { get; set; }
 
@@ -19,5 +22,12 @@ namespace IsoECS.Components
 
         // is this currently visible?
         public bool Visible { get; set; }
+
+        public DrawableComponent()
+        {
+            Visible = true;
+            Color = Color.White;
+            Layer = 1;
+        }
     }
 }

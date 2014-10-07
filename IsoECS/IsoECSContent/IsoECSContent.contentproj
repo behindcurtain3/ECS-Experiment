@@ -56,6 +56,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Sprites\debug.json">
+      <Name>debug</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Sprites\isometric_tiles.json">
       <Name>isometric_tiles</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -68,6 +72,13 @@
   <ItemGroup>
     <Compile Include="Data\Sprites\isometric_tiles.png">
       <Name>isometric_tiles</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Sprites\debug.png">
+      <Name>debug</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

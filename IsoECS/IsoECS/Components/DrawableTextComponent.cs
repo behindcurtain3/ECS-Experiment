@@ -7,5 +7,10 @@ namespace IsoECS.Components
     {
         public String Text { get; set; }
         public Color Color { get; set; }
+
+        public DrawableTextComponent()
+        {
+            Color = Color.White;
+        }
     }
 }

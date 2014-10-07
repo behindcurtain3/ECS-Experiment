@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace IsoECS.Systems
 {
-    public class RenderSystem
+    public class RenderSystem : IRenderSystem
     {
         public GraphicsDevice Graphics { get; set; }
         public Color ClearColor { get; set; }
@@ -31,10 +31,15 @@ namespace IsoECS.Systems
             });
             foreach (Entity e in drawables)
             {
-                // if this entity is not visible continue to next
-                if (!e.Get<DrawableComponent>().Visible) continue;
+                DrawableComponent drawable = e.Get<DrawableComponent>();
 
-                spriteBatch.Draw(e.Get<DrawableComponent>().Texture, e.Get<PositionComponent>().Position, e.Get<DrawableComponent>().Source, e.Get<DrawableComponent>().Color);
+                // if this entity is not visible continue to next
+                if (!drawable.Visible) continue;
+
+                if(drawable.Destination.Equals(Rectangle.Empty))
+                    spriteBatch.Draw(drawable.Texture, e.Get<PositionComponent>().Position, drawable.Source, drawable.Color);
+                else
+                    spriteBatch.Draw(drawable.Texture, drawable.Destination, drawable.Source, drawable.Color);
             }
 
             // Render the text entities
@@ -50,7 +55,8 @@ namespace IsoECS.Systems
                 color = e.Get<DrawableTextComponent>().Color;
                 
                 // do the draw call
-                spriteBatch.DrawString(spriteFont, text, position, color);
+                if(!string.IsNullOrWhiteSpace(text))
+                    spriteBatch.DrawString(spriteFont, text, position, color);
             }
 
             // end the scene

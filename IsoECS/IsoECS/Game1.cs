@@ -22,16 +22,12 @@ namespace IsoECS
         SpriteFont spriteFont;
         List<Entity> entities;
         List<ISystem> systems;
+        List<IRenderSystem> renderers;
         Random random;
 
         RenderSystem renderSystem;
 
-        IsoMap map;
-        Entity mapEntity;
         Entity cameraEntity;
-
-
-        Dictionary<String, Texture2D> textures;
 
         public Game1()
         {
@@ -62,23 +58,13 @@ namespace IsoECS
             systems = new List<ISystem>();
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
             systems.Add(new CameraSystem());
+            systems.Add(new DebugSystem());
             systems.Add(new ProductionSystem());
 
+            renderers = new List<IRenderSystem>();
+            renderers.Add(new IsometricMapSystem());
+
             entities = new List<Entity>();
-
-            for (int i = 0; i < 10; i++)
-            {
-                Entity e = new Entity();
-
-                e.AddComponent(new PositionComponent(new Vector2((float)random.NextDouble() * 300, (float)random.NextDouble() * 300)));
-                e.AddComponent(new DrawableTextComponent() 
-                    { 
-                        Text = "I'm an entity with a drawable # " + e.ID,
-                        Color = new Color(random.Next(256), random.Next(256), random.Next(256))
-                    });
-
-                entities.Add(e);
-            }
 
             // add some nodes to the map
             for (int j = 0; j < 3; j++)
@@ -89,15 +75,6 @@ namespace IsoECS
                 {
                     X = random.Next(GraphicsDevice.Viewport.Width),
                     Y = random.Next(GraphicsDevice.Viewport.Height)
-                });
-
-                node.AddComponent(new DrawableComponent()
-                {
-                    Texture = textures["Nodes"],
-                    Source = new Rectangle(0, 0, textures["Nodes"].Width, textures["Nodes"].Height),
-                    Color = Color.White,
-                    Layer = 1,
-                    Visible = true
                 });
 
                 node.AddComponent(new Inventory());
@@ -122,17 +99,9 @@ namespace IsoECS
             renderSystem = new RenderSystem()
             {
                 Graphics = GraphicsDevice,
-                ClearColor = Color.White
+                ClearColor = Color.Black
             };
-
-            mapEntity = new Entity();
-            mapEntity.AddComponent(new DrawableComponent() 
-            {
-                Visible = true,
-                Color = Color.White
-            });
-            mapEntity.AddComponent(new PositionComponent());
-            entities.Add(mapEntity);
+            renderers.Add(renderSystem);
 
             cameraEntity = new Entity();
             cameraEntity.AddComponent(new PositionComponent());
@@ -147,8 +116,31 @@ namespace IsoECS
             inputEntity.AddComponent(new InputController());
             entities.Add(inputEntity);
 
-            map = new IsoMap(GraphicsDevice);
-            map.CreateMap("isometric_tiles", 32, 32, 16, 9);
+            Entity mapEntity = new Entity();
+            mapEntity.AddComponent(CreateMap("isometric_tiles", 64, 64, 32, 16));
+            mapEntity.AddComponent(new DrawableComponent()
+            {
+                Visible = true,
+                Color = Color.White,
+                Layer = 99
+            });
+            mapEntity.AddComponent(new PositionComponent());
+            entities.Add(mapEntity);
+
+            Entity debugEntity = new Entity();
+            debugEntity.AddComponent(new PositionComponent());
+            debugEntity.AddComponent(new DrawableComponent()
+            {
+                Layer = 1,
+                Visible = true,
+                Texture = Textures.Instance.Get("debug"),
+                Source = Textures.Instance.GetSource("overlay")
+            });
+            debugEntity.AddComponent(new DrawableTextComponent());
+
+            debugEntity.AddComponent(new DebugComponent());
+            entities.Add(debugEntity);
+
         }
 
         /// <summary>
@@ -160,20 +152,8 @@ namespace IsoECS
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteFont = Content.Load<SpriteFont>("Default");
-
-            textures = new Dictionary<string, Texture2D>();
-            textures.Add("Nodes", Content.Load<Texture2D>("Data/Sprites/Nodes"));
         }
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
-        }
-
+        
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -181,10 +161,6 @@ namespace IsoECS
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-
             // update the game systems
             foreach (ISystem system in systems)
             {
@@ -200,29 +176,43 @@ namespace IsoECS
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            // render the map to texture
-            map.RenderToTexture(spriteBatch, cameraEntity.Get<PositionComponent>().X, cameraEntity.Get<PositionComponent>().Y, MapRenderComplete);
-
-            // render everything
-            renderSystem.Draw(entities, spriteBatch, spriteFont);
+            foreach (IRenderSystem render in renderers)
+                render.Draw(entities, spriteBatch, spriteFont);
 
             base.Draw(gameTime);
         }
 
-        /// <summary>
-        /// Callback for when the map has completed rendering, update the map entity texture
-        /// </summary>
-        /// <param name="map"></param>
-        private void MapRenderComplete(IsoMap map)
+        private IsometricMapComponent CreateMap(string spriteSheetName, int txWidth, int txHeight, int pxTileWidth, int pxTileHeight)
         {
-            if (mapEntity.HasComponent<DrawableComponent>())
-            {
-                DrawableComponent drawable = mapEntity.Get<DrawableComponent>();
+            IsometricMapComponent map = new IsometricMapComponent();
 
-                drawable.Layer = 99;
-                drawable.Texture = (Texture2D)map.Buffer;
-                drawable.Source = new Rectangle(0, 0, map.Buffer.Width, map.Buffer.Height);
+            map.Graphics = GraphicsDevice;
+            map.Buffer = new RenderTarget2D(map.Graphics, map.Graphics.Viewport.Width, map.Graphics.Viewport.Height);
+
+            map.SpriteSheetName = spriteSheetName;
+
+            map.TxWidth = txWidth;
+            map.TxHeight = txHeight;
+
+            map.PxTileWidth = pxTileWidth;
+            map.PxTileHeight = pxTileHeight;
+
+            map.PxTileHalfWidth = map.PxTileWidth / 2;
+            map.PxTileHalfHeight = map.PxTileHeight / 2;
+
+            // Create the tile data structure
+            map.Terrain = new int[1, txHeight, txWidth];
+
+            // fill in the array
+            for (int y = 0; y < map.TxHeight; y++)
+            {
+                for (int x = 0; x < map.TxWidth; x++)
+                {
+                    map.Terrain[0, y, x] = (int)Tiles.Grass;
+                }
             }
+
+            return map;
         }
     }
 }

@@ -1,0 +1,10 @@
+{
+    "Texture": "Data/Sprites/debug",
+	"Name": "debug",
+    "Sources": [
+        {
+            "ID": "overlay",
+			"Source": {"x":0,"y":0,"width":32,"height":16}
+        }
+	]
+}
