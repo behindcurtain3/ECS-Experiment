@@ -1,0 +1,70 @@
+{
+    "Texture": "Data/Sprites/isometric_roads",
+	"Name": "isometric_roads",
+    "Sources": [
+        {
+            "ID": "four_way",
+			"Source": {"x":0,"y":0,"width":32,"height":16}
+        },
+        {
+            "ID": "single",
+			"Source": {"x":32,"y":0,"width":32,"height":16}
+        },
+		{
+            "ID": "sw_ne_connection",
+			"Source": {"x":64,"y":0,"width":32,"height":16}
+        },
+		{
+            "ID": "nw_se_connection",
+			"Source": {"x":96,"y":0,"width":32,"height":16}
+        },
+		{
+            "ID": "sw_endpoint",
+			"Source": {"x":0,"y":16,"width":32,"height":16}
+        },
+		{
+            "ID": "nw_endpoint",
+			"Source": {"x":32,"y":16,"width":32,"height":16}
+        },
+		{
+            "ID": "ne_endpoint",
+			"Source": {"x":64,"y":16,"width":32,"height":16}
+        },
+		{
+            "ID": "se_endpoint",
+			"Source": {"x":96,"y":16,"width":32,"height":16}
+        },
+		{
+            "ID": "sw_se_corner",
+			"Source": {"x":0,"y":32,"width":32,"height":16}
+        },
+		{
+            "ID": "nw_sw_corner",
+			"Source": {"x":32,"y":32,"width":32,"height":16}
+        },
+		{
+            "ID": "nw_ne_corner",
+			"Source": {"x":64,"y":32,"width":32,"height":16}
+        },
+		{
+            "ID": "ne_se_corner",
+			"Source": {"x":96,"y":32,"width":32,"height":16}
+        },
+		{
+            "ID": "sw_threeway",
+			"Source": {"x":0,"y":48,"width":32,"height":16}
+        },
+		{
+            "ID": "nw_threeway",
+			"Source": {"x":32,"y":48,"width":32,"height":16}
+        },
+		{
+            "ID": "ne_threeway",
+			"Source": {"x":64,"y":48,"width":32,"height":16}
+        },
+		{
+            "ID": "se_threeway",
+			"Source": {"x":96,"y":48,"width":32,"height":16}
+        }
+	]
+}

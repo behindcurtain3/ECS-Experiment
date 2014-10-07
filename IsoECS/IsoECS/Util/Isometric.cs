@@ -46,5 +46,10 @@ namespace IsoECS.Util
 
             return p;
         }
+
+        public static bool ValidIndex(IsometricMapComponent map, int x, int y)
+        {
+            return (x >= 0 && x < map.TxWidth && y >= 0 && y < map.TxHeight);
+        }
     }
 }

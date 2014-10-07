@@ -59,10 +59,18 @@ namespace IsoECS
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
             systems.Add(new CameraSystem());
             systems.Add(new DebugSystem());
+            systems.Add(new RoadBuilderSystem());
             systems.Add(new ProductionSystem());
 
             renderers = new List<IRenderSystem>();
             renderers.Add(new IsometricMapSystem());
+
+            renderSystem = new RenderSystem()
+            {
+                Graphics = GraphicsDevice,
+                ClearColor = Color.Black
+            };
+            renderers.Add(renderSystem);
 
             entities = new List<Entity>();
 
@@ -95,13 +103,6 @@ namespace IsoECS
 
                 entities.Add(node);
             }
-
-            renderSystem = new RenderSystem()
-            {
-                Graphics = GraphicsDevice,
-                ClearColor = Color.Black
-            };
-            renderers.Add(renderSystem);
 
             cameraEntity = new Entity();
             cameraEntity.AddComponent(new PositionComponent());
@@ -140,6 +141,12 @@ namespace IsoECS
 
             debugEntity.AddComponent(new DebugComponent());
             entities.Add(debugEntity);
+
+            // add an entity that tracks data
+            Entity dataTracker = new Entity();
+            dataTracker.AddComponent(new RoadplannerComponent());
+            dataTracker.AddComponent(new FloorplannerComponent());
+            entities.Add(dataTracker);
 
         }
 

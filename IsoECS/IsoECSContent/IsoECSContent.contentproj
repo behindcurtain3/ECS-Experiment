@@ -60,6 +60,10 @@
       <Name>debug</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Sprites\isometric_roads.json">
+      <Name>isometric_roads</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Sprites\isometric_tiles.json">
       <Name>isometric_tiles</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -79,6 +83,13 @@
   <ItemGroup>
     <Compile Include="Data\Sprites\debug.png">
       <Name>debug</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Sprites\isometric_roads.png">
+      <Name>isometric_roads</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

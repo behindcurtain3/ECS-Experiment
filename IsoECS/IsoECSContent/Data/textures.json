@@ -2,6 +2,7 @@
   "Name" : "Textures",
   "List" : [
     "Content/Data/Sprites/isometric_tiles.json",
+	"Content/Data/Sprites/isometric_roads.json",
 	"Content/Data/Sprites/debug.json"
   ]
 }

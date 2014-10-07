@@ -115,10 +115,13 @@
     <Compile Include="Components\DebugComponent.cs" />
     <Compile Include="Components\DrawableComponent.cs" />
     <Compile Include="Components\DrawableTextComponent.cs" />
+    <Compile Include="Components\GamePlay\FloorplannerComponent.cs" />
     <Compile Include="Components\GamePlay\Generator.cs" />
     <Compile Include="Components\GamePlay\Inventory.cs" />
     <Compile Include="Components\Controls\InputController.cs" />
     <Compile Include="Components\GamePlay\IsometricMapComponent.cs" />
+    <Compile Include="Components\GamePlay\RoadComponent.cs" />
+    <Compile Include="Components\GamePlay\RoadplannerComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
     <Compile Include="DataStructures\Json\JsonListConfig.cs" />
@@ -140,6 +143,7 @@
     <Compile Include="Systems\ISystem.cs" />
     <Compile Include="Systems\ProductionSystem.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
+    <Compile Include="Systems\RoadBuilderSystem.cs" />
     <Compile Include="Util\Isometric.cs" />
   </ItemGroup>
   <ItemGroup>
