@@ -51,5 +51,27 @@ namespace IsoECS.Util
         {
             return (x >= 0 && x < map.TxWidth && y >= 0 && y < map.TxHeight);
         }
+
+        public static Vector2 MoveTowards(Vector2 position, float speed, Vector2 target)
+        {
+            double tx = target.X - position.X;
+            double ty = target.Y - position.Y;
+            double length = Math.Sqrt(tx * tx + ty * ty);
+
+            if (length > speed)
+            {
+                // move towards the goal
+                position.X = (float)(position.X + speed * tx / length);
+                position.Y = (float)(position.Y + speed * ty / length);
+            }
+            else
+            {
+                // already there
+                position.X = target.X;
+                position.Y = target.Y;
+            }
+
+            return position;
+        }
     }
 }

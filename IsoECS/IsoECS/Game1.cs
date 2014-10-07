@@ -60,6 +60,7 @@ namespace IsoECS
             systems.Add(new CameraSystem());
             systems.Add(new DebugSystem());
             systems.Add(new RoadBuilderSystem());
+            systems.Add(new FollowMouseSystem());
             systems.Add(new ProductionSystem());
 
             renderers = new List<IRenderSystem>();
@@ -148,6 +149,19 @@ namespace IsoECS
             dataTracker.AddComponent(new RoadplannerComponent());
             dataTracker.AddComponent(new FloorplannerComponent());
             entities.Add(dataTracker);
+
+            // add test person entity
+            Entity person = new Entity();
+            person.AddComponent(new PositionComponent());
+            person.AddComponent(new DrawableComponent()
+            {
+                Texture = Textures.Instance.Get("isometric_person"),
+                Source = Textures.Instance.GetSource("isometric_person", "male"),
+                Origin = Textures.Instance.GetOrigin("isometric_person", "male"),
+                Layer = 2
+            });
+            person.AddComponent(new MoveToTargetComponent());
+            entities.Add(person);
 
         }
 
