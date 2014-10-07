@@ -36,10 +36,10 @@ namespace IsoECS.Systems
                 // if this entity is not visible continue to next
                 if (!drawable.Visible) continue;
 
-                if(drawable.Destination.Equals(Rectangle.Empty))
+                if (drawable.Destination.Equals(Rectangle.Empty))
                     spriteBatch.Draw(drawable.Texture, e.Get<PositionComponent>().Position, drawable.Source, drawable.Color);
                 else
-                    spriteBatch.Draw(drawable.Texture, drawable.Destination, drawable.Source, drawable.Color);
+                    spriteBatch.Draw(drawable.Texture, drawable.Destination, drawable.Source, drawable.Color, drawable.Rotation, drawable.Origin, drawable.Effects, 0);
             }
 
             // Render the text entities

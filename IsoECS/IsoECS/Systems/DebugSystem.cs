@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using IsoECS.Entities;
 using IsoECS.Components;
-using Microsoft.Xna.Framework;
-using IsoECS.Util;
 using IsoECS.Components.GamePlay;
-using System;
+using IsoECS.Entities;
+using IsoECS.Util;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.Systems
 {

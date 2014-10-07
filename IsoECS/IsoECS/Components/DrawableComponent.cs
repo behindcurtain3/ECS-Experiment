@@ -23,6 +23,15 @@ namespace IsoECS.Components
         // is this currently visible?
         public bool Visible { get; set; }
 
+        // any sprite effects
+        public SpriteEffects Effects { get; set; }
+
+        // origin
+        public Vector2 Origin { get; set; }
+
+        //rotation
+        public float Rotation { get; set; }
+
         public DrawableComponent()
         {
             Visible = true;
