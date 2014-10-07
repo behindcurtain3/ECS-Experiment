@@ -123,7 +123,8 @@ namespace IsoECS
             {
                 Visible = true,
                 Color = Color.White,
-                Layer = 99
+                Layer = 99,
+                Static = true
             });
             mapEntity.AddComponent(new PositionComponent());
             entities.Add(mapEntity);
@@ -135,7 +136,7 @@ namespace IsoECS
                 Layer = 1,
                 Visible = true,
                 Texture = Textures.Instance.Get("debug"),
-                Source = Textures.Instance.GetSource("overlay")
+                Source = Textures.Instance.GetSource("overlay"),
             });
             debugEntity.AddComponent(new DrawableTextComponent());
 

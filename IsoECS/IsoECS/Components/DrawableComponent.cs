@@ -32,11 +32,15 @@ namespace IsoECS.Components
         //rotation
         public float Rotation { get; set; }
 
+        // does this move when the camera moves?
+        public bool Static { get; set; }
+
         public DrawableComponent()
         {
             Visible = true;
             Color = Color.White;
             Layer = 1;
+            Static = false;
         }
     }
 }

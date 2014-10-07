@@ -41,8 +41,8 @@ namespace IsoECS.Systems
                 Vector2 dPositiion = Isometric.GetIsometricPosition(map, 0, index.Y, index.X);
 
                 // update the debug sprite position accounting for the camera
-                debugPosition.X = dPositiion.X - (int)camera.X;
-                debugPosition.Y = dPositiion.Y - (int)camera.Y;
+                debugPosition.X = dPositiion.X;// -(int)camera.X;
+                debugPosition.Y = dPositiion.Y;// -(int)camera.Y;
 
                 //debugger.Get<DrawableTextComponent>().Text = string.Format("{0}x{1}\n{2}x{3}\n{4}x{5}\n{6}x{7}", x, y, index.X, index.Y, camera.X, camera.Y, dPositiion.X, dPositiion.Y);
             }

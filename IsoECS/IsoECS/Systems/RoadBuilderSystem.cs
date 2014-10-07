@@ -24,7 +24,7 @@ namespace IsoECS.Systems
                 MouseState prevMouse = inputEntity.Get<InputController>().PrevMouse;
 
                 // click registered
-                if (currentMouse.LeftButton == ButtonState.Pressed)
+                if (currentMouse.LeftButton == ButtonState.Pressed || currentMouse.RightButton == ButtonState.Pressed)
                 {
                     Entity cameraEntity = entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
                     Entity mapEntity = entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
@@ -43,34 +43,40 @@ namespace IsoECS.Systems
                     if (!Isometric.ValidIndex(Map, index.X, index.Y))
                         return;
 
-                    // check to see if another road already exists there
-                    // already built
-                    if (roadPlanner.Built.ContainsKey(index))
-                        return;
-
                     // update the planner
-                    UpdateRoad(roadPlanner, index, true);
-
-                    // translate the index into a screen position
-                    Vector2 position = Isometric.GetIsometricPosition(Map, 0, index.Y, index.X);
-                    position.X -= (int)camera.X;
-                    position.Y -= (int)camera.Y;
-
-                    Entity roadEntity = new Entity();
-                    roadEntity.AddComponent(new PositionComponent(position));
-                    roadEntity.AddComponent(new RoadComponent() 
-                    { 
-                        RoadType = roadPlanner.Built[index],
-                        BuiltAt = index
-                    });
-                    roadEntity.AddComponent(new DrawableComponent()
+                    if (currentMouse.LeftButton == ButtonState.Pressed)
                     {
-                        Texture = Textures.Instance.Get("isometric_roads"),
-                        Source = Textures.Instance.GetSource(roadPlanner.Built[index]),
-                        Layer = 89
-                    });
+                        // check to see if another road already exists there
+                        // already built
+                        if (roadPlanner.Built.ContainsKey(index))
+                            return;
 
-                    entities.Add(roadEntity);
+                        AddOrUpdateRoad(roadPlanner, index, true);
+
+                        // translate the index into a screen position
+                        Vector2 position = Isometric.GetIsometricPosition(Map, 0, index.Y, index.X);
+
+                        Entity roadEntity = new Entity();
+                        roadEntity.AddComponent(new PositionComponent(position));
+                        roadEntity.AddComponent(new RoadComponent()
+                        {
+                            RoadType = roadPlanner.Built[index],
+                            BuiltAt = index
+                        });
+                        roadEntity.AddComponent(new DrawableComponent()
+                        {
+                            Texture = Textures.Instance.Get("isometric_roads"),
+                            Source = Textures.Instance.GetSource(roadPlanner.Built[index]),
+                            Layer = 89
+                        });
+
+                        entities.Add(roadEntity);
+                    }
+                    else
+                    {
+                        RemoveRoad(roadPlanner, index);
+                    }
+                    
 
                     List<Entity> roadEntities = entities.FindAll(delegate(Entity e) { return e.HasComponent<RoadComponent>(); });
 
@@ -80,14 +86,22 @@ namespace IsoECS.Systems
                         RoadComponent road = entity.Get<RoadComponent>();
                         DrawableComponent drawable = entity.Get<DrawableComponent>();
 
-                        road.RoadType = roadPlanner.Built[road.BuiltAt];
-                        drawable.Source = Textures.Instance.GetSource(road.RoadType);
+                        if (!roadPlanner.Built.ContainsKey(road.BuiltAt))
+                        {
+                            // remove the entity
+                            entities.Remove(entity);
+                        }
+                        else
+                        {
+                            road.RoadType = roadPlanner.Built[road.BuiltAt];
+                            drawable.Source = Textures.Instance.GetSource(road.RoadType);
+                        }
                     }
                 }
             }
         }
 
-        private void UpdateRoad(RoadplannerComponent planner, Point location, bool recursion = false)
+        private void AddOrUpdateRoad(RoadplannerComponent planner, Point location, bool recursion = false)
         {
             string value = GetRoadValue(planner, location);
 
@@ -99,19 +113,32 @@ namespace IsoECS.Systems
 
             if (recursion)
             {
-                // update the neighbors to account for this one
-                if (Isometric.ValidIndex(Map, location.X - 1, location.Y) && planner.Built.ContainsKey(new Point(location.X - 1, location.Y)))
-                    UpdateRoad(planner, new Point(location.X - 1, location.Y));
-
-                if (Isometric.ValidIndex(Map, location.X, location.Y - 1) && planner.Built.ContainsKey(new Point(location.X, location.Y - 1)))
-                    UpdateRoad(planner, new Point(location.X, location.Y - 1));
-
-                if (Isometric.ValidIndex(Map, location.X + 1, location.Y) && planner.Built.ContainsKey(new Point(location.X + 1, location.Y)))
-                    UpdateRoad(planner, new Point(location.X + 1, location.Y));
-
-                if (Isometric.ValidIndex(Map, location.X, location.Y + 1) && planner.Built.ContainsKey(new Point(location.X, location.Y + 1)))
-                    UpdateRoad(planner, new Point(location.X, location.Y + 1));
+                UpdateNeighbors(planner, location);
             }
+        }
+
+        private void RemoveRoad(RoadplannerComponent planner, Point location)
+        {
+            if (planner.Built.ContainsKey(location))
+                planner.Built.Remove(location);
+
+            UpdateNeighbors(planner, location);
+        }
+
+        public void UpdateNeighbors(RoadplannerComponent planner, Point location)
+        {
+            // update the neighbors to account for this one
+            if (Isometric.ValidIndex(Map, location.X - 1, location.Y) && planner.Built.ContainsKey(new Point(location.X - 1, location.Y)))
+                AddOrUpdateRoad(planner, new Point(location.X - 1, location.Y));
+
+            if (Isometric.ValidIndex(Map, location.X, location.Y - 1) && planner.Built.ContainsKey(new Point(location.X, location.Y - 1)))
+                AddOrUpdateRoad(planner, new Point(location.X, location.Y - 1));
+
+            if (Isometric.ValidIndex(Map, location.X + 1, location.Y) && planner.Built.ContainsKey(new Point(location.X + 1, location.Y)))
+                AddOrUpdateRoad(planner, new Point(location.X + 1, location.Y));
+
+            if (Isometric.ValidIndex(Map, location.X, location.Y + 1) && planner.Built.ContainsKey(new Point(location.X, location.Y + 1)))
+                AddOrUpdateRoad(planner, new Point(location.X, location.Y + 1));
         }
 
         private string GetRoadValue(RoadplannerComponent planner, Point location)

@@ -16,6 +16,7 @@ namespace IsoECS.Systems
             // Get the list of drawable text entities from the main list
             List<Entity> drawables = entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
             List<Entity> drawableText = entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableTextComponent>() && e.HasComponent<PositionComponent>(); });
+            PositionComponent cameraPosition = entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
 
             // Setup the scene
             Graphics.Clear(ClearColor);
@@ -33,13 +34,18 @@ namespace IsoECS.Systems
             {
                 DrawableComponent drawable = e.Get<DrawableComponent>();
 
+                // update the destination on the drawable
+                if (!drawable.Static)
+                    drawable.Destination = new Rectangle(
+                                            (int)(e.Get<PositionComponent>().X - cameraPosition.X), 
+                                            (int)(e.Get<PositionComponent>().Y - cameraPosition.Y),
+                                            drawable.Source.Width, 
+                                            drawable.Source.Height);
+
                 // if this entity is not visible continue to next
                 if (!drawable.Visible) continue;
 
-                if (drawable.Destination.Equals(Rectangle.Empty))
-                    spriteBatch.Draw(drawable.Texture, e.Get<PositionComponent>().Position, drawable.Source, drawable.Color);
-                else
-                    spriteBatch.Draw(drawable.Texture, drawable.Destination, drawable.Source, drawable.Color, drawable.Rotation, drawable.Origin, drawable.Effects, 0);
+                spriteBatch.Draw(drawable.Texture, drawable.Destination, drawable.Source, drawable.Color, drawable.Rotation, drawable.Origin, drawable.Effects, 0);
             }
 
             // Render the text entities
