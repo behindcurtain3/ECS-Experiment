@@ -10,5 +10,8 @@ namespace IsoECS.DataStructures.Json
 
         [JsonConverter(typeof(RectangleConverter))]
         public Rectangle Source { get; set; }
+
+        [JsonConverter(typeof(VectorConverter))]
+        public Vector2 Origin { get; set; }
     }
 }

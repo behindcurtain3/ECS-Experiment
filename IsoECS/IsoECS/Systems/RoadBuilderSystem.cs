@@ -66,7 +66,7 @@ namespace IsoECS.Systems
                         roadEntity.AddComponent(new DrawableComponent()
                         {
                             Texture = Textures.Instance.Get("isometric_roads"),
-                            Source = Textures.Instance.GetSource(roadPlanner.Built[index]),
+                            Source = Textures.Instance.GetSource("isometric_roads", roadPlanner.Built[index]),
                             Layer = 89
                         });
 
@@ -94,7 +94,7 @@ namespace IsoECS.Systems
                         else
                         {
                             road.RoadType = roadPlanner.Built[road.BuiltAt];
-                            drawable.Source = Textures.Instance.GetSource(road.RoadType);
+                            drawable.Source = Textures.Instance.GetSource("isometric_roads", road.RoadType);
                         }
                     }
                 }

@@ -136,7 +136,7 @@ namespace IsoECS
                 Layer = 1,
                 Visible = true,
                 Texture = Textures.Instance.Get("debug"),
-                Source = Textures.Instance.GetSource("overlay"),
+                Source = Textures.Instance.GetSource("debug", "overlay"),
             });
             debugEntity.AddComponent(new DrawableTextComponent());
 

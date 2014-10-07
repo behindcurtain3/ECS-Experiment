@@ -1,0 +1,11 @@
+{
+    "Texture": "Data/Sprites/isometric_person",
+	"Name": "isometric_person",
+    "Sources": [
+        {
+            "ID": "male",
+			"Source": {"x":0,"y":0,"width":32,"height":24},
+			"Origin": {"x":0,"y":8}
+        }
+	]
+}

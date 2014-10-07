@@ -124,6 +124,7 @@
     <Compile Include="Components\GamePlay\RoadplannerComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
+    <Compile Include="DataStructures\Json\Converters\VectorConverter.cs" />
     <Compile Include="DataStructures\Json\JsonListConfig.cs" />
     <Compile Include="DataStructures\Json\JsonTexture.cs" />
     <Compile Include="DataStructures\Json\JsonTextureLoader.cs" />

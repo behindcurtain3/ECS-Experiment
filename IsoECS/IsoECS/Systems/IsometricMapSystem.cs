@@ -56,7 +56,7 @@ namespace IsoECS.Systems
 
                         // get the source rectangle
                         // TODO: this should be dynamic based on the value at Terrain[z, y, x]
-                        source = Textures.Instance.GetSource("grass");
+                        source = Textures.Instance.GetSource(map.SpriteSheetName, "grass");
 
                         // draw the tile
                         spriteBatch.Draw(Textures.Instance.Get(map.SpriteSheetName), destination, source, Color.White);

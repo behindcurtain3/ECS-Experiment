@@ -23,8 +23,6 @@ namespace IsoECS.Systems
             spriteBatch.Begin();
 
             // TODO: render any background
-            // TODO: render the map
-            // TODO: render any sprites
             // sort the drawables by layer
             drawables.Sort(delegate(Entity a, Entity b)
             {
@@ -50,6 +48,7 @@ namespace IsoECS.Systems
             }
 
             // Render the text entities
+            // TODO: update this
             string text;
             Vector2 position;
             Color color;
