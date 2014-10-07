@@ -72,6 +72,10 @@
       <Name>isometric_tiles</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Sprites\misc_textures.json">
+      <Name>misc_textures</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\textures.json">
       <Name>textures</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -101,6 +105,13 @@
   <ItemGroup>
     <Compile Include="Data\Sprites\isometric_person.png">
       <Name>isometric_person</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Sprites\3x3.png">
+      <Name>3x3</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

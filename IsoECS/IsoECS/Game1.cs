@@ -134,10 +134,12 @@ namespace IsoECS
             debugEntity.AddComponent(new PositionComponent());
             debugEntity.AddComponent(new DrawableComponent()
             {
-                Layer = 1,
+                Layer = 20,
                 Visible = true,
-                Texture = Textures.Instance.Get("debug"),
-                Source = Textures.Instance.GetSource("debug", "overlay"),
+                Texture = Textures.Instance.Get("misc"),
+                Source = Textures.Instance.GetSource("misc", "3x3"),
+                Origin = Textures.Instance.GetOrigin("misc", "3x3"),
+                Color = new Color(255, 255, 255, 128)
             });
             debugEntity.AddComponent(new DrawableTextComponent());
 

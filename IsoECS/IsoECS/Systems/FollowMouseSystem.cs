@@ -25,10 +25,6 @@ namespace IsoECS.Systems
             // pick out the tile index that the screen coords intersect
             Point mouseIndex = Isometric.GetPointAtScreenCoords(map, x, y);
 
-            // if not a valid index exit
-            if (!Isometric.ValidIndex(map, mouseIndex.X, mouseIndex.Y))
-                return;
-
             List<Entity> followers = entities.FindAll(delegate(Entity e) { return e.HasComponent<MoveToTargetComponent>(); });
 
             foreach (Entity e in followers)
@@ -38,9 +34,12 @@ namespace IsoECS.Systems
 
                 if (moveable.PathToTarget == null || moveable.PathToTarget.Waypoints.Count <= 0)
                 {
+                    // if not a valid index exit
+                    if (!Isometric.ValidIndex(map, mouseIndex.X, mouseIndex.Y))
+                        continue;
 
                     Point eIndex = Isometric.GetPointAtScreenCoords(map, (int)position.X, (int)position.Y);
-
+                    
                     // already has the path to target
                     if (mouseIndex == eIndex)
                         continue;
@@ -55,7 +54,7 @@ namespace IsoECS.Systems
                 {
                     // move to the target
                     Vector2 targetPos = Isometric.GetIsometricPosition(map, 0, moveable.PathToTarget.Waypoints[0].Y, moveable.PathToTarget.Waypoints[0].X);
-                    Vector2 arrivedAt = Isometric.MoveTowards(position.Position, 2f, targetPos);
+                    Vector2 arrivedAt = Isometric.MoveTowards(position.Position, 1f, targetPos);
                     position.X = arrivedAt.X;
                     position.Y = arrivedAt.Y;
 

@@ -1,0 +1,11 @@
+{
+    "Texture": "Data/Sprites/3x3",
+	"Name": "misc",
+    "Sources": [
+        {
+            "ID": "3x3",
+			"Source": {"x":0,"y":0,"width":96,"height":48},
+			"Origin": {"x":32,"y":16}
+        }
+	]
+}
