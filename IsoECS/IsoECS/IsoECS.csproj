@@ -116,8 +116,8 @@
     <Compile Include="Components\DrawableComponent.cs" />
     <Compile Include="Components\DrawableTextComponent.cs" />
     <Compile Include="Components\GamePlay\CollisionMapComponent.cs" />
-    <Compile Include="Components\GamePlay\FloorComponent.cs" />
-    <Compile Include="Components\GamePlay\FloorplannerComponent.cs" />
+    <Compile Include="Components\GamePlay\FoundationComponent.cs" />
+    <Compile Include="Components\GamePlay\FoundationPlannerComponent.cs" />
     <Compile Include="Components\GamePlay\Generator.cs" />
     <Compile Include="Components\GamePlay\Inventory.cs" />
     <Compile Include="Components\Controls\InputController.cs" />
@@ -127,10 +127,12 @@
     <Compile Include="Components\GamePlay\RoadplannerComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
     <Compile Include="DataStructures\Buildables.cs" />
+    <Compile Include="DataStructures\Json\Converters\PointConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\VectorConverter.cs" />
     <Compile Include="DataStructures\Json\JsonBuildableLoader.cs" />
     <Compile Include="DataStructures\Json\JsonListConfig.cs" />
+    <Compile Include="DataStructures\Json\JsonPoint.cs" />
     <Compile Include="DataStructures\Json\JsonTexture.cs" />
     <Compile Include="DataStructures\Json\JsonTextureLoader.cs" />
     <Compile Include="DataStructures\Path.cs" />

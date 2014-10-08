@@ -3,11 +3,11 @@ using Microsoft.Xna.Framework;
 
 namespace IsoECS.Components.GamePlay
 {
-    public class FloorplannerComponent : Component
+    public class FoundationPlannerComponent : Component
     {
         public Dictionary<Point, bool> SpaceTaken { get; set; }
 
-        public FloorplannerComponent()
+        public FoundationPlannerComponent()
         {
             SpaceTaken = new Dictionary<Point, bool>();
         }

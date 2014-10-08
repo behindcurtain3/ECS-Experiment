@@ -145,7 +145,7 @@ namespace IsoECS
             Entity dataTracker = new Entity();
             dataTracker.AddComponent(new RoadplannerComponent());
             dataTracker.AddComponent(CreateCollisionMap(mapComponent));
-            dataTracker.AddComponent(new FloorplannerComponent());
+            dataTracker.AddComponent(new FoundationPlannerComponent());
             dataTracker.AddComponent(new PositionComponent());
             dataTracker.AddComponent(new DrawableComponent()
             {

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace IsoECS.Components.GamePlay
 {
-    public class FloorComponent : Component
+    public class FoundationComponent : Component
     {
         public Point[] FloorPlan { get; set; }
     }

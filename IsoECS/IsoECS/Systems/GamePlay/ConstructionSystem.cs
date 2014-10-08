@@ -10,6 +10,7 @@ using IsoECS.DataStructures.Json;
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using IsoECS.DataStructures.Json.Converters;
 
 namespace IsoECS.Systems.GamePlay
 {
@@ -36,7 +37,7 @@ namespace IsoECS.Systems.GamePlay
             PositionComponent drawablePosition = dataTracker.Get<PositionComponent>();
             RoadplannerComponent roadPlanner = dataTracker.Get<RoadplannerComponent>();
             CollisionMapComponent collisionMap = dataTracker.Get<CollisionMapComponent>();
-            FloorplannerComponent floorPlanner = dataTracker.Get<FloorplannerComponent>();
+            FoundationPlannerComponent floorPlanner = dataTracker.Get<FoundationPlannerComponent>();
 
             List<string> categories = Buildables.Instance.GetCategories();
             if (input.CurrentKeyboard.IsKeyDown(Keys.OemPlus) && !input.PrevKeyboard.IsKeyDown(Keys.OemPlus))
@@ -65,7 +66,7 @@ namespace IsoECS.Systems.GamePlay
             if (!floorPlanner.SpaceTaken.ContainsKey(index))
                 drawable.Color = new Color(drawable.Color.R, drawable.Color.G, drawable.Color.B, 228);
             else
-                drawable.Color = new Color(255, 0, 0, 128);
+                drawable.Color = new Color(128, 128, 128, 128);
 
             drawable.Texture = Textures.Instance.Get(selectedBuildable.ConstructSpriteSheetName);
             drawable.Source = Textures.Instance.GetSource(selectedBuildable.ConstructSpriteSheetName, selectedBuildable.ConstructSourceID);
@@ -97,8 +98,6 @@ namespace IsoECS.Systems.GamePlay
                 // add misc components
                 foreach (JObject component in selectedBuildable.Components)
                 {
-                    Console.WriteLine(component.ToString());
-
                     JToken tokenName;
                     if (!component.TryGetValue("Type", out tokenName))
                         continue;
@@ -144,6 +143,51 @@ namespace IsoECS.Systems.GamePlay
                             List<Entity> roadEntities = entities.FindAll(delegate(Entity e) { return e.HasComponent<RoadComponent>(); });
                             RoadsHelper.UpdateRoadsGfx(roadEntities, roadPlanner);
                             break;
+                        case "FoundationComponent":
+                            FoundationComponent floor = (FoundationComponent)c;
+
+                            // TODO: implement a better way to handle this crap
+                            JToken plan;
+                            List<Point> offsets = new List<Point>();
+
+                            // if using floorplan setup the offsets
+                            if (component.TryGetValue("FoundationPlan", out plan))
+                            {
+                                List<JToken> tokens = new List<JToken>(component["FoundationPlan"].Children());
+                                
+                                foreach (JToken token in tokens)
+                                {
+                                    Point p = JsonConvert.DeserializeObject<Point>(token.ToString(), new PointConverter());
+                                    offsets.Add(p);
+                                }
+                            }
+                            // if using a fill pattern
+                            else if (component.TryGetValue("FillFoundationPlan", out plan))
+                            {
+                                Point start;
+                                Point end;
+
+                                List<JToken> tokens = new List<JToken>(component["FillFoundationPlan"].Children());
+
+                                start = JsonConvert.DeserializeObject<Point>(tokens[0].ToString(), new PointConverter());
+                                end = JsonConvert.DeserializeObject<Point>(tokens[1].ToString(), new PointConverter());
+
+                                for (int xx = start.X; xx <= end.X; xx++)
+                                {
+                                    for (int yy = start.Y; yy <= end.Y; yy++)
+                                    {
+                                        offsets.Add(new Point(xx, yy));
+                                    }
+                                }
+                            }
+
+                            // update the floor planner
+                            foreach (Point p in offsets)
+                            {
+                                Point update = new Point(index.X + p.X, index.Y + p.Y);
+                                floorPlanner.SpaceTaken.Add(update, true);
+                            }
+                            break;
                     }
                 }
 
@@ -151,9 +195,6 @@ namespace IsoECS.Systems.GamePlay
                 buildable.AddComponent(buildableDrawable);
                 // add the entity
                 entities.Add(buildable);
-
-                // update the floor planner
-                floorPlanner.SpaceTaken.Add(index, true);
             }
         }
     }

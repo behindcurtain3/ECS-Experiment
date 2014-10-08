@@ -11,7 +11,14 @@
 		"DragBuildEnabled": true,
 		"Components": [
 			{
-				"Type": "RoadComponent"
+				"Type": "RoadComponent",
+				"Movement": 8
+			},
+			{
+				"Type": "FoundationComponent",
+				"FoundationPlan": [
+					{"x":0,"y":0}
+				]
 			}
 		]
 	}
