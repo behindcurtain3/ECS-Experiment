@@ -59,11 +59,12 @@ namespace IsoECS
 
             // Load textures from config
             Textures.Instance.LoadFromJson("Content/Data/textures.json", true);
+            // Load the buildables from config
+            Buildables.Instance.LoadFromJson("Content/Data/buildables.json", true);
 
             systems = new List<ISystem>();
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
             systems.Add(new ControlSystem());
-            systems.Add(new DebugSystem());
             systems.Add(new ProductionSystem());
 
             renderers = new List<IRenderSystem>();
@@ -136,25 +137,20 @@ namespace IsoECS
 
             Entity debugEntity = new Entity();
             debugEntity.AddComponent(new PositionComponent());
-            debugEntity.AddComponent(new DrawableComponent()
-            {
-                Layer = 20,
-                Visible = true,
-                Texture = Textures.Instance.Get("misc"),
-                Source = Textures.Instance.GetSource("misc", "3x3"),
-                Origin = Textures.Instance.GetOrigin("misc", "3x3"),
-                Color = new Color(255, 255, 255, 128)
-            });
             debugEntity.AddComponent(new DrawableTextComponent());
-
             debugEntity.AddComponent(new DebugComponent());
             entities.Add(debugEntity);
 
             // add an entity that tracks data
             Entity dataTracker = new Entity();
             dataTracker.AddComponent(new RoadplannerComponent());
-            dataTracker.AddComponent(new FloorplannerComponent());
             dataTracker.AddComponent(CreateCollisionMap(mapComponent));
+            dataTracker.AddComponent(new FloorplannerComponent());
+            dataTracker.AddComponent(new PositionComponent());
+            dataTracker.AddComponent(new DrawableComponent()
+            {
+                Visible = false
+            });
             entities.Add(dataTracker);
 
             // add test person entity

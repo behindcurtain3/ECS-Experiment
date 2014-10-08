@@ -125,8 +125,11 @@
     <Compile Include="Components\GamePlay\RoadComponent.cs" />
     <Compile Include="Components\GamePlay\RoadplannerComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
+    <Compile Include="DataStructures\Buildables.cs" />
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\VectorConverter.cs" />
+    <Compile Include="DataStructures\Json\JsonBuildableLoader.cs" />
+    <Compile Include="DataStructures\Json\JsonComponent.cs" />
     <Compile Include="DataStructures\Json\JsonListConfig.cs" />
     <Compile Include="DataStructures\Json\JsonTexture.cs" />
     <Compile Include="DataStructures\Json\JsonTextureLoader.cs" />
@@ -144,6 +147,7 @@
     <Compile Include="Systems\ControlSystem.cs" />
     <Compile Include="Systems\DebugSystem.cs" />
     <Compile Include="Systems\FollowMouseSystem.cs" />
+    <Compile Include="Systems\GamePlay\ConstructionSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />
     <Compile Include="Systems\IRenderSystem.cs" />
     <Compile Include="Systems\IsometricMapSystem.cs" />
@@ -155,6 +159,7 @@
     <Compile Include="Util\Isometric.cs" />
     <Compile Include="Util\MathHelper.cs" />
     <Compile Include="Util\Pathfinder.cs" />
+    <Compile Include="Util\RoadsHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

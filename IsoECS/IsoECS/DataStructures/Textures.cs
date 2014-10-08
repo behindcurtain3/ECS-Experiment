@@ -26,7 +26,6 @@ namespace IsoECS.DataStructures
         private Dictionary<string, Dictionary<string, TextureInfo>> _textureDb;
         private Dictionary<string, Texture2D> _textures;
         
-        //private Dictionary<string, Rectangle> _sources;
         private GraphicsDevice _graphics;
         public GraphicsDevice Graphics
         {
@@ -43,7 +42,6 @@ namespace IsoECS.DataStructures
             Count = 0;
             _textureDb = new Dictionary<string, Dictionary<string, TextureInfo>>();
             _textures = new Dictionary<string, Texture2D>();
-            //_sources = new Dictionary<string, Rectangle>();
         }
 
         public void AddTexture(string spriteSheetName, string texturePath, string sourceID, Rectangle sourceRect, Vector2 sourceOrigin)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using IsoECS.Entities;
 using Microsoft.Xna.Framework.Input;
 using IsoECS.Components;
+using IsoECS.Systems.GamePlay;
 
 namespace IsoECS.Systems
 {
@@ -17,7 +18,7 @@ namespace IsoECS.Systems
         {
             KeyBindings = new Dictionary<Keys, Type>();
             KeyBindings.Add(Keys.C, typeof(CameraSystem));
-            KeyBindings.Add(Keys.R, typeof(RoadBuilderSystem));
+            KeyBindings.Add(Keys.B, typeof(ConstructionSystem));
             KeyBindings.Add(Keys.F, typeof(FollowMouseSystem));
 
             ControlSystems = new Dictionary<Type, ISystem>();

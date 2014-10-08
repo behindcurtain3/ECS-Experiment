@@ -65,7 +65,6 @@ namespace IsoECS.Util
                                                             selectedNode
                                                             );
 
-                        // TODO: check the collision map to see if the location is walkable
                         if (collisionMap.Collision[waypoint.Location] != -1 && !_closedList.ContainsKey(waypoint.Location))
                         {
                             if (_openList.ContainsKey(waypoint.Location))

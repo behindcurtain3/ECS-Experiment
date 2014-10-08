@@ -54,7 +54,7 @@ namespace IsoECS.Systems
                         if (roadPlanner.Built.ContainsKey(index))
                             return;
 
-                        AddOrUpdateRoad(roadPlanner, index, true);
+                        RoadsHelper.AddOrUpdateRoad(roadPlanner, Map, index, true);
 
                         // update the collision map
                         collisionMap.Collision[index] = 8;
@@ -80,7 +80,7 @@ namespace IsoECS.Systems
                     }
                     else
                     {
-                        RemoveRoad(roadPlanner, index);
+                        RoadsHelper.RemoveRoad(roadPlanner, Map, index);
 
                         collisionMap.Collision[index] = 64;
                     }
@@ -109,112 +109,6 @@ namespace IsoECS.Systems
             }
         }
 
-        private void AddOrUpdateRoad(RoadplannerComponent planner, Point location, bool recursion = false)
-        {
-            string value = GetRoadValue(planner, location);
-
-            // set the value of built into the roadPlanner
-            if (!planner.Built.ContainsKey(location))
-                planner.Built.Add(location, value);
-            else
-                planner.Built[location] = value;
-
-            if (recursion)
-            {
-                UpdateNeighbors(planner, location);
-            }
-        }
-
-        private void RemoveRoad(RoadplannerComponent planner, Point location)
-        {
-            if (planner.Built.ContainsKey(location))
-                planner.Built.Remove(location);
-
-            UpdateNeighbors(planner, location);
-        }
-
-        public void UpdateNeighbors(RoadplannerComponent planner, Point location)
-        {
-            // update the neighbors to account for this one
-            if (Isometric.ValidIndex(Map, location.X - 1, location.Y) && planner.Built.ContainsKey(new Point(location.X - 1, location.Y)))
-                AddOrUpdateRoad(planner, new Point(location.X - 1, location.Y));
-
-            if (Isometric.ValidIndex(Map, location.X, location.Y - 1) && planner.Built.ContainsKey(new Point(location.X, location.Y - 1)))
-                AddOrUpdateRoad(planner, new Point(location.X, location.Y - 1));
-
-            if (Isometric.ValidIndex(Map, location.X + 1, location.Y) && planner.Built.ContainsKey(new Point(location.X + 1, location.Y)))
-                AddOrUpdateRoad(planner, new Point(location.X + 1, location.Y));
-
-            if (Isometric.ValidIndex(Map, location.X, location.Y + 1) && planner.Built.ContainsKey(new Point(location.X, location.Y + 1)))
-                AddOrUpdateRoad(planner, new Point(location.X, location.Y + 1));
-        }
-
-        private string GetRoadValue(RoadplannerComponent planner, Point location)
-        {
-            // set the value of the location to index of the type of road at this location
-            bool NW = false;
-            bool NE = false;
-            bool SE = false;
-            bool SW = false;
-
-            if (Isometric.ValidIndex(Map, location.X - 1, location.Y))
-                NW = planner.Built.ContainsKey(new Point(location.X - 1, location.Y));
-
-            if (Isometric.ValidIndex(Map, location.X, location.Y - 1))
-                NE = planner.Built.ContainsKey(new Point(location.X, location.Y - 1));
-
-            if (Isometric.ValidIndex(Map, location.X + 1, location.Y))
-                SE = planner.Built.ContainsKey(new Point(location.X + 1, location.Y));
-
-            if (Isometric.ValidIndex(Map, location.X, location.Y + 1))
-                SW = planner.Built.ContainsKey(new Point(location.X, location.Y + 1));
-
-            // 1 combo of 4
-            if(NW && NE && SE && SW)
-                return "four_way";
-
-            // four different combos of 3
-            else if(NW && NE && SE)
-                return "ne_threeway";
-            else if(NW && NE && SW)
-                return "nw_threeway";
-            else if(NW && SE && SW)
-                return "sw_threeway";
-            else if(NE && SE && SW)
-                return "se_threeway";
-
-            // 6 combos of 2
-            else if(SW && SE)
-                return "sw_se_corner";
-            else if(NW && SW)
-                return "nw_sw_corner";
-            else if(NW && NE)
-                return "nw_ne_corner";
-            else if(NE && SE)
-                return "ne_se_corner";
-            else if(SW && NE)
-                return "sw_ne_connection";
-            else if(NW && SE)
-                return "nw_se_connection";
-
-            // 4 combos of 1
-            else if(SW)
-                return "sw_endpoint";
-            else if(NW)
-                return "nw_endpoint";
-            else if(NE)
-                return "ne_endpoint";
-            else if(SE)
-                return "se_endpoint";
-
-            // 1 cobmo of 0
-            else
-                return "single";
-        }
-
-        private void GetRoadType(RoadplannerComponent planner, int x, int y)
-        {
-
-        }
+        
     }
 }
