@@ -141,6 +141,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Systems\CameraSystem.cs" />
+    <Compile Include="Systems\ControlSystem.cs" />
     <Compile Include="Systems\DebugSystem.cs" />
     <Compile Include="Systems\FollowMouseSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />

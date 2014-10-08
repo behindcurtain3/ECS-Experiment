@@ -57,9 +57,8 @@ namespace IsoECS
 
             systems = new List<ISystem>();
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
-            systems.Add(new CameraSystem());
+            systems.Add(new ControlSystem());
             systems.Add(new DebugSystem());
-            systems.Add(new RoadBuilderSystem());
             systems.Add(new FollowMouseSystem());
             systems.Add(new ProductionSystem());
 
