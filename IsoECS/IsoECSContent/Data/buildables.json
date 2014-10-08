@@ -1,6 +1,7 @@
 {
   "Name" : "Buildables",
   "List" : [
-    "Content/Data/Buildables/roads.json"
+    "Content/Data/Buildables/roads.json",
+	"Content/Data/Buildables/farms.json"
   ]
 }

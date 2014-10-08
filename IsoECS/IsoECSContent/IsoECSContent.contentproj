@@ -60,6 +60,10 @@
       <Name>buildables</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Buildables\farms.json">
+      <Name>farms</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Buildables\roads.json">
       <Name>roads</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

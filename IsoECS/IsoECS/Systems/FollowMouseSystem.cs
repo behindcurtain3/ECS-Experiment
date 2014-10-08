@@ -56,7 +56,7 @@ namespace IsoECS.Systems
                 {
                     // move to the target
                     Vector2 targetPos = Isometric.GetIsometricPosition(map, 0, moveable.PathToTarget.Waypoints[0].Y, moveable.PathToTarget.Waypoints[0].X);
-                    Vector2 arrivedAt = Isometric.MoveTowards(position.Position, 1f, targetPos);
+                    Vector2 arrivedAt = Isometric.MoveTowards(position.Position, 1.5f, targetPos);
                     position.X = arrivedAt.X;
                     position.Y = arrivedAt.Y;
 

@@ -172,7 +172,7 @@ namespace IsoECS
             {
                 Text = "",
                 Color = Color.White,
-                Visible = false
+                Visible = true
             });
             entities.Add(diagnosticEntity);
         }
@@ -203,7 +203,7 @@ namespace IsoECS
                 diagnostics.StopTiming(system.GetType().ToString());
             }
 
-            diagnosticEntity.Get<DrawableTextComponent>().Text = diagnostics.ShowTop(5, true);
+            diagnosticEntity.Get<DrawableTextComponent>().Text = diagnostics.ShowTop(8, true);
 
             base.Update(gameTime);
         }

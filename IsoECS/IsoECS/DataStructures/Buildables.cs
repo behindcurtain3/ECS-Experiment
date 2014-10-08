@@ -3,6 +3,8 @@ using System.IO;
 using IsoECS.DataStructures.Json;
 using Microsoft.Xna.Framework.Content;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 
 namespace IsoECS.DataStructures
 {
@@ -18,7 +20,7 @@ namespace IsoECS.DataStructures
         public string ConstructSourceID;
 
         public bool DragBuildEnabled;
-        public JsonComponent[] Components;
+        public JObject[] Components;
     }
 
     public sealed class Buildables
@@ -74,7 +76,6 @@ namespace IsoECS.DataStructures
             }
             else
             {
-                // TODO: rewrite for JsonBuildableLoader
                 JsonBuildableLoader loader = JsonConvert.DeserializeObject<JsonBuildableLoader>(json);
                 foreach (BuildableInfo info in loader.Buildables)
                 {

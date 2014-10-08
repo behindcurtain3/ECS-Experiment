@@ -1,0 +1,30 @@
+{
+  "Buildables" : [
+    {
+		"Category": "Transportation",
+		"Name": "Wheat Farm",
+		"Description": "A countryside farm that produces wheat.",
+		"SpriteSheetName": "misc",
+		"SourceID": "3x3",
+		"ConstructSpriteSheetName": "misc",
+		"ConstructSourceID": "3x3",
+		"DragBuildEnabled": false,
+		"Components": [
+			{
+				"Type": "FloorBadComponent",
+				"FloorPlan": [
+					{"x":-1,"y":-1},
+					{"x":0,"y":-1},
+					{"x":1,"y":-1},
+					{"x":-1,"y":0},
+					{"x":0,"y":0},
+					{"x":1,"y":0},
+					{"x":-1,"y":1},
+					{"x":0,"y":1},
+					{"x":1,"y":1}
+				]
+			}
+		]
+	}
+  ]
+}

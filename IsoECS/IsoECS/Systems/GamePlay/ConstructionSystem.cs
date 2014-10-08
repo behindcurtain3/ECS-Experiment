@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using IsoECS.DataStructures.Json;
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace IsoECS.Systems.GamePlay
 {
@@ -37,6 +39,13 @@ namespace IsoECS.Systems.GamePlay
             FloorplannerComponent floorPlanner = dataTracker.Get<FloorplannerComponent>();
 
             List<string> categories = Buildables.Instance.GetCategories();
+            if (input.CurrentKeyboard.IsKeyDown(Keys.OemPlus) && !input.PrevKeyboard.IsKeyDown(Keys.OemPlus))
+            {
+                _selection++;
+
+                if (_selection >= Buildables.Instance.GetCategory(categories[_category]).Count)
+                    _selection = 0;
+            }
             List<BuildableInfo> buildings = Buildables.Instance.GetCategory(categories[_category]);
             BuildableInfo selectedBuildable = buildings[_selection];
 
@@ -47,15 +56,16 @@ namespace IsoECS.Systems.GamePlay
             // pick out the tile index that the screen coords intersect
             Point index = Isometric.GetPointAtScreenCoords(map, x, y);
 
+            // TODO: only update the drawable when first shown or the selection has changed
             // translate the index into a screen position
             Vector2 dPositiion = Isometric.GetIsometricPosition(map, 0, index.Y, index.X);
             drawablePosition.X = dPositiion.X;
             drawablePosition.Y = dPositiion.Y;
 
             if (!floorPlanner.SpaceTaken.ContainsKey(index))
-                drawable.Color = new Color(drawable.Color.R, drawable.Color.G, drawable.Color.B, 196);
+                drawable.Color = new Color(drawable.Color.R, drawable.Color.G, drawable.Color.B, 228);
             else
-                drawable.Color = new Color(255, 0, 0, 255);
+                drawable.Color = new Color(255, 0, 0, 128);
 
             drawable.Texture = Textures.Instance.Get(selectedBuildable.ConstructSpriteSheetName);
             drawable.Source = Textures.Instance.GetSource(selectedBuildable.ConstructSpriteSheetName, selectedBuildable.ConstructSourceID);
@@ -71,7 +81,6 @@ namespace IsoECS.Systems.GamePlay
                 if (floorPlanner.SpaceTaken.ContainsKey(index))
                     return;
 
-                // TODO: check the collision map
                 // TODO: add larger footprint support
                 // Construct the buildable
                 Entity buildable = new Entity();
@@ -86,19 +95,42 @@ namespace IsoECS.Systems.GamePlay
                 buildable.AddComponent(new PositionComponent(drawablePosition.Position));
                 
                 // add misc components
-                foreach (JsonComponent component in selectedBuildable.Components)
+                foreach (JObject component in selectedBuildable.Components)
                 {
-                    Type type = Type.GetType("IsoECS.Components.GamePlay." + component.Type);
-                    Component c = (Component)Activator.CreateInstance(type);
+                    Console.WriteLine(component.ToString());
 
-                    switch (component.Type)
+                    JToken tokenName;
+                    if (!component.TryGetValue("Type", out tokenName))
+                        continue;
+
+                    string typeName = tokenName.ToString();
+
+                    // instantiate the component
+                    Component c;
+                    try
+                    {
+                        Type type = Type.GetType("IsoECS.Components.GamePlay." + typeName);
+                        c = (Component)Activator.CreateInstance(type);
+                    }
+                    catch(ArgumentNullException ex)
+                    {
+                        Console.WriteLine("Unable to load component: " + typeName);
+                        Console.WriteLine(ex.StackTrace);
+                        continue;
+                    }
+
+                    // do a custom action based on the type below
+                    switch (typeName)
                     {
                         case "RoadComponent":
+                            // setup the road component
                             RoadComponent road = (RoadComponent)c;
                             road.BuiltAt = index;
 
+                            // add it to the new entity
                             buildable.AddComponent(road);
 
+                            // update the roads
                             RoadsHelper.AddOrUpdateRoad(roadPlanner, map, index, true);
 
                             buildableDrawable.Source = Textures.Instance.GetSource(selectedBuildable.SpriteSheetName, roadPlanner.Built[index]);

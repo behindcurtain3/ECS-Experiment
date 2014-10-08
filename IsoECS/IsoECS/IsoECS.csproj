@@ -116,6 +116,7 @@
     <Compile Include="Components\DrawableComponent.cs" />
     <Compile Include="Components\DrawableTextComponent.cs" />
     <Compile Include="Components\GamePlay\CollisionMapComponent.cs" />
+    <Compile Include="Components\GamePlay\FloorComponent.cs" />
     <Compile Include="Components\GamePlay\FloorplannerComponent.cs" />
     <Compile Include="Components\GamePlay\Generator.cs" />
     <Compile Include="Components\GamePlay\Inventory.cs" />
@@ -129,7 +130,6 @@
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\VectorConverter.cs" />
     <Compile Include="DataStructures\Json\JsonBuildableLoader.cs" />
-    <Compile Include="DataStructures\Json\JsonComponent.cs" />
     <Compile Include="DataStructures\Json\JsonListConfig.cs" />
     <Compile Include="DataStructures\Json\JsonTexture.cs" />
     <Compile Include="DataStructures\Json\JsonTextureLoader.cs" />
