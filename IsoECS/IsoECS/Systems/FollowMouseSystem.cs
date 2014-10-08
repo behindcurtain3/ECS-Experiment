@@ -14,6 +14,8 @@ namespace IsoECS.Systems
             Entity inputEntity = entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
             Entity cameraEntity = entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
             Entity mapEntity = entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
+            Entity dataTracker = entities.Find(delegate(Entity e) { return e.HasComponent<RoadplannerComponent>(); });
+            CollisionMapComponent collisionMap = dataTracker.Get<CollisionMapComponent>();
             InputController input = inputEntity.Get<InputController>();
             PositionComponent camera = cameraEntity.Get<PositionComponent>();
             IsometricMapComponent map = mapEntity.Get<IsometricMapComponent>();
@@ -47,7 +49,7 @@ namespace IsoECS.Systems
                     if (moveable.PathToTarget != null && moveable.PathToTarget.End == mouseIndex)
                         continue;
 
-                    moveable.PathToTarget = Pathfinder.Generate(null, map, eIndex, mouseIndex);
+                    moveable.PathToTarget = Pathfinder.Generate(collisionMap, map, eIndex, mouseIndex);
                     moveable.Target = mouseIndex;
                 }
                 else

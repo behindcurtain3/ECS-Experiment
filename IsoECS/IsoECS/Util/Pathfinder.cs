@@ -17,10 +17,10 @@ namespace IsoECS.Util
             _openList.Clear();
             _closedList.Clear();
 
-            if (start == end)
+            if (start == end || collisionMap.Collision[end] == -1)
                 return new Path();
 
-            _openList.Add(end, new PathWaypoint(end));
+            _openList.Add(end, new PathWaypoint(end, collisionMap.Collision[end]));
 
             while (_openList.Count > 0)
             {
@@ -60,11 +60,13 @@ namespace IsoECS.Util
                             continue;
 
                         PathWaypoint waypoint = new PathWaypoint(
-                                                            new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y), 
-                                                            selectedNode);
+                                                            new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y),
+                                                            collisionMap.Collision[new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y)],
+                                                            selectedNode
+                                                            );
 
                         // TODO: check the collision map to see if the location is walkable
-                        if (!_closedList.ContainsKey(waypoint.Location))
+                        if (collisionMap.Collision[waypoint.Location] != -1 && !_closedList.ContainsKey(waypoint.Location))
                         {
                             if (_openList.ContainsKey(waypoint.Location))
                             {

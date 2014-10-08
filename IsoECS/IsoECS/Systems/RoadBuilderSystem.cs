@@ -16,7 +16,10 @@ namespace IsoECS.Systems
         public void Update(List<Entity> entities, int dt)
         {
             Entity inputEntity = entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
-            RoadplannerComponent roadPlanner = entities.Find(delegate(Entity e) { return e.HasComponent<RoadplannerComponent>(); }).Get<RoadplannerComponent>();
+            Entity dataTracker = entities.Find(delegate(Entity e) { return e.HasComponent<RoadplannerComponent>(); });
+            RoadplannerComponent roadPlanner = dataTracker.Get<RoadplannerComponent>();
+            CollisionMapComponent collisionMap = dataTracker.Get<CollisionMapComponent>();
+
 
             if (inputEntity != null)
             {
@@ -53,6 +56,9 @@ namespace IsoECS.Systems
 
                         AddOrUpdateRoad(roadPlanner, index, true);
 
+                        // update the collision map
+                        collisionMap.Collision[index] = 8;
+
                         // translate the index into a screen position
                         Vector2 position = Isometric.GetIsometricPosition(Map, 0, index.Y, index.X);
 
@@ -75,6 +81,8 @@ namespace IsoECS.Systems
                     else
                     {
                         RemoveRoad(roadPlanner, index);
+
+                        collisionMap.Collision[index] = 64;
                     }
                     
 

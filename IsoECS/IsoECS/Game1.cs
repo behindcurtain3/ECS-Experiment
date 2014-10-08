@@ -121,8 +121,9 @@ namespace IsoECS
             inputEntity.AddComponent(new InputController());
             entities.Add(inputEntity);
 
+            IsometricMapComponent mapComponent = CreateMap("isometric_tiles", 64, 64, 32, 16);
             Entity mapEntity = new Entity();
-            mapEntity.AddComponent(CreateMap("isometric_tiles", 64, 64, 32, 16));
+            mapEntity.AddComponent(mapComponent);
             mapEntity.AddComponent(new DrawableComponent()
             {
                 Visible = true,
@@ -153,6 +154,7 @@ namespace IsoECS
             Entity dataTracker = new Entity();
             dataTracker.AddComponent(new RoadplannerComponent());
             dataTracker.AddComponent(new FloorplannerComponent());
+            dataTracker.AddComponent(CreateCollisionMap(mapComponent));
             entities.Add(dataTracker);
 
             // add test person entity
@@ -257,6 +259,24 @@ namespace IsoECS
             }
 
             return map;
+        }
+
+        private CollisionMapComponent CreateCollisionMap(IsometricMapComponent map)
+        {
+            CollisionMapComponent collisions = new CollisionMapComponent();
+
+            for (int x = 0; x < map.TxWidth; x++)
+            {
+                for (int y = 0; y < map.TxHeight; y++)
+                {
+                    if (map.Terrain[0, y, x] == (int)Tiles.Grass)
+                        collisions.Collision.Add(new Point(x, y), 64);
+                    else
+                        collisions.Collision.Add(new Point(x, y), -1);
+                }
+            }
+
+            return collisions;
         }
     }
 }

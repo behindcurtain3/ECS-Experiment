@@ -12,10 +12,10 @@ namespace IsoECS.DataStructures
         public int Length { get; set; }
         public int Cost { get; set; }
 
-        public PathWaypoint(Point location, PathWaypoint parent = null)
+        public PathWaypoint(Point location, int cost = 10, PathWaypoint parent = null)
         {
             Length = 0;
-            Cost = 10;
+            Cost = cost;
             Location = location;
             SetParent(parent);
         }
