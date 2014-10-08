@@ -56,7 +56,7 @@ namespace IsoECS.Util
                         if (x == y || x == -y || -x == y)
                             continue;
 
-                        if (selectedNode.Location.X + x < 0 || selectedNode.Location.Y + y < 0 || selectedNode.Location.X + x >= map.TxWidth || selectedNode.Location.Y + y >= map.TxHeight)
+                        if (!Isometric.ValidIndex(map, selectedNode.Location.X + x, selectedNode.Location.Y + y))
                             continue;
 
                         PathWaypoint waypoint = new PathWaypoint(

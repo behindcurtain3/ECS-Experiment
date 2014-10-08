@@ -55,6 +55,9 @@ namespace IsoECS.Systems
             
             foreach (Entity e in drawableText)
             {
+                if (!e.Get<DrawableTextComponent>().Visible)
+                    continue;
+
                 // get the needed data
                 text = e.Get<DrawableTextComponent>().Text;
                 position = e.Get<PositionComponent>().Position;

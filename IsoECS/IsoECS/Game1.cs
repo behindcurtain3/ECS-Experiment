@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using IsoECS.GamePlay.Map;
+using IsoECS.Util;
 
 namespace IsoECS
 {
@@ -26,6 +27,8 @@ namespace IsoECS
         Random random;
 
         RenderSystem renderSystem;
+        DiagnosticInfo diagnostics;
+        Entity diagnosticEntity;
 
         Entity cameraEntity;
 
@@ -48,6 +51,8 @@ namespace IsoECS
 
             random = new Random();
 
+            diagnostics = new DiagnosticInfo("System Performance");
+
             // Add the content to the textures singleton
             Textures.Instance.Graphics = GraphicsDevice;
             Textures.Instance.Content = Content;
@@ -59,7 +64,6 @@ namespace IsoECS
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
             systems.Add(new ControlSystem());
             systems.Add(new DebugSystem());
-            systems.Add(new FollowMouseSystem());
             systems.Add(new ProductionSystem());
 
             renderers = new List<IRenderSystem>();
@@ -164,6 +168,15 @@ namespace IsoECS
             person.AddComponent(new MoveToTargetComponent());
             entities.Add(person);
 
+            diagnosticEntity = new Entity();
+            diagnosticEntity.AddComponent(new PositionComponent());
+            diagnosticEntity.AddComponent(new DrawableTextComponent()
+            {
+                Text = "",
+                Color = Color.White,
+                Visible = false
+            });
+            entities.Add(diagnosticEntity);
         }
 
         /// <summary>
@@ -187,8 +200,12 @@ namespace IsoECS
             // update the game systems
             foreach (ISystem system in systems)
             {
+                diagnostics.RestartTiming(system.GetType().ToString());
                 system.Update(entities, gameTime.ElapsedGameTime.Milliseconds);
+                diagnostics.StopTiming(system.GetType().ToString());
             }
+
+            diagnosticEntity.Get<DrawableTextComponent>().Text = diagnostics.ShowTop(5, true);
 
             base.Update(gameTime);
         }
@@ -200,7 +217,11 @@ namespace IsoECS
         protected override void Draw(GameTime gameTime)
         {
             foreach (IRenderSystem render in renderers)
+            {
+                diagnostics.RestartTiming(render.GetType().ToString());
                 render.Draw(entities, spriteBatch, spriteFont);
+                diagnostics.StopTiming(render.GetType().ToString());
+            }
 
             base.Draw(gameTime);
         }

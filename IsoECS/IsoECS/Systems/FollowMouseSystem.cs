@@ -47,7 +47,7 @@ namespace IsoECS.Systems
                     if (moveable.PathToTarget != null && moveable.PathToTarget.End == mouseIndex)
                         continue;
 
-                    moveable.PathToTarget = Pathfinder.Generate(new CollisionMapComponent(), map, eIndex, mouseIndex);
+                    moveable.PathToTarget = Pathfinder.Generate(null, map, eIndex, mouseIndex);
                     moveable.Target = mouseIndex;
                 }
                 else

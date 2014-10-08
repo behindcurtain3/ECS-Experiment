@@ -17,6 +17,8 @@ namespace IsoECS.Systems
         {
             KeyBindings = new Dictionary<Keys, Type>();
             KeyBindings.Add(Keys.C, typeof(CameraSystem));
+            KeyBindings.Add(Keys.R, typeof(RoadBuilderSystem));
+            KeyBindings.Add(Keys.F, typeof(FollowMouseSystem));
 
             ControlSystems = new Dictionary<Type, ISystem>();
             ControlSystems.Add(typeof(CameraSystem), new CameraSystem());
@@ -24,20 +26,17 @@ namespace IsoECS.Systems
 
         public void Update(List<Entity> entities, int dt)
         {
-
-            // Update the subsystems
-            foreach (ISystem system in ControlSystems.Values)
-                system.Update(entities, dt);
-
             Entity input = entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
             KeyboardState keyboard = input.Get<InputController>().CurrentKeyboard;
             KeyboardState prevKeyboard = input.Get<InputController>().PrevKeyboard;
 
+            // check keybindings
             foreach (KeyValuePair<Keys, Type> binding in KeyBindings)
             {
                 // if the key is pressed
                 if (keyboard.IsKeyDown(binding.Key) && !prevKeyboard.IsKeyDown(binding.Key))
                 {
+                    // either add or remove the system bound to the key
                     if (ControlSystems.ContainsKey(binding.Value))
                         ControlSystems.Remove(binding.Value);
                     else
@@ -47,6 +46,10 @@ namespace IsoECS.Systems
                     }
                 }
             }
+
+            // Update the subsystems
+            foreach (ISystem system in ControlSystems.Values)
+                system.Update(entities, dt);
         }
     }
 }
