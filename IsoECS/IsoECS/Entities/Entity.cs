@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using IsoECS.Components;
 using Newtonsoft.Json;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace IsoECS.Entities
 {
     /// <summary>
     /// Notes: use the entity ID for all references to an entity
     /// </summary>
+    [Serializable]
     public class Entity
     {
         public static uint ID_COUNTER = 0;
@@ -56,6 +59,23 @@ namespace IsoECS.Entities
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
+        }
+
+        public Entity DeepCopy()
+        {
+            MemoryStream m = new MemoryStream();
+            BinaryFormatter b = new BinaryFormatter();
+            b.Serialize(m, this);
+            m.Position = 0;
+
+            Entity e = (Entity)b.Deserialize(m);
+            e.ResetID();
+            return e;
+        }
+
+        private void ResetID()
+        {
+            ID = ++ID_COUNTER;
         }
     }
 }

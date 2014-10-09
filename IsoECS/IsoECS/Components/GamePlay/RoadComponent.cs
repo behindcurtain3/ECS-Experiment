@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.Components.GamePlay
 {
+    [Serializable]
     public class RoadComponent : Component
     {
         public string RoadType { get; set; }

@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using IsoECS.DataStructures;
 
 namespace IsoECS.Components.GamePlay
 {
+    [Serializable]
     public class FoundationComponent : Component
     {
-        public List<Point> FloorPlan { get; set; }
+        public List<LocationValue> Plan { get; set; }
+        public string PlanType { get; set; }
 
         public FoundationComponent()
         {
-            FloorPlan = new List<Point>();
+            Plan = new List<LocationValue>();
+            PlanType = "Normal";
         }
     }
 }

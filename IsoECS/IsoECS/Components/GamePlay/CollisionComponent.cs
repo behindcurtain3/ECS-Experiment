@@ -6,13 +6,16 @@ using IsoECS.DataStructures;
 
 namespace IsoECS.Components.GamePlay
 {
+    [Serializable]
     public class CollisionComponent : Component
     {
-        public List<LocationValue> Data { get; set; }
+        public List<LocationValue> Plan { get; set; }
+        public string PlanType { get; set; }
 
         public CollisionComponent()
         {
-            Data = new List<LocationValue>();
+            Plan = new List<LocationValue>();
+            PlanType = "Normal"; // default value
         }
     }
 }

@@ -8,6 +8,16 @@ namespace IsoECS.Systems
 {
     public class ProductionSystem : ISystem
     {
+        public void Init(List<Entity> entities)
+        {
+
+        }
+
+        public void Shutdown(List<Entity> entities)
+        {
+
+        }
+
         public void Update(List<Entity> entities, int dt)
         {
             List<Entity> producers = entities.FindAll(delegate(Entity e) { return e.HasComponent<Generator>(); });

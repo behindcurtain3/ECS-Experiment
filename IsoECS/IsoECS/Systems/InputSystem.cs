@@ -10,6 +10,16 @@ namespace IsoECS.Systems
 {
     public class InputSystem : ISystem
     {
+        public void Init(List<Entity> entities)
+        {
+
+        }
+
+        public void Shutdown(List<Entity> entities)
+        {
+
+        }
+
         public void Update(List<Entity> entities, int dt)
         {
             List<Entity> inputControls = entities.FindAll(delegate(Entity e) { return e.HasComponent<InputController>(); });

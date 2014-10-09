@@ -25,6 +25,17 @@ namespace IsoECS.Systems
             ControlSystems.Add(typeof(CameraSystem), new CameraSystem());
         }
 
+        public void Init(List<Entity> entities)
+        {
+            foreach (ISystem system in ControlSystems.Values)
+                system.Init(entities);
+        }
+
+        public void Shutdown(List<Entity> entities)
+        {
+
+        }
+
         public void Update(List<Entity> entities, int dt)
         {
             Entity input = entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
@@ -39,10 +50,14 @@ namespace IsoECS.Systems
                 {
                     // either add or remove the system bound to the key
                     if (ControlSystems.ContainsKey(binding.Value))
+                    {
+                        ControlSystems[binding.Value].Shutdown(entities);
                         ControlSystems.Remove(binding.Value);
+                    }
                     else
                     {
                         ISystem instance = (ISystem)Activator.CreateInstance(binding.Value);
+                        instance.Init(entities);
                         ControlSystems.Add(instance.GetType(), instance);
                     }
                 }

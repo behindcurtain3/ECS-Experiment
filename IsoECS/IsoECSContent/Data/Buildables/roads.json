@@ -1,34 +1,39 @@
 {
-  "Buildables" : [
-    {
-		"Category": "Transportation",
-		"Name": "Dirt Road",
-		"Description": "A dirt road, provides faster travel than grass.",
-		"SpriteSheetName": "isometric_roads",
-		"SourceID": "four_way",
-		"ConstructSpriteSheetName": "isometric_roads",
-		"ConstructSourceID": "single",
-		"DragBuildEnabled": true,
-		"Components": [
-			{
-				"Type": "RoadComponent"
-			},
-			{
-				"Type": "FoundationComponent",
-				"FoundationPlan": [
-					{ "Value": { "x": 0, "y": 0 } }
-				]
-			},
-			{
-				"Type": "CollisionComponent",
-				"Plan": [
-					{
-						"Value": 8,
-						"Offset": { "x": 0, "y": 0 }
-					}
-				]
-			}
-		]
-	}
-  ]
+	"Entities" : [
+		{
+			"Components": [
+				{
+					"Type": "BuildableComponent",
+					"Category": "Transportation",
+					"Name": "Dirt Road",
+					"Description": "A dirt road, provides faster travel than grass.",
+					"SpriteSheetName": "isometric_roads",
+					"SourceID": "four_way",
+					"ConstructSpriteSheetName": "isometric_roads",
+					"ConstructSourceID": "single",
+					"DragBuildEnabled": true
+				},
+				{
+					"Type": "RoadComponent"
+				},
+				{
+					"Type": "FoundationComponent",
+					"PlanType": "Normal",
+					"Plan": [
+						{ "Offset": { "x": 0, "y": 0 } }
+					]
+				},
+				{
+					"Type": "CollisionComponent",
+					"PlanType": "Normal",
+					"Plan": [
+						{
+							"Value": 8,
+							"Offset": { "x": 0, "y": 0 }
+						}
+					]
+				}
+			]
+		}
+	]
 }

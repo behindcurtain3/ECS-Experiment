@@ -7,7 +7,15 @@ namespace IsoECS.Systems
 {
     public class CameraSystem : ISystem
     {
+        public void Init(List<Entity> entities)
+        {
 
+        }
+
+        public void Shutdown(List<Entity> entities)
+        {
+
+        }
         public void Update(List<Entity> entities, int dt)
         {
             Entity camera = entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });

@@ -59,8 +59,9 @@ namespace IsoECS
 
             // Load textures from config
             Textures.Instance.LoadFromJson("Content/Data/textures.json", true);
-            // Load the buildables from config
-            Buildables.Instance.LoadFromJson("Content/Data/buildables.json", true);
+
+            // Load in entities
+            EntityLibrary.Instance.LoadFromJson("Content/Data/buildables.json", true);
 
             systems = new List<ISystem>();
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
@@ -175,6 +176,10 @@ namespace IsoECS
                 Visible = true
             });
             entities.Add(diagnosticEntity);
+
+            // init the systems
+            foreach (ISystem system in systems)
+                system.Init(entities);
         }
 
         /// <summary>

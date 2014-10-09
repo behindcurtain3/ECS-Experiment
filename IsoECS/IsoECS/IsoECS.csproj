@@ -115,6 +115,7 @@
     <Compile Include="Components\DebugComponent.cs" />
     <Compile Include="Components\DrawableComponent.cs" />
     <Compile Include="Components\DrawableTextComponent.cs" />
+    <Compile Include="Components\GamePlay\BuildableComponent.cs" />
     <Compile Include="Components\GamePlay\CollisionComponent.cs" />
     <Compile Include="Components\GamePlay\CollisionMapComponent.cs" />
     <Compile Include="Components\GamePlay\FoundationComponent.cs" />
@@ -127,12 +128,11 @@
     <Compile Include="Components\GamePlay\RoadComponent.cs" />
     <Compile Include="Components\GamePlay\RoadplannerComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
-    <Compile Include="DataStructures\Buildables.cs" />
+    <Compile Include="DataStructures\EntityLibrary.cs" />
     <Compile Include="DataStructures\Json\Converters\PointConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\VectorConverter.cs" />
     <Compile Include="DataStructures\Json\Deserializable\DeserializablePoint.cs" />
-    <Compile Include="DataStructures\Json\JsonBuildableLoader.cs" />
     <Compile Include="DataStructures\Json\JsonListConfig.cs" />
     <Compile Include="DataStructures\Json\JsonTexture.cs" />
     <Compile Include="DataStructures\Json\JsonTextureLoader.cs" />
@@ -158,7 +158,6 @@
     <Compile Include="Systems\ISystem.cs" />
     <Compile Include="Systems\ProductionSystem.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
-    <Compile Include="Systems\RoadBuilderSystem.cs" />
     <Compile Include="Util\DiagnosticInfo.cs" />
     <Compile Include="Util\Isometric.cs" />
     <Compile Include="Util\MathHelper.cs" />

@@ -1,24 +1,29 @@
 {
-  "Buildables" : [
+  "Entities" : [
     {
-		"Category": "Transportation",
-		"Name": "Wheat Farm",
-		"Description": "A countryside farm that produces wheat.",
-		"SpriteSheetName": "misc",
-		"SourceID": "3x3",
-		"ConstructSpriteSheetName": "misc",
-		"ConstructSourceID": "3x3",
-		"DragBuildEnabled": false,
 		"Components": [
 			{
+				"Type": "BuildableComponent",
+				"Category": "Transportation",
+				"Name": "Wheat Farm",
+				"Description": "A countryside farm that produces wheat.",
+				"SpriteSheetName": "misc",
+				"SourceID": "3x3",
+				"ConstructSpriteSheetName": "misc",
+				"ConstructSourceID": "3x3",
+				"DragBuildEnabled": false
+			},
+			{
 				"Type": "FoundationComponent",
-				"FillFoundationPlan": [
-					{ "Value": {"x": -1,"y": -1} },
-					{ "Value": {"x": 1,"y": 1} }
+				"PlanType": "Fill",
+				"Plan": [
+					{ "Offset": {"x": -1,"y": -1} },
+					{ "Offset": {"x": 1,"y": 1} }
 				]
 			},
 			{
 				"Type": "CollisionComponent",
+				"PlayType": "Normal",
 				"Plan": [
 					{
 						"Value": -1,

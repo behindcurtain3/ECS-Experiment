@@ -9,6 +9,16 @@ namespace IsoECS.Systems
 {
     public class DebugSystem : ISystem
     {
+        public void Init(List<Entity> entities)
+        {
+
+        }
+
+        public void Shutdown(List<Entity> entities)
+        {
+
+        }
+
         public void Update(List<Entity> entities, int dt)
         {
             Entity debugger = entities.Find(delegate(Entity e) { return e.HasComponent<DebugComponent>(); });
