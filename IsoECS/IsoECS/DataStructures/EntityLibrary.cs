@@ -37,7 +37,9 @@ namespace IsoECS.DataStructures
             // Loop through the components and setup the appropriate components 
             foreach(JObject o in components)
             {
+                Component c = null;                
                 JToken tokenName;
+                
                 if (!o.TryGetValue("Type", out tokenName))
                 {
                     Console.WriteLine("Unable to load component, no type specified.");
@@ -47,22 +49,7 @@ namespace IsoECS.DataStructures
 
                 // get the component type
                 string typeName = tokenName.ToString();
-
-                // instantiate the component
-                Component c;
-                try
-                {
-                    Type type = Type.GetType("IsoECS.Components.GamePlay." + typeName);
-                    c = (Component)Activator.CreateInstance(type);
-                }
-                catch(ArgumentNullException ex)
-                {
-                    Console.WriteLine("Unable to load component: " + typeName);
-                    Console.WriteLine(ex.StackTrace);
-                    Console.WriteLine(o.ToString());
-                    continue;
-                }
-
+                
                 // do a custom action based on the type below
                 switch (typeName)
                 {
@@ -83,12 +70,14 @@ namespace IsoECS.DataStructures
 
                     case "RoadComponent":
                         // setup the road component (nothing atm)
-                        RoadComponent road = (RoadComponent)c;
+                        RoadComponent road = JsonConvert.DeserializeObject<RoadComponent>(o.ToString());
+                        c = road;
                         break;
                 }
 
                 // add the component to the entity
-                e.AddComponent(c);
+                if(c != null)
+                    e.AddComponent(c);
             }
 
             _entities.Add(e);
