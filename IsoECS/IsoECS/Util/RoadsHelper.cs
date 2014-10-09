@@ -13,7 +13,7 @@ namespace IsoECS.Util
     public class RoadsHelper
     {
 
-        public static void UpdateRoadsGfx(List<Entity> entities, RoadplannerComponent planner)
+        public static void UpdateRoadsGfx(List<Entity> entities, RoadPlannerComponent planner)
         {
             // make sure the road has the right gfx & data
             foreach (Entity entity in entities)
@@ -35,7 +35,7 @@ namespace IsoECS.Util
             }
         }
 
-        public static void AddOrUpdateRoad(RoadplannerComponent planner, IsometricMapComponent map, Point location, bool recursion = false)
+        public static void AddOrUpdateRoad(RoadPlannerComponent planner, IsometricMapComponent map, Point location, bool recursion = false)
         {
             string value = GetRoadValue(planner, map, location);
 
@@ -51,7 +51,7 @@ namespace IsoECS.Util
             }
         }
 
-        public static void RemoveRoad(RoadplannerComponent planner, IsometricMapComponent map, Point location)
+        public static void RemoveRoad(RoadPlannerComponent planner, IsometricMapComponent map, Point location)
         {
             if (planner.Built.ContainsKey(location))
                 planner.Built.Remove(location);
@@ -59,7 +59,7 @@ namespace IsoECS.Util
             UpdateNeighbors(planner, map, location);
         }
 
-        private static void UpdateNeighbors(RoadplannerComponent planner, IsometricMapComponent map, Point location)
+        private static void UpdateNeighbors(RoadPlannerComponent planner, IsometricMapComponent map, Point location)
         {
             // update the neighbors to account for this one
             if (Isometric.ValidIndex(map, location.X - 1, location.Y) && planner.Built.ContainsKey(new Point(location.X - 1, location.Y)))
@@ -75,7 +75,7 @@ namespace IsoECS.Util
                 AddOrUpdateRoad(planner, map, new Point(location.X, location.Y + 1));
         }
 
-        private static string GetRoadValue(RoadplannerComponent planner, IsometricMapComponent map, Point location)
+        private static string GetRoadValue(RoadPlannerComponent planner, IsometricMapComponent map, Point location)
         {
             // set the value of the location to index of the type of road at this location
             bool NW = false;

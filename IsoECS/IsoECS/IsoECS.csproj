@@ -112,9 +112,7 @@
   <ItemGroup>
     <Compile Include="Components\Controls\CameraController.cs" />
     <Compile Include="Components\Component.cs" />
-    <Compile Include="Components\DebugComponent.cs" />
     <Compile Include="Components\DrawableComponent.cs" />
-    <Compile Include="Components\DrawableTextComponent.cs" />
     <Compile Include="Components\GamePlay\BuildableComponent.cs" />
     <Compile Include="Components\GamePlay\CollisionComponent.cs" />
     <Compile Include="Components\GamePlay\CollisionMapComponent.cs" />
@@ -126,9 +124,10 @@
     <Compile Include="Components\GamePlay\IsometricMapComponent.cs" />
     <Compile Include="Components\GamePlay\MoveToTargetComponent.cs" />
     <Compile Include="Components\GamePlay\RoadComponent.cs" />
-    <Compile Include="Components\GamePlay\RoadplannerComponent.cs" />
+    <Compile Include="Components\GamePlay\RoadPlannerComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />
+    <Compile Include="DataStructures\DrawableText.cs" />
     <Compile Include="DataStructures\EntityLibrary.cs" />
     <Compile Include="DataStructures\IGameDrawable.cs" />
     <Compile Include="DataStructures\Json\Converters\PointConverter.cs" />
@@ -146,12 +145,12 @@
     <Compile Include="GamePlay\Item.cs" />
     <Compile Include="GamePlay\Map\Tiles.cs" />
     <Compile Include="GamePlay\Recipe.cs" />
+    <Compile Include="GamePlay\Scenario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Systems\CameraSystem.cs" />
     <Compile Include="Systems\ControlSystem.cs" />
-    <Compile Include="Systems\DebugSystem.cs" />
     <Compile Include="Systems\FollowMouseSystem.cs" />
     <Compile Include="Systems\GamePlay\ConstructionSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />

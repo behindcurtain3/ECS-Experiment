@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using IsoECS.Components;
+using IsoECS.Components.GamePlay;
+using IsoECS.DataStructures;
 using IsoECS.Entities;
+using IsoECS.GamePlay.Map;
 using IsoECS.Systems;
+using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using IsoECS.Components.GamePlay;
-using IsoECS.DataStructures;
-using IsoECS.GamePlay.Map;
-using IsoECS.Util;
+using Newtonsoft.Json;
+using IsoECS.GamePlay;
+using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace IsoECS
 {
@@ -29,8 +33,7 @@ namespace IsoECS
         RenderSystem renderSystem;
         DiagnosticInfo diagnostics;
         Entity diagnosticEntity;
-
-        Entity cameraEntity;
+        Entity inputControlEntity;
 
         public Game1()
         {
@@ -61,7 +64,7 @@ namespace IsoECS
             Textures.Instance.LoadFromJson("Content/Data/textures.json", true);
 
             // Load in entities
-            EntityLibrary.Instance.LoadFromJson("Content/Data/buildables.json", true);
+            EntityLibrary.Instance.LoadFromJson("Content/Data/entities.json", true);
 
             systems = new List<ISystem>();
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
@@ -79,6 +82,31 @@ namespace IsoECS
             renderers.Add(renderSystem);
 
             entities = new List<Entity>();
+
+            // Load the scenario
+            // TODO: put this in a method somewhere
+            string s = File.ReadAllText("Content/Data/Scenarios/alpha.json");
+            Scenario scenario = JsonConvert.DeserializeObject<Scenario>(s);
+            foreach (JObject o in scenario.DefaultEntities)
+            {
+                Entity e = EntityLibrary.Instance.LoadEntity(o);
+
+                if (e.HasComponent<IsometricMapComponent>())
+                {
+                    IsometricMapComponent map = e.Get<IsometricMapComponent>();
+
+                    if (map.Terrain == null)
+                    {
+                        map = CreateMap(map.SpriteSheetName, map.TxWidth, map.TxHeight, map.PxTileWidth, map.PxTileHeight);
+
+                        // replace the map
+                        e.RemoveComponent(e.Get<IsometricMapComponent>());
+                        e.AddComponent(map);
+                    }
+                }
+
+                entities.Add(e);
+            }
 
             // add some nodes to the map
             for (int j = 0; j < 3; j++)
@@ -110,79 +138,29 @@ namespace IsoECS
                 entities.Add(node);
             }
 
-            cameraEntity = new Entity();
-            cameraEntity.AddComponent(new PositionComponent());
-            cameraEntity.AddComponent(new CameraController());
-            cameraEntity.Get<CameraController>().Up.AddRange(new List<Keys>() { Keys.W, Keys.Up });
-            cameraEntity.Get<CameraController>().Down.AddRange(new List<Keys>() { Keys.S, Keys.Down });
-            cameraEntity.Get<CameraController>().Left.AddRange(new List<Keys>() { Keys.A, Keys.Left });
-            cameraEntity.Get<CameraController>().Right.AddRange(new List<Keys>() { Keys.D, Keys.Right });
-            entities.Add(cameraEntity);
+            // TODO: create a settings file to read any key bindings from
+            inputControlEntity = new Entity();
+            inputControlEntity.AddComponent(new InputController());
+            inputControlEntity.AddComponent(new PositionComponent());
+            inputControlEntity.AddComponent(new CameraController());
+            inputControlEntity.Get<CameraController>().Up.AddRange(new List<Keys>() { Keys.W, Keys.Up });
+            inputControlEntity.Get<CameraController>().Down.AddRange(new List<Keys>() { Keys.S, Keys.Down });
+            inputControlEntity.Get<CameraController>().Left.AddRange(new List<Keys>() { Keys.A, Keys.Left });
+            inputControlEntity.Get<CameraController>().Right.AddRange(new List<Keys>() { Keys.D, Keys.Right });
+            entities.Add(inputControlEntity);
 
-            Entity inputEntity = new Entity();
-            inputEntity.AddComponent(new InputController());
-            entities.Add(inputEntity);
-
-            IsometricMapComponent mapComponent = CreateMap("isometric_tiles", 64, 64, 32, 16);
-            DrawableComponent mapDrawable = new DrawableComponent();
-            mapDrawable.Drawables.Add(new DrawableSprite()
-            {
-                Layer = 99,
-                Visible = true,
-                Color = Color.White,
-                Static = true,
-                SpriteSheet = "internal_map_texture",
-                ID = "internal_map_source"
-            });
-            Entity mapEntity = new Entity();
-            mapEntity.AddComponent(mapComponent);
-            mapEntity.AddComponent(mapDrawable);
-            mapEntity.AddComponent(new PositionComponent());
-            entities.Add(mapEntity);
-
-            Entity debugEntity = new Entity();
-            debugEntity.AddComponent(new PositionComponent());
-            debugEntity.AddComponent(new DrawableTextComponent());
-            debugEntity.AddComponent(new DebugComponent());
-            entities.Add(debugEntity);
-
-            // add an entity that tracks data
-            Entity dataTracker = new Entity();
-            DrawableComponent dataDrawble = new DrawableComponent();
-            dataDrawble.Drawables.Add(new DrawableSprite()
-            {
-                Visible = false
-            });
-            dataTracker.AddComponent(new RoadplannerComponent());
-            dataTracker.AddComponent(CreateCollisionMap(mapComponent));
-            dataTracker.AddComponent(new FoundationPlannerComponent());
-            dataTracker.AddComponent(new PositionComponent());
-            dataTracker.AddComponent(dataDrawble);
-            entities.Add(dataTracker);
-
-            // add test person entity
-            Entity person = new Entity();
-            person.AddComponent(new PositionComponent());
-            DrawableComponent personDrawable = new DrawableComponent();
-            personDrawable.Drawables.Add(new DrawableSprite()
-            {
-                Visible = true,
-                Color = Color.White,
-                SpriteSheet = "isometric_person",
-                ID = "male"
-            });
-            person.AddComponent(personDrawable);
-            person.AddComponent(new MoveToTargetComponent());
-            entities.Add(person);
-
-            diagnosticEntity = new Entity();
-            diagnosticEntity.AddComponent(new PositionComponent());
-            diagnosticEntity.AddComponent(new DrawableTextComponent()
+            DrawableComponent diagDrawable = new DrawableComponent();
+            diagDrawable.Drawables.Add(new DrawableText()
             {
                 Text = "",
                 Color = Color.White,
-                Visible = true
+                Visible = true,
+                Layer = 0,
+                Static = true
             });
+            diagnosticEntity = new Entity();
+            diagnosticEntity.AddComponent(new PositionComponent());
+            diagnosticEntity.AddComponent(diagDrawable);
             entities.Add(diagnosticEntity);
 
             // init the systems
@@ -216,7 +194,7 @@ namespace IsoECS
                 diagnostics.StopTiming(system.GetType().ToString());
             }
 
-            diagnosticEntity.Get<DrawableTextComponent>().Text = diagnostics.ShowTop(8, true);
+            ((DrawableText)diagnosticEntity.Get<DrawableComponent>().Drawables[0]).Text = diagnostics.ShowTop(8, true);
 
             base.Update(gameTime);
         }

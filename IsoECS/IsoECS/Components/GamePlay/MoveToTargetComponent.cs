@@ -1,8 +1,10 @@
-﻿using IsoECS.DataStructures;
+﻿using System;
+using IsoECS.DataStructures;
 using Microsoft.Xna.Framework;
 
 namespace IsoECS.Components.GamePlay
 {
+    [Serializable]
     public class MoveToTargetComponent : Component
     {
         public Point Target { get; set; }

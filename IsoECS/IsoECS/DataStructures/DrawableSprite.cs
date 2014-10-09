@@ -24,9 +24,10 @@ namespace IsoECS.DataStructures
             Visible = true;
             Color = Color.White;
             Static = false;
+            Layer = 1;
         }
 
-        public void Draw(GraphicsDevice graphics, SpriteBatch spriteBatch, float positionX, float positionY)
+        public void Draw(GraphicsDevice graphics, SpriteBatch spriteBatch, SpriteFont font, float positionX, float positionY)
         {
 
             // update the destination on the drawable
@@ -38,6 +39,7 @@ namespace IsoECS.DataStructures
             else
                 destination = new Rectangle((int)positionX, (int)positionY, source.Width, source.Height);
 
+            // TODO: needs to take into account the origin
             if (graphics.Viewport.Bounds.Contains(destination) || graphics.Viewport.Bounds.Intersects(destination))
                 spriteBatch.Draw(Textures.Instance.Get(SpriteSheet), destination, source, Color, Rotation, Textures.Instance.GetOrigin(SpriteSheet, ID), Effects, 0);
         }

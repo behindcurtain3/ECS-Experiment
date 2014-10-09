@@ -21,13 +21,13 @@ namespace IsoECS.Systems.GamePlay
         private IsometricMapComponent _map;
         private PositionComponent _camera;
         private InputController _input;
-        private RoadplannerComponent _roadPlanner;
+        private RoadPlannerComponent _roadPlanner;
         private CollisionMapComponent _collisionMap;
         private FoundationPlannerComponent _foundationPlanner;
 
         public void Init(List<Entity> entities)
         {
-            _dataTracker = entities.Find(delegate(Entity e) { return e.HasComponent<RoadplannerComponent>(); });
+            _dataTracker = entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
 
             Entity inputEntity = entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
             Entity cameraEntity = entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
@@ -36,7 +36,7 @@ namespace IsoECS.Systems.GamePlay
             _camera = cameraEntity.Get<PositionComponent>();
             _map = mapEntity.Get<IsometricMapComponent>();
             _input = inputEntity.Get<InputController>();
-            _roadPlanner = _dataTracker.Get<RoadplannerComponent>();
+            _roadPlanner = _dataTracker.Get<RoadPlannerComponent>();
             _collisionMap = _dataTracker.Get<CollisionMapComponent>();
             _foundationPlanner = _dataTracker.Get<FoundationPlannerComponent>();
 

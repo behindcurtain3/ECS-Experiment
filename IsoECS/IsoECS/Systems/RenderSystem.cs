@@ -17,12 +17,12 @@ namespace IsoECS.Systems
     {
         public GraphicsDevice Graphics { get; set; }
         public Color ClearColor { get; set; }
+        private List<DrawData> _allDrawables = new List<DrawData>();
 
         public void Draw(List<Entity> entities, SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
             // Get the list of drawable text entities from the main list
             List<Entity> drawables = entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
-            List<Entity> drawableText = entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableTextComponent>() && e.HasComponent<PositionComponent>(); });
             PositionComponent cameraPosition = entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
 
             // Setup the scene
@@ -31,7 +31,7 @@ namespace IsoECS.Systems
 
             // TODO: render any background
             // TODO: this should be cached and only updated when drawbles are added, removed or changed
-            List<DrawData> allDrawables = new List<DrawData>();
+            _allDrawables.Clear();
             DrawData dd;
             foreach (Entity e in drawables)
             {
@@ -40,12 +40,12 @@ namespace IsoECS.Systems
                     dd = new DrawData();
                     dd.Position = e.Get<PositionComponent>();
                     dd.Drawable = d;
-                    allDrawables.Add(dd);
+                    _allDrawables.Add(dd);
                 }
             }
 
             // roughly good enough for now
-            allDrawables.Sort(delegate(DrawData a, DrawData b)
+            _allDrawables.Sort(delegate(DrawData a, DrawData b)
             {
                 // sort by Y position
                 if (b.Drawable.Layer == a.Drawable.Layer)
@@ -58,33 +58,15 @@ namespace IsoECS.Systems
                 }
             });
             
-            foreach (DrawData d in allDrawables)
+            foreach (DrawData d in _allDrawables)
             {
                 // if the drawable is not visible continue
                 if (!d.Drawable.Visible) continue;
 
-                d.Drawable.Draw(Graphics, spriteBatch, (int)(d.Position.X - cameraPosition.X), (int)(d.Position.Y - cameraPosition.Y));
-            }
-
-            // Render the text entities
-            // TODO: update this
-            string text;
-            Vector2 position;
-            Color color;
-            
-            foreach (Entity e in drawableText)
-            {
-                if (!e.Get<DrawableTextComponent>().Visible)
-                    continue;
-
-                // get the needed data
-                text = e.Get<DrawableTextComponent>().Text;
-                position = e.Get<PositionComponent>().Position;
-                color = e.Get<DrawableTextComponent>().Color;
-                
-                // do the draw call
-                if(!string.IsNullOrWhiteSpace(text))
-                    spriteBatch.DrawString(spriteFont, text, position, color);
+                if(d.Drawable.Static)
+                    d.Drawable.Draw(Graphics, spriteBatch, spriteFont, (int)d.Position.X, (int)d.Position.Y);
+                else
+                    d.Drawable.Draw(Graphics, spriteBatch, spriteFont, (int)(d.Position.X - cameraPosition.X), (int)(d.Position.Y - cameraPosition.Y));
             }
 
             // end the scene

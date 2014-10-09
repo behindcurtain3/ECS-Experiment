@@ -1,0 +1,79 @@
+{
+	"Name": "Alpha Scenario",
+	"Description": "Testing 1, 2 ... uh 3",
+
+	"Textures": "Content/Data/textures.json",
+	"Library": "Content/Data/entities.json",
+
+	"DefaultEntities" : [
+		{
+			"Components": [
+				{
+					"Type": "DrawableComponent",
+					"Sprites": [
+						{
+							"Visible": false,
+						}
+					]
+				},
+				{
+					"Type": "RoadPlannerComponent"
+				},
+				{
+					"Type": "FoundationPlannerComponent"
+				},
+				{
+					"Type": "CollisionMapComponent"
+				},
+				{
+					"Type": "PositionComponent"
+				}
+			]
+		},
+		{
+			"Components": [
+				{
+					"Type": "IsometricMapComponent",
+					"SpriteSheetName": "isometric_tiles",
+					"TxWidth": 64,
+					"TxHeight": 64,
+					"PxTileWidth": 32,
+					"PxTileHeight": 16
+				},
+				{
+					"Type": "DrawableComponent",
+					"Sprites": [
+						{
+							"Layer": 99,
+							"Static": true,
+							"SpriteSheet": "internal_map_texture",
+							"ID": "internal_map_source"
+						}
+					]
+				},
+				{
+					"Type": "PositionComponent"
+				}
+			]
+		},
+		{
+			"Components": [
+				{
+					"Type": "DrawableComponent",
+					"Sprites": [
+						{
+							"SpriteSheet": "isometric_person",
+							"ID": "male"
+						}
+					]
+				},
+				{
+					"Type": "PositionComponent"
+				},
+				{
+					"Type": "MoveToTargetComponent"
+				}
+			]
+		}
+	]
+}

@@ -1,14 +1,19 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace IsoECS.Components.GamePlay
 {
+    [Serializable]
     public class IsometricMapComponent : Component
-    {
-        // the tiles
-        public int[, ,] Terrain { get; set; }
-
+    {   
+        [JsonIgnore]
         public RenderTarget2D Buffer { get; set; }
+        [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
+
+        // name of the spritesheet containing the sprites for the map
+        public string SpriteSheetName { get; set; }
 
         // Width/Height of the map in tiles
         public int TxWidth { get; set; }
@@ -21,10 +26,7 @@ namespace IsoECS.Components.GamePlay
         public float PxTileHalfHeight { get; set; }
         public float PxTileHalfWidth { get; set; }
 
-        // name of the spritesheet containing the sprites for the map
-        public string SpriteSheetName { get; set; }
-
-        // used to callback after the map has been rendered
-        //public delegate void RenderHandler(IsoMap map);
+        // the tiles
+        public int[, ,] Terrain { get; set; }
     }
 }

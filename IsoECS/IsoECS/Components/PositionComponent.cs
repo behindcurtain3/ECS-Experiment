@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.Components
 {
+    [Serializable]
     public class PositionComponent : Component
     {
         public float X { get; set; }

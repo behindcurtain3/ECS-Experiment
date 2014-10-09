@@ -24,7 +24,7 @@ namespace IsoECS.Systems
             Entity inputEntity = entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
             Entity cameraEntity = entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
             Entity mapEntity = entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
-            Entity dataTracker = entities.Find(delegate(Entity e) { return e.HasComponent<RoadplannerComponent>(); });
+            Entity dataTracker = entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
             CollisionMapComponent collisionMap = dataTracker.Get<CollisionMapComponent>();
             InputController input = inputEntity.Get<InputController>();
             PositionComponent camera = cameraEntity.Get<PositionComponent>();

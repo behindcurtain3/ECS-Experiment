@@ -6,7 +6,8 @@ namespace IsoECS.DataStructures
     {
         bool Visible { get; set; }
         int Layer { get; set; }
+        bool Static { get; set; }
 
-        void Draw(GraphicsDevice graphics, SpriteBatch spriteBatch, float cameraX, float cameraY);
+        void Draw(GraphicsDevice graphics, SpriteBatch spriteBatch, SpriteFont font, float cameraX, float cameraY);
     }
 }

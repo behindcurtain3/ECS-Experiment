@@ -1,12 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
+using IsoECS.DataStructures.Json.Converters;
 
 namespace IsoECS.DataStructures
 {
+    [Serializable]
     public class Path
     {
         public List<Point> Waypoints { get; private set; }
+
+        [JsonConverter(typeof(PointConverter))]
         public Point Start { get; set; }
+
+        [JsonConverter(typeof(PointConverter))]
         public Point End { get; set; }
 
         public Path()

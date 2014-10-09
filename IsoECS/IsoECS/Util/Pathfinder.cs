@@ -17,6 +17,11 @@ namespace IsoECS.Util
             _openList.Clear();
             _closedList.Clear();
 
+            if (!collisionMap.Collision.ContainsKey(end))
+                collisionMap.Collision.Add(end, 64);
+            if (!collisionMap.Collision.ContainsKey(start))
+                collisionMap.Collision.Add(start, 64);
+
             if (start == end || collisionMap.Collision[end] == -1 || collisionMap.Collision[start] == -1)
                 return new Path();
 
@@ -59,9 +64,13 @@ namespace IsoECS.Util
                         if (!Isometric.ValidIndex(map, selectedNode.Location.X + x, selectedNode.Location.Y + y))
                             continue;
 
+                        Point p = new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y);
+                        if (!collisionMap.Collision.ContainsKey(p))
+                            collisionMap.Collision.Add(p, 64);
+
                         PathWaypoint waypoint = new PathWaypoint(
-                                                            new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y),
-                                                            collisionMap.Collision[new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y)],
+                                                            p,
+                                                            collisionMap.Collision[p],
                                                             selectedNode
                                                             );
 

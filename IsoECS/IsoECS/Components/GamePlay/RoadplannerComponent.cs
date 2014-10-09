@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace IsoECS.Components.GamePlay
 {
-    public class RoadplannerComponent : Component
+    [Serializable]
+    public class RoadPlannerComponent : Component
     {
         public Dictionary<Point, string> Built { get; private set; }
 
-        public RoadplannerComponent()
+        public RoadPlannerComponent()
         {
             Built = new Dictionary<Point, string>();
         }

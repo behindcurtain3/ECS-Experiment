@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
 namespace IsoECS.Components
 {
+    [Serializable]
     public class CameraController : Component
     {
-        public List<Keys> Up { get; private set; }
-        public List<Keys> Down { get; private set; }
-        public List<Keys> Left { get; private set; }
-        public List<Keys> Right { get; private set; }
+        public List<Keys> Up { get; set; }
+        public List<Keys> Down { get; set; }
+        public List<Keys> Left { get; set; }
+        public List<Keys> Right { get; set; }
 
         public CameraController()
         {

@@ -7,9 +7,6 @@ namespace IsoECS.Components.GamePlay
     {
         // holds the value of the collision at each map index (point)
         // -1 impassable
-        // 1 = main upgraded road
-        // 4 = road
-        // 16 = grass
         public Dictionary<Point, int> Collision { get; set; }
 
         public CollisionMapComponent()
