@@ -86,9 +86,12 @@ namespace IsoECS.Systems
             if (mapDrawable != null)
             {
                 mapDrawable.Layer = 99;
-                mapDrawable.Texture = (Texture2D)map.Buffer;
-                mapDrawable.Source = new Rectangle(0, 0, map.Buffer.Width, map.Buffer.Height);
-                mapDrawable.Destination = new Rectangle(0, 0, map.Graphics.Viewport.Width, map.Graphics.Viewport.Height);
+
+                Textures.Instance.UpdateTexture("internal_map_texture", (Texture2D)map.Buffer, "internal_map_source", new TextureInfo()
+                {
+                    Source = new Rectangle(0, 0, map.Buffer.Width, map.Buffer.Height),
+                    Origin = Vector2.Zero
+                });
             }
         }
     }

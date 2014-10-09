@@ -124,15 +124,18 @@ namespace IsoECS
             entities.Add(inputEntity);
 
             IsometricMapComponent mapComponent = CreateMap("isometric_tiles", 64, 64, 32, 16);
-            Entity mapEntity = new Entity();
-            mapEntity.AddComponent(mapComponent);
-            mapEntity.AddComponent(new DrawableComponent()
+            DrawableComponent mapDrawable = new DrawableComponent();
+            mapDrawable.Sprites.Add(new DrawableSprite()
             {
                 Visible = true,
                 Color = Color.White,
-                Layer = 99,
-                Static = true
+                Static = true,
+                SpriteSheet = "internal_map_texture",
+                ID = "internal_map_source"
             });
+            Entity mapEntity = new Entity();
+            mapEntity.AddComponent(mapComponent);
+            mapEntity.AddComponent(mapDrawable);
             mapEntity.AddComponent(new PositionComponent());
             entities.Add(mapEntity);
 
@@ -144,26 +147,30 @@ namespace IsoECS
 
             // add an entity that tracks data
             Entity dataTracker = new Entity();
+            DrawableComponent dataDrawble = new DrawableComponent();
+            dataDrawble.Sprites.Add(new DrawableSprite()
+            {
+                Visible = false
+            });
             dataTracker.AddComponent(new RoadplannerComponent());
             dataTracker.AddComponent(CreateCollisionMap(mapComponent));
             dataTracker.AddComponent(new FoundationPlannerComponent());
             dataTracker.AddComponent(new PositionComponent());
-            dataTracker.AddComponent(new DrawableComponent()
-            {
-                Visible = false
-            });
+            dataTracker.AddComponent(dataDrawble);
             entities.Add(dataTracker);
 
             // add test person entity
             Entity person = new Entity();
             person.AddComponent(new PositionComponent());
-            person.AddComponent(new DrawableComponent()
+            DrawableComponent personDrawable = new DrawableComponent();
+            personDrawable.Sprites.Add(new DrawableSprite()
             {
-                Texture = Textures.Instance.Get("isometric_person"),
-                Source = Textures.Instance.GetSource("isometric_person", "male"),
-                Origin = Textures.Instance.GetOrigin("isometric_person", "male"),
-                Layer = 2
+                Visible = true,
+                Color = Color.White,
+                SpriteSheet = "isometric_person",
+                ID = "male"
             });
+            person.AddComponent(personDrawable);
             person.AddComponent(new MoveToTargetComponent());
             entities.Add(person);
 

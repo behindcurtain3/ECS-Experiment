@@ -8,8 +8,6 @@ namespace IsoECS.Components.GamePlay
         public string Category;
         public string Name;
         public string Description;
-        public string SpriteSheetName;
-        public string SourceID;
 
         public string ConstructSpriteSheetName;
         public string ConstructSourceID;

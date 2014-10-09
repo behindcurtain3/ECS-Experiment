@@ -29,7 +29,8 @@ namespace IsoECS.Util
                 else
                 {
                     road.RoadType = planner.Built[road.BuiltAt];
-                    drawable.Source = Textures.Instance.GetSource("isometric_roads", road.RoadType); // TODO: fix the static string
+                    foreach (DrawableSprite sprite in drawable.Sprites)
+                        sprite.ID = road.RoadType;
                 }
             }
         }

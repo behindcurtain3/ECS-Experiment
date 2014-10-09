@@ -3,6 +3,7 @@ using IsoECS.Components;
 using IsoECS.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using IsoECS.DataStructures;
 
 namespace IsoECS.Systems
 {
@@ -32,19 +33,27 @@ namespace IsoECS.Systems
             {
                 DrawableComponent drawable = e.Get<DrawableComponent>();
 
-                // update the destination on the drawable
-                if (!drawable.Static)
-                    drawable.Destination = new Rectangle(
-                                            (int)(e.Get<PositionComponent>().X - cameraPosition.X), 
-                                            (int)(e.Get<PositionComponent>().Y - cameraPosition.Y),
-                                            drawable.Source.Width, 
-                                            drawable.Source.Height);
+                foreach (DrawableSprite sprite in drawable.Sprites)
+                {
+                    // if this entity is not visible continue to next
+                    if (!sprite.Visible) continue;
 
-                // if this entity is not visible continue to next
-                if (!drawable.Visible) continue;
+                    // update the destination on the drawable
+                    Rectangle source = Textures.Instance.GetSource(sprite.SpriteSheet, sprite.ID);
+                    Rectangle destination;
 
-                if (Graphics.Viewport.Bounds.Contains(drawable.Destination) || Graphics.Viewport.Bounds.Intersects(drawable.Destination))
-                    spriteBatch.Draw(drawable.Texture, drawable.Destination, drawable.Source, drawable.Color, drawable.Rotation, drawable.Origin, drawable.Effects, 0);
+                    if (sprite.Static)
+                        destination = new Rectangle(0, 0, Graphics.Viewport.Width, Graphics.Viewport.Height);
+                    else
+                        destination = new Rectangle(
+                                                (int)(e.Get<PositionComponent>().X - cameraPosition.X),
+                                                (int)(e.Get<PositionComponent>().Y - cameraPosition.Y),
+                                                source.Width,
+                                                source.Height);
+
+                    if (Graphics.Viewport.Bounds.Contains(destination) || Graphics.Viewport.Bounds.Intersects(destination))
+                        spriteBatch.Draw(Textures.Instance.Get(sprite.SpriteSheet), destination, source, sprite.Color, sprite.Rotation, Textures.Instance.GetOrigin(sprite.SpriteSheet, sprite.ID), sprite.Effects, 0);
+                }
             }
 
             // Render the text entities

@@ -82,6 +82,20 @@ namespace IsoECS.DataStructures
                 _textureDb[spriteSheetName].Add(sourceID, info);
         }
 
+        public void UpdateTexture(string spritesheet, Texture2D texture, string sourceID, TextureInfo source)
+        {
+            if (!_textures.ContainsKey(spritesheet))
+                _textures.Add(spritesheet, texture);
+            else
+                _textures[spritesheet] = texture;
+
+            if (!_textureDb.ContainsKey(spritesheet))
+                _textureDb.Add(spritesheet, new Dictionary<string, TextureInfo>());
+
+            if (!_textureDb[spritesheet].ContainsKey(sourceID))
+                _textureDb[spritesheet].Add(sourceID, source);
+        }
+
         public Texture2D Get(string path)
         {
             return _textures[path];

@@ -63,6 +63,11 @@ namespace IsoECS.DataStructures
                         c = collision;
                         break;
 
+                    case "DrawableComponent":
+                        DrawableComponent drawable = JsonConvert.DeserializeObject<DrawableComponent>(o.ToString());
+                        c = drawable;
+                        break;
+
                     case "FoundationComponent":
                         FoundationComponent floor = JsonConvert.DeserializeObject<FoundationComponent>(o.ToString());
                         c = floor;

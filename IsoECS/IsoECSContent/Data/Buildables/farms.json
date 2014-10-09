@@ -7,11 +7,20 @@
 				"Category": "Transportation",
 				"Name": "Wheat Farm",
 				"Description": "A countryside farm that produces wheat.",
-				"SpriteSheetName": "misc",
-				"SourceID": "3x3",
 				"ConstructSpriteSheetName": "misc",
 				"ConstructSourceID": "3x3",
 				"DragBuildEnabled": false
+			},
+			{
+				"Type": "DrawableComponent",
+				"Sprites": [
+					{
+						"SpriteSheet": "misc",
+						"ID": "3x3",
+						"Visible": true,
+						"Color": "255, 255, 255, 255"
+					}
+				]
 			},
 			{
 				"Type": "FoundationComponent",

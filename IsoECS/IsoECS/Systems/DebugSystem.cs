@@ -41,12 +41,6 @@ namespace IsoECS.Systems
                 // pick out the tile index that the screen coords intersect
                 Point index = Isometric.GetPointAtScreenCoords(map, x, y);
 
-                // if the index is not valid hide it
-                if (index.X < 0 || index.X >= map.TxWidth || index.Y < 0 || index.Y >= map.TxHeight)
-                    debugger.Get<DrawableComponent>().Visible = false;
-                else
-                    debugger.Get<DrawableComponent>().Visible = true;
-
                 // translate the index into a screen position
                 Vector2 dPositiion = Isometric.GetIsometricPosition(map, 0, index.Y, index.X);
 

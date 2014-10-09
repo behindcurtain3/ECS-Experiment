@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
-using IsoECS.DataStructures.Json.Deserializable;
 using IsoECS.Entities;
 using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Newtonsoft.Json.Linq;
 
 namespace IsoECS.Systems.GamePlay
 {
@@ -61,7 +58,8 @@ namespace IsoECS.Systems.GamePlay
         public void Shutdown(List<Entity> entities)
         {
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
-            drawable.Visible = false;
+            foreach(DrawableSprite sprite in drawable.Sprites)
+                sprite.Visible = false;
         }
 
         public void Update(List<Entity> entities, int dt)
@@ -95,16 +93,15 @@ namespace IsoECS.Systems.GamePlay
             drawablePosition.Y = dPositiion.Y;
 
             if (!_foundationPlanner.SpaceTaken.ContainsKey(index))
-                drawable.Color = new Color(drawable.Color.R, drawable.Color.G, drawable.Color.B, 228);
+                drawable.Sprites[0].Color = new Color(drawable.Sprites[0].Color.R, drawable.Sprites[0].Color.G, drawable.Sprites[0].Color.B, 228);
             else
-                drawable.Color = new Color(128, 128, 128, 128);
+                drawable.Sprites[0].Color = new Color(128, 128, 128, 128);
 
-            drawable.Texture = Textures.Instance.Get(selectedBuildable.ConstructSpriteSheetName);
-            drawable.Source = Textures.Instance.GetSource(selectedBuildable.ConstructSpriteSheetName, selectedBuildable.ConstructSourceID);
-            drawable.Visible = Isometric.ValidIndex(_map, index.X, index.Y);
-            drawable.Origin = Textures.Instance.GetOrigin(selectedBuildable.ConstructSpriteSheetName, selectedBuildable.ConstructSourceID);
+            drawable.Sprites[0].SpriteSheet = selectedBuildable.ConstructSpriteSheetName;
+            drawable.Sprites[0].ID = selectedBuildable.ConstructSourceID;
+            drawable.Sprites[0].Visible = Isometric.ValidIndex(_map, index.X, index.Y);
 
-            if (!drawable.Visible)
+            if (!drawable.Sprites[0].Visible)
                 return;
 
             if (_input.CurrentMouse.LeftButton == ButtonState.Pressed && (selectedBuildable.DragBuildEnabled || _input.PrevMouse.LeftButton != ButtonState.Pressed))
@@ -114,17 +111,7 @@ namespace IsoECS.Systems.GamePlay
                     return;
 
                 Entity buildable = selectedEntity.DeepCopy();
-
-                DrawableComponent buildableDrawable = new DrawableComponent()
-                {
-                    Layer = 2,
-                    Visible = true,
-                    Texture = Textures.Instance.Get(selectedBuildable.SpriteSheetName),
-                    Source = Textures.Instance.GetSource(selectedBuildable.SpriteSheetName, selectedBuildable.SourceID),
-                    Origin = Textures.Instance.GetOrigin(selectedBuildable.SpriteSheetName, selectedBuildable.SourceID)
-                };
                 buildable.AddComponent(new PositionComponent(drawablePosition.Position));
-                buildable.AddComponent(buildableDrawable);
                 entities.Add(buildable);
 
                 // update the game data
@@ -186,9 +173,8 @@ namespace IsoECS.Systems.GamePlay
                             // update the roads
                             RoadsHelper.AddOrUpdateRoad(_roadPlanner, _map, index, true);
 
-                            buildableDrawable.Source = Textures.Instance.GetSource(selectedBuildable.SpriteSheetName, _roadPlanner.Built[index]);
-                            buildableDrawable.Origin = Textures.Instance.GetOrigin(selectedBuildable.SpriteSheetName, _roadPlanner.Built[index]);
-                            buildableDrawable.Layer = 89;
+                            //buildableDrawable.Sprites["Base"].ID = _roadPlanner.Built[index];
+                            //buildableDrawable.Layer = 89;
 
                             // update the other roads
                             List<Entity> roadEntities = entities.FindAll(delegate(Entity e) { return e.HasComponent<RoadComponent>(); });
