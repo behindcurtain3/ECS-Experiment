@@ -25,6 +25,7 @@ namespace IsoECS.Systems
 
             // TODO: render any background
             // sort the drawables by layer
+            // TODO: improve the sort algorithm, account for Y-position
             drawables.Sort(delegate(Entity a, Entity b)
             {
                 return b.Get<DrawableComponent>().Layer.CompareTo(a.Get<DrawableComponent>().Layer);
@@ -33,26 +34,12 @@ namespace IsoECS.Systems
             {
                 DrawableComponent drawable = e.Get<DrawableComponent>();
 
-                foreach (DrawableSprite sprite in drawable.Sprites)
+                foreach (IGameDrawable d in drawable.Drawables)
                 {
-                    // if this entity is not visible continue to next
-                    if (!sprite.Visible) continue;
+                    // if the drawable is not visible continue
+                    if (!d.Visible) continue;
 
-                    // update the destination on the drawable
-                    Rectangle source = Textures.Instance.GetSource(sprite.SpriteSheet, sprite.ID);
-                    Rectangle destination;
-
-                    if (sprite.Static)
-                        destination = new Rectangle(0, 0, Graphics.Viewport.Width, Graphics.Viewport.Height);
-                    else
-                        destination = new Rectangle(
-                                                (int)(e.Get<PositionComponent>().X - cameraPosition.X),
-                                                (int)(e.Get<PositionComponent>().Y - cameraPosition.Y),
-                                                source.Width,
-                                                source.Height);
-
-                    if (Graphics.Viewport.Bounds.Contains(destination) || Graphics.Viewport.Bounds.Intersects(destination))
-                        spriteBatch.Draw(Textures.Instance.Get(sprite.SpriteSheet), destination, source, sprite.Color, sprite.Rotation, Textures.Instance.GetOrigin(sprite.SpriteSheet, sprite.ID), sprite.Effects, 0);
+                    d.Draw(Graphics, spriteBatch, (int)(e.Get<PositionComponent>().X - cameraPosition.X), (int)(e.Get<PositionComponent>().Y - cameraPosition.Y));
                 }
             }
 

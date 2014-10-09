@@ -65,6 +65,10 @@ namespace IsoECS.DataStructures
 
                     case "DrawableComponent":
                         DrawableComponent drawable = JsonConvert.DeserializeObject<DrawableComponent>(o.ToString());
+                        
+                        // add any sprites to the drawable list
+                        drawable.Drawables.AddRange(drawable.Sprites);
+
                         c = drawable;
                         break;
 

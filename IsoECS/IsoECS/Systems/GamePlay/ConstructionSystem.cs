@@ -92,16 +92,17 @@ namespace IsoECS.Systems.GamePlay
             drawablePosition.X = dPositiion.X;
             drawablePosition.Y = dPositiion.Y;
 
+            DrawableSprite sprite = (DrawableSprite)drawable.Sprites[0];
             if (!_foundationPlanner.SpaceTaken.ContainsKey(index))
-                drawable.Sprites[0].Color = new Color(drawable.Sprites[0].Color.R, drawable.Sprites[0].Color.G, drawable.Sprites[0].Color.B, 228);
+                sprite.Color = new Color(sprite.Color.R, sprite.Color.G, sprite.Color.B, 228);
             else
-                drawable.Sprites[0].Color = new Color(128, 128, 128, 128);
+                sprite.Color = new Color(128, 128, 128, 128);
 
-            drawable.Sprites[0].SpriteSheet = selectedBuildable.ConstructSpriteSheetName;
-            drawable.Sprites[0].ID = selectedBuildable.ConstructSourceID;
-            drawable.Sprites[0].Visible = Isometric.ValidIndex(_map, index.X, index.Y);
+            sprite.SpriteSheet = selectedBuildable.ConstructSpriteSheetName;
+            sprite.ID = selectedBuildable.ConstructSourceID;
+            sprite.Visible = Isometric.ValidIndex(_map, index.X, index.Y);
 
-            if (!drawable.Sprites[0].Visible)
+            if (!sprite.Visible)
                 return;
 
             if (_input.CurrentMouse.LeftButton == ButtonState.Pressed && (selectedBuildable.DragBuildEnabled || _input.PrevMouse.LeftButton != ButtonState.Pressed))
@@ -172,9 +173,6 @@ namespace IsoECS.Systems.GamePlay
 
                             // update the roads
                             RoadsHelper.AddOrUpdateRoad(_roadPlanner, _map, index, true);
-
-                            //buildableDrawable.Sprites["Base"].ID = _roadPlanner.Built[index];
-                            //buildableDrawable.Layer = 89;
 
                             // update the other roads
                             List<Entity> roadEntities = entities.FindAll(delegate(Entity e) { return e.HasComponent<RoadComponent>(); });

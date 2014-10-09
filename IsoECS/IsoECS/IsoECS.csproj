@@ -130,6 +130,7 @@
     <Compile Include="Components\PositionComponent.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />
     <Compile Include="DataStructures\EntityLibrary.cs" />
+    <Compile Include="DataStructures\IGameDrawable.cs" />
     <Compile Include="DataStructures\Json\Converters\PointConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\VectorConverter.cs" />

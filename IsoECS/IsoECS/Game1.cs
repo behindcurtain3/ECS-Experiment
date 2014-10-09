@@ -125,7 +125,7 @@ namespace IsoECS
 
             IsometricMapComponent mapComponent = CreateMap("isometric_tiles", 64, 64, 32, 16);
             DrawableComponent mapDrawable = new DrawableComponent();
-            mapDrawable.Sprites.Add(new DrawableSprite()
+            mapDrawable.Drawables.Add(new DrawableSprite()
             {
                 Visible = true,
                 Color = Color.White,
@@ -148,7 +148,7 @@ namespace IsoECS
             // add an entity that tracks data
             Entity dataTracker = new Entity();
             DrawableComponent dataDrawble = new DrawableComponent();
-            dataDrawble.Sprites.Add(new DrawableSprite()
+            dataDrawble.Drawables.Add(new DrawableSprite()
             {
                 Visible = false
             });
@@ -163,7 +163,7 @@ namespace IsoECS
             Entity person = new Entity();
             person.AddComponent(new PositionComponent());
             DrawableComponent personDrawable = new DrawableComponent();
-            personDrawable.Sprites.Add(new DrawableSprite()
+            personDrawable.Drawables.Add(new DrawableSprite()
             {
                 Visible = true,
                 Color = Color.White,

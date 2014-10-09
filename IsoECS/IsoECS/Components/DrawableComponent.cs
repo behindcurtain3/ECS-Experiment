@@ -12,10 +12,13 @@ namespace IsoECS.Components
         // sorting
         public int Layer { get; set; }
 
+        public List<IGameDrawable> Drawables { get; set; }
+
         public List<DrawableSprite> Sprites { get; set; }
 
         public DrawableComponent()
         {
+            Drawables = new List<IGameDrawable>();
             Sprites = new List<DrawableSprite>();
             Layer = 1;
         }
