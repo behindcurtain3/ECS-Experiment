@@ -129,6 +129,9 @@
     <Compile Include="DataStructures\DrawableSprite.cs" />
     <Compile Include="DataStructures\DrawableText.cs" />
     <Compile Include="DataStructures\EntityLibrary.cs" />
+    <Compile Include="DataStructures\GameData.cs" />
+    <Compile Include="DataStructures\GamePlay\RecipeInput.cs" />
+    <Compile Include="DataStructures\GamePlay\RecipeOutput.cs" />
     <Compile Include="DataStructures\IGameDrawable.cs" />
     <Compile Include="DataStructures\Json\Converters\PointConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
@@ -143,6 +146,7 @@
     <Compile Include="DataStructures\Textures.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="GamePlay\Item.cs" />
+    <Compile Include="GamePlay\IUnique.cs" />
     <Compile Include="GamePlay\Map\Tiles.cs" />
     <Compile Include="GamePlay\Recipe.cs" />
     <Compile Include="GamePlay\Scenario.cs" />

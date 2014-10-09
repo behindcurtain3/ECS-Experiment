@@ -34,7 +34,7 @@ namespace IsoECS.Systems
                 if(!g.GeneratesPercentage)
                 {
                     Inventory inv = e.Get<Inventory>();
-
+                    /*
                     // check each input item
                     foreach (Item item in g.Recipe.Input)
                     {
@@ -52,7 +52,7 @@ namespace IsoECS.Systems
                             break;
                         }
 
-                    }
+                    }*/
                 }
 
                 if (doGeneration)
@@ -68,7 +68,7 @@ namespace IsoECS.Systems
 
                         // Add the outputs to the inventory
                         Inventory inv = e.Get<Inventory>();
-
+                        /*
                         if (inv.Items.ContainsKey(g.Recipe.Output.Name))
                         {
                             inv.Items[g.Recipe.Output.Name] += g.Recipe.Output.Amount;
@@ -76,7 +76,7 @@ namespace IsoECS.Systems
                         else
                         {
                             inv.Items.Add(g.Recipe.Output.Name, g.Recipe.Output.Amount);
-                        }
+                        }*/
                     }
                 }
             }

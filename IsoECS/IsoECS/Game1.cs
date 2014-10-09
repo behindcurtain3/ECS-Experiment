@@ -87,6 +87,10 @@ namespace IsoECS
             // TODO: put this in a method somewhere
             string s = File.ReadAllText("Content/Data/Scenarios/alpha.json");
             Scenario scenario = JsonConvert.DeserializeObject<Scenario>(s);
+
+            // load scenario data
+            GameData.Instance.LoadRecipesFromJson(scenario.Recipes, true);
+
             foreach (JObject o in scenario.DefaultEntities)
             {
                 Entity e = EntityLibrary.Instance.LoadEntity(o);
@@ -120,20 +124,6 @@ namespace IsoECS
                 });
 
                 node.AddComponent(new Inventory());
-                node.AddComponent(new Generator()
-                {
-                    Recipe = new GamePlay.Recipe()
-                    {
-                       Output = new GamePlay.Item()
-                       {
-                           Name = "Default",
-                           Amount =  1
-                       }
-                    },
-
-                    Rate = 3000,
-                    RateCountdown = 3000
-                });
 
                 entities.Add(node);
             }

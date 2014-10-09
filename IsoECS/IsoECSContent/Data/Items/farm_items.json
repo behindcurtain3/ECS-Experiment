@@ -1,0 +1,16 @@
+{
+	"Items": [
+		{
+			"UniqueID": "alpha-grain",
+			"Name": "Grain",
+			"Description": "",
+			"Value": 1.0
+		},
+		{
+			"UniqueID": "alpha-fertilizer",
+			"Name": "Fertilizer",
+			"Description": "",
+			"Value": 0.1
+		}
+	]
+}

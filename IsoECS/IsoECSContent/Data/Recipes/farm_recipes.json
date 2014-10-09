@@ -1,0 +1,23 @@
+{
+	"Recipes": [
+		{
+			"UniqueID": "alpha-wheat",
+			"Name": "Wheat Production",
+			"Description": "",
+			"Inputs": [
+				{
+					"Item": "alpha-fertilizer",
+					"Bonus": 0.2,
+					"Required": false
+				}
+			],
+
+			"Outputs": [
+				{
+					"Item": "alpha-grain",
+					"Rate": 50
+				}
+			]
+		}
+	]
+}

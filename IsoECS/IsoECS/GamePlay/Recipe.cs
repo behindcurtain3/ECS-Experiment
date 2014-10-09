@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using IsoECS.DataStructures.GamePlay;
 
 namespace IsoECS.GamePlay
 {
-    public class Recipe
+    [Serializable]
+    public class Recipe : IUnique
     {
-        public List<Item> Input { get; private set; }
-        public Item Output { get; set; }
+        public string UniqueID { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public List<RecipeInput> Inputs { get; set; }
+        public List<RecipeOutput> Outputs { get; set; }
 
         public Recipe()
         {
-            Input = new List<Item>();
+            Inputs = new List<RecipeInput>();
+            Outputs = new List<RecipeOutput>();
         }
     }
 }
