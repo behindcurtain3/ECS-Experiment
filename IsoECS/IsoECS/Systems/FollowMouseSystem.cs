@@ -40,7 +40,8 @@ namespace IsoECS.Systems
                     if (!Isometric.ValidIndex(map, mouseIndex.X, mouseIndex.Y))
                         continue;
 
-                    Point eIndex = Isometric.GetPointAtScreenCoords(map, (int)position.X, (int)position.Y);
+                    // TODO: the position needs to be reworked?
+                    Point eIndex = Isometric.GetPointAtScreenCoords(map, (int)position.X + (int)map.PxTileHalfWidth, (int)position.Y + (int)map.PxTileHalfHeight);
                     
                     // already has the path to target
                     if (mouseIndex == eIndex)

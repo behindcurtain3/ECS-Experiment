@@ -8,6 +8,11 @@ namespace IsoECS.Components.GamePlay
 {
     public class FoundationComponent : Component
     {
-        public Point[] FloorPlan { get; set; }
+        public List<Point> FloorPlan { get; set; }
+
+        public FoundationComponent()
+        {
+            FloorPlan = new List<Point>();
+        }
     }
 }

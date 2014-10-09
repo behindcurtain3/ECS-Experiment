@@ -115,6 +115,7 @@
     <Compile Include="Components\DebugComponent.cs" />
     <Compile Include="Components\DrawableComponent.cs" />
     <Compile Include="Components\DrawableTextComponent.cs" />
+    <Compile Include="Components\GamePlay\CollisionComponent.cs" />
     <Compile Include="Components\GamePlay\CollisionMapComponent.cs" />
     <Compile Include="Components\GamePlay\FoundationComponent.cs" />
     <Compile Include="Components\GamePlay\FoundationPlannerComponent.cs" />
@@ -130,11 +131,12 @@
     <Compile Include="DataStructures\Json\Converters\PointConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\VectorConverter.cs" />
+    <Compile Include="DataStructures\Json\Deserializable\DeserializablePoint.cs" />
     <Compile Include="DataStructures\Json\JsonBuildableLoader.cs" />
     <Compile Include="DataStructures\Json\JsonListConfig.cs" />
-    <Compile Include="DataStructures\Json\JsonPoint.cs" />
     <Compile Include="DataStructures\Json\JsonTexture.cs" />
     <Compile Include="DataStructures\Json\JsonTextureLoader.cs" />
+    <Compile Include="DataStructures\LocationValue.cs" />
     <Compile Include="DataStructures\Path.cs" />
     <Compile Include="DataStructures\PathWaypoint.cs" />
     <Compile Include="DataStructures\Textures.cs" />

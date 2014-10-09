@@ -11,13 +11,21 @@
 		"DragBuildEnabled": true,
 		"Components": [
 			{
-				"Type": "RoadComponent",
-				"Movement": 8
+				"Type": "RoadComponent"
 			},
 			{
 				"Type": "FoundationComponent",
 				"FoundationPlan": [
-					{"x":0,"y":0}
+					{ "Value": { "x": 0, "y": 0 } }
+				]
+			},
+			{
+				"Type": "CollisionComponent",
+				"Plan": [
+					{
+						"Value": 8,
+						"Offset": { "x": 0, "y": 0 }
+					}
 				]
 			}
 		]

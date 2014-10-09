@@ -17,7 +17,7 @@ namespace IsoECS.Util
             _openList.Clear();
             _closedList.Clear();
 
-            if (start == end || collisionMap.Collision[end] == -1)
+            if (start == end || collisionMap.Collision[end] == -1 || collisionMap.Collision[start] == -1)
                 return new Path();
 
             _openList.Add(end, new PathWaypoint(end, collisionMap.Collision[end]));

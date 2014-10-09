@@ -13,8 +13,49 @@
 			{
 				"Type": "FoundationComponent",
 				"FillFoundationPlan": [
-					{"x":-1,"y":-1},
-					{"x":1,"y":1}
+					{ "Value": {"x": -1,"y": -1} },
+					{ "Value": {"x": 1,"y": 1} }
+				]
+			},
+			{
+				"Type": "CollisionComponent",
+				"Plan": [
+					{
+						"Value": -1,
+						"Offset": { "x": -1, "y": -1 }
+					},
+					{
+						"Value": -1,
+						"Offset": { "x": -1, "y": 0 }
+					},
+					{
+						"Value": -1,
+						"Offset": { "x": -1, "y": 1 }
+					},
+					{
+						"Value": -1,
+						"Offset": { "x": 0, "y": -1 }
+					},
+					{
+						"Value": -1,
+						"Offset": { "x": 0, "y": 0 }
+					},
+					{
+						"Value": -1,
+						"Offset": { "x": 0, "y": 1 }
+					},
+					{
+						"Value": -1,
+						"Offset": { "x": 1, "y": -1 }
+					},
+					{
+						"Value": -1,
+						"Offset": { "x": 1, "y": 0 }
+					},
+					{
+						"Value": -1,
+						"Offset": { "x": 1, "y": 1 }
+					}
 				]
 			}
 		]

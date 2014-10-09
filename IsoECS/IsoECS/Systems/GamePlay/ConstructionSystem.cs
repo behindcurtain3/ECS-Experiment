@@ -11,6 +11,7 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using IsoECS.DataStructures.Json.Converters;
+using IsoECS.DataStructures.Json.Deserializable;
 
 namespace IsoECS.Systems.GamePlay
 {
@@ -136,9 +137,6 @@ namespace IsoECS.Systems.GamePlay
                             buildableDrawable.Origin = Textures.Instance.GetOrigin(selectedBuildable.SpriteSheetName, roadPlanner.Built[index]);
                             buildableDrawable.Layer = 89;
 
-                            // update the collision map
-                            collisionMap.Collision[index] = 8;
-
                             // update the other roads
                             List<Entity> roadEntities = entities.FindAll(delegate(Entity e) { return e.HasComponent<RoadComponent>(); });
                             RoadsHelper.UpdateRoadsGfx(roadEntities, roadPlanner);
@@ -147,45 +145,59 @@ namespace IsoECS.Systems.GamePlay
                             FoundationComponent floor = (FoundationComponent)c;
 
                             // TODO: implement a better way to handle this crap
+                            // TODO: all this json reading crap needs to happen when the buildable
+                            // is first read and stored in the BuildableInfo
                             JToken plan;
-                            List<Point> offsets = new List<Point>();
 
                             // if using floorplan setup the offsets
                             if (component.TryGetValue("FoundationPlan", out plan))
                             {
-                                List<JToken> tokens = new List<JToken>(component["FoundationPlan"].Children());
-                                
-                                foreach (JToken token in tokens)
+                                IEnumerable<DeserializablePoint> list = component["FoundationPlan"].ToObject<IEnumerable<DeserializablePoint>>();
+
+                                foreach (DeserializablePoint p in list)
                                 {
-                                    Point p = JsonConvert.DeserializeObject<Point>(token.ToString(), new PointConverter());
-                                    offsets.Add(p);
+                                    floor.FloorPlan.Add(p.Value);
                                 }
                             }
                             // if using a fill pattern
                             else if (component.TryGetValue("FillFoundationPlan", out plan))
                             {
-                                Point start;
-                                Point end;
-
-                                List<JToken> tokens = new List<JToken>(component["FillFoundationPlan"].Children());
-
-                                start = JsonConvert.DeserializeObject<Point>(tokens[0].ToString(), new PointConverter());
-                                end = JsonConvert.DeserializeObject<Point>(tokens[1].ToString(), new PointConverter());
-
+                                List<DeserializablePoint> flist = new List<DeserializablePoint>(component["FillFoundationPlan"].ToObject<IEnumerable<DeserializablePoint>>());
+                                Point start = flist[0].Value;
+                                Point end = flist[1].Value;
+                                
                                 for (int xx = start.X; xx <= end.X; xx++)
                                 {
                                     for (int yy = start.Y; yy <= end.Y; yy++)
                                     {
-                                        offsets.Add(new Point(xx, yy));
+                                        floor.FloorPlan.Add(new Point(xx, yy));
                                     }
                                 }
                             }
 
                             // update the floor planner
-                            foreach (Point p in offsets)
+                            foreach (Point p in floor.FloorPlan)
                             {
                                 Point update = new Point(index.X + p.X, index.Y + p.Y);
                                 floorPlanner.SpaceTaken.Add(update, true);
+                            }
+
+                            buildable.AddComponent(floor);
+                            break;
+
+                        case "CollisionComponent":
+                            CollisionComponent collision = (CollisionComponent)c;
+
+                            IEnumerable<LocationValue> planList = component["Plan"].ToObject<IEnumerable<LocationValue>>();
+
+                            foreach (LocationValue lv in planList)
+                            {
+                                Point p = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
+
+                                if (collisionMap.Collision.ContainsKey(p))
+                                    collisionMap.Collision[p] = lv.Value;
+                                else
+                                    collisionMap.Collision.Add(p, lv.Value);
                             }
                             break;
                     }
