@@ -127,6 +127,7 @@ namespace IsoECS
             DrawableComponent mapDrawable = new DrawableComponent();
             mapDrawable.Drawables.Add(new DrawableSprite()
             {
+                Layer = 99,
                 Visible = true,
                 Color = Color.White,
                 Static = true,

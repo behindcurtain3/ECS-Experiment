@@ -18,7 +18,8 @@
 							"SpriteSheet": "isometric_roads",
 							"ID": "single",
 							"Visible": true,
-							"Color": "255, 255, 255, 255"
+							"Color": "255, 255, 255, 255",
+							"Layer": 89
 						}
 					]
 				},

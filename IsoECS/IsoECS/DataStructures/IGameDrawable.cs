@@ -5,6 +5,7 @@ namespace IsoECS.DataStructures
     public interface IGameDrawable
     {
         bool Visible { get; set; }
+        int Layer { get; set; }
 
         void Draw(GraphicsDevice graphics, SpriteBatch spriteBatch, float cameraX, float cameraY);
     }

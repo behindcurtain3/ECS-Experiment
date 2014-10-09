@@ -85,8 +85,6 @@ namespace IsoECS.Systems
 
             if (mapDrawable != null)
             {
-                mapDrawable.Layer = 99;
-
                 Textures.Instance.UpdateTexture("internal_map_texture", (Texture2D)map.Buffer, "internal_map_source", new TextureInfo()
                 {
                     Source = new Rectangle(0, 0, map.Buffer.Width, map.Buffer.Height),

@@ -58,7 +58,7 @@ namespace IsoECS.Systems.GamePlay
         public void Shutdown(List<Entity> entities)
         {
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
-            foreach(DrawableSprite sprite in drawable.Sprites)
+            foreach(IGameDrawable sprite in drawable.Drawables)
                 sprite.Visible = false;
         }
 
@@ -92,7 +92,7 @@ namespace IsoECS.Systems.GamePlay
             drawablePosition.X = dPositiion.X;
             drawablePosition.Y = dPositiion.Y;
 
-            DrawableSprite sprite = (DrawableSprite)drawable.Sprites[0];
+            DrawableSprite sprite = (DrawableSprite)drawable.Drawables[0];
             if (!_foundationPlanner.SpaceTaken.ContainsKey(index))
                 sprite.Color = new Color(sprite.Color.R, sprite.Color.G, sprite.Color.B, 228);
             else

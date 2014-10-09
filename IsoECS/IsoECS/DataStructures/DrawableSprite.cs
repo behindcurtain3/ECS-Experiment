@@ -17,6 +17,7 @@ namespace IsoECS.DataStructures
 
         // does this move when the camera moves?
         public bool Static { get; set; }
+        public int Layer { get; set; }
 
         public DrawableSprite()
         {

@@ -7,6 +7,12 @@ using IsoECS.DataStructures;
 
 namespace IsoECS.Systems
 {
+    public struct DrawData
+    {
+        public IGameDrawable Drawable;
+        public PositionComponent Position;
+    }
+
     public class RenderSystem : IRenderSystem
     {
         public GraphicsDevice Graphics { get; set; }
@@ -24,23 +30,40 @@ namespace IsoECS.Systems
             spriteBatch.Begin();
 
             // TODO: render any background
-            // sort the drawables by layer
-            // TODO: improve the sort algorithm, account for Y-position
-            drawables.Sort(delegate(Entity a, Entity b)
-            {
-                return b.Get<DrawableComponent>().Layer.CompareTo(a.Get<DrawableComponent>().Layer);
-            });
+            // TODO: this should be cached and only updated when drawbles are added, removed or changed
+            List<DrawData> allDrawables = new List<DrawData>();
+            DrawData dd;
             foreach (Entity e in drawables)
             {
-                DrawableComponent drawable = e.Get<DrawableComponent>();
-
-                foreach (IGameDrawable d in drawable.Drawables)
+                foreach (IGameDrawable d in e.Get<DrawableComponent>().Drawables)
                 {
-                    // if the drawable is not visible continue
-                    if (!d.Visible) continue;
-
-                    d.Draw(Graphics, spriteBatch, (int)(e.Get<PositionComponent>().X - cameraPosition.X), (int)(e.Get<PositionComponent>().Y - cameraPosition.Y));
+                    dd = new DrawData();
+                    dd.Position = e.Get<PositionComponent>();
+                    dd.Drawable = d;
+                    allDrawables.Add(dd);
                 }
+            }
+
+            // roughly good enough for now
+            allDrawables.Sort(delegate(DrawData a, DrawData b)
+            {
+                // sort by Y position
+                if (b.Drawable.Layer == a.Drawable.Layer)
+                {
+                    return a.Position.Y.CompareTo(b.Position.Y);
+                }
+                else
+                {
+                    return b.Drawable.Layer.CompareTo(a.Drawable.Layer);
+                }
+            });
+            
+            foreach (DrawData d in allDrawables)
+            {
+                // if the drawable is not visible continue
+                if (!d.Drawable.Visible) continue;
+
+                d.Drawable.Draw(Graphics, spriteBatch, (int)(d.Position.X - cameraPosition.X), (int)(d.Position.Y - cameraPosition.Y));
             }
 
             // Render the text entities
