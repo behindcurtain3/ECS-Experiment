@@ -18,7 +18,8 @@
 						"SpriteSheet": "misc",
 						"ID": "3x3",
 						"Visible": true,
-						"Color": "255, 255, 255, 255"
+						"Color": "255, 255, 255, 255",
+						"Layer": 11
 					}
 				]
 			},

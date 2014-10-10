@@ -78,6 +78,7 @@ namespace IsoECS.Systems.GamePlay
 
             Entity selectedEntity = _db[categories[_category]][_selection];
             BuildableComponent selectedBuildable = selectedEntity.Get<BuildableComponent>();
+            FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
             
             // set the starting coords
             int x = _input.CurrentMouse.X + (int)_camera.X;
@@ -92,8 +93,19 @@ namespace IsoECS.Systems.GamePlay
             drawablePosition.X = dPositiion.X;
             drawablePosition.Y = dPositiion.Y;
 
+            bool spaceTaken = false;
             DrawableSprite sprite = (DrawableSprite)drawable.Drawables[0];
-            if (!_foundationPlanner.SpaceTaken.ContainsKey(index))
+
+            foreach (LocationValue lv in foundation.Plan)
+            {
+                if (_foundationPlanner.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
+                {
+                    spaceTaken = true;
+                    break;
+                }
+            }
+            
+            if (!spaceTaken)
                 sprite.Color = new Color(sprite.Color.R, sprite.Color.G, sprite.Color.B, 228);
             else
                 sprite.Color = new Color(128, 128, 128, 128);
@@ -101,6 +113,7 @@ namespace IsoECS.Systems.GamePlay
             sprite.SpriteSheet = selectedBuildable.ConstructSpriteSheetName;
             sprite.ID = selectedBuildable.ConstructSourceID;
             sprite.Visible = Isometric.ValidIndex(_map, index.X, index.Y);
+            sprite.Layer = 1;
 
             if (!sprite.Visible)
                 return;
@@ -108,7 +121,7 @@ namespace IsoECS.Systems.GamePlay
             if (_input.CurrentMouse.LeftButton == ButtonState.Pressed && (selectedBuildable.DragBuildEnabled || _input.PrevMouse.LeftButton != ButtonState.Pressed))
             {
                 // don't build over a spot that is already taken
-                if (_foundationPlanner.SpaceTaken.ContainsKey(index))
+                if (spaceTaken)
                     return;
 
                 Entity buildable = selectedEntity.DeepCopy();
@@ -136,27 +149,6 @@ namespace IsoECS.Systems.GamePlay
 
                         case "FoundationComponent":
                             FoundationComponent floor = (FoundationComponent)c;
-
-                            switch (floor.PlanType)
-                            {
-                                case "Normal":
-                                    // nothing
-                                    break;
-                                case "Fill":
-                                    Point start = floor.Plan[0].Offset;
-                                    Point end = floor.Plan[1].Offset;
-
-                                    floor.Plan.Clear(); // clear the plan, the for loops will fill it
-                                    for (int xx = start.X; xx <= end.X; xx++)
-                                    {
-                                        for (int yy = start.Y; yy <= end.Y; yy++)
-                                        {
-                                            floor.Plan.Add(new LocationValue() { Offset = new Point(xx, yy) });
-                                        }
-                                    }
-
-                                    break;
-                            }
 
                             // update the floor planner
                             foreach (LocationValue lv in floor.Plan)

@@ -7,6 +7,7 @@ using IsoECS.DataStructures.Json;
 using IsoECS.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.DataStructures
 {
@@ -90,6 +91,27 @@ namespace IsoECS.DataStructures
 
                     case "FoundationComponent":
                         FoundationComponent floor = JsonConvert.DeserializeObject<FoundationComponent>(o.ToString());
+
+                        switch (floor.PlanType)
+                        {
+                            case "Normal":
+                                // nothing
+                                break;
+                            case "Fill":
+                                Point start = floor.Plan[0].Offset;
+                                Point end = floor.Plan[1].Offset;
+
+                                floor.Plan.Clear(); // clear the plan, the for loops will fill it
+                                for (int xx = start.X; xx <= end.X; xx++)
+                                {
+                                    for (int yy = start.Y; yy <= end.Y; yy++)
+                                    {
+                                        floor.Plan.Add(new LocationValue() { Offset = new Point(xx, yy) });
+                                    }
+                                }
+
+                                break;
+                        }
                         c = floor;
                         break;
 
