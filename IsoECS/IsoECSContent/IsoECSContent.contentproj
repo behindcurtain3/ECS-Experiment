@@ -60,11 +60,15 @@
       <Name>entities</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Buildables\farms.json">
+    <None Include="Data\Entities\farms.json">
       <Name>farms</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Buildables\roads.json">
+    <None Include="Data\Entities\people.json">
+      <Name>people</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Entities\roads.json">
       <Name>roads</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

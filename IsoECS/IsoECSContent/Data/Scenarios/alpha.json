@@ -96,7 +96,10 @@
 					]
 				},				
 				{
-					"Type": "SpawnerComponent"
+					"Type": "SpawnerComponent",
+					"Spawns": [
+						"immigrant"
+					]
 				},
 				{
 					"Type": "RoadComponent"

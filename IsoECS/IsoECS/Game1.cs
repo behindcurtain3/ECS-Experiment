@@ -1,18 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using IsoECS.Entities;
+using IsoECS.GamePlay;
 using IsoECS.GamePlay.Map;
 using IsoECS.Systems;
+using IsoECS.Systems.GamePlay;
 using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
-using IsoECS.GamePlay;
-using System.IO;
 using Newtonsoft.Json.Linq;
 
 namespace IsoECS
@@ -64,6 +65,7 @@ namespace IsoECS
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
             systems.Add(new ControlSystem());
             systems.Add(new ProductionSystem());
+            systems.Add(new ImmigrationSystem());
 
             renderers = new List<IRenderSystem>();
             renderers.Add(new IsometricMapSystem()

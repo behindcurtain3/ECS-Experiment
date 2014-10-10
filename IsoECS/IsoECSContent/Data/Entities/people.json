@@ -1,0 +1,24 @@
+{
+	"Entities" : [
+		{
+			"UniqueID": "immigrant",
+			"Components": [
+				{
+					"Type": "DrawableComponent",
+					"Sprites": [
+						{
+							"SpriteSheet": "isometric_person",
+							"ID": "male"
+						}
+					]
+				},
+				{
+					"Type": "PositionComponent"
+				},
+				{
+					"Type": "MoveToTargetComponent"
+				}
+			]
+		}
+	]
+}

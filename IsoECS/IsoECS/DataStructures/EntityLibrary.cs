@@ -21,27 +21,39 @@ namespace IsoECS.DataStructures
         }
 
         // stores ready made entities by their unique ID
-        private List<Entity> _entities;
+        private Dictionary<string, Entity> _entities;
 
         private EntityLibrary()
         {
-            _entities = new List<Entity>();
+            _entities = new Dictionary<string, Entity>();
         }
 
         private void AddEntity(JObject source)
         {
             Entity e = LoadEntity(source);
-            _entities.Add(e);
+
+            if (String.IsNullOrWhiteSpace(e.UniqueID))
+            {
+                e.UniqueID = e.ID.ToString();
+            }
+
+            _entities.Add(e.UniqueID, e);
         }
 
         public List<Entity> GetAll<T>()
         {
-            return _entities.FindAll(delegate(Entity e) { return e.HasComponent<T>(); });   
+            return new List<Entity>(_entities.Values).FindAll(delegate(Entity e) { return e.HasComponent<T>(); });
+        }
+
+        public Entity Get(string uniqueID)
+        {
+            return _entities[uniqueID];
         }
 
         public Entity LoadEntity(JObject source)
         {
             Entity e = new Entity();
+            e.UniqueID = (string)source["UniqueID"];
 
             // Get the components from the json
             IEnumerable<JObject> components = source["Components"].ToObject<IEnumerable<JObject>>();

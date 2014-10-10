@@ -21,8 +21,6 @@ namespace IsoECS.Systems.GamePlay
         private IsometricMapComponent _map;
         private PositionComponent _camera;
         private InputController _input;
-        private RoadPlannerComponent _roadPlanner;
-        private CollisionMapComponent _collisionMap;
         private FoundationPlannerComponent _foundationPlanner;
 
         public void Init(List<Entity> entities)

@@ -85,6 +85,8 @@ namespace IsoECS.Util
                     case "SpawnerComponent":
                         DrawableComponent drawable = entity.Get<DrawableComponent>();
 
+                        // this should be put into the positioncomponent case w/ options
+                        // like: "random", "edge", "non-edge"
                         int side = Game1.Random.Next(4);
                         int x;
                         int y;

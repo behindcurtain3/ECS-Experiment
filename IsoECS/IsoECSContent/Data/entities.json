@@ -1,7 +1,8 @@
 {
-  "Name" : "Buildables",
+  "Name" : "Entity List",
   "List" : [
-    "Content/Data/Buildables/roads.json",
-	"Content/Data/Buildables/farms.json"
+    "Content/Data/Entities/roads.json",
+	"Content/Data/Entities/farms.json",
+	"Content/Data/Entities/people.json"
   ]
 }

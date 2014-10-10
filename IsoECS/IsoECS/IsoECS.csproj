@@ -159,6 +159,7 @@
     <Compile Include="Systems\ControlSystem.cs" />
     <Compile Include="Systems\FollowMouseSystem.cs" />
     <Compile Include="Systems\GamePlay\ConstructionSystem.cs" />
+    <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />
     <Compile Include="Systems\IRenderSystem.cs" />
     <Compile Include="Systems\IsometricMapSystem.cs" />

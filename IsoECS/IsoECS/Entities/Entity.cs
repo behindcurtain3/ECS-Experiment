@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IsoECS.Components;
-using Newtonsoft.Json;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using IsoECS.Components;
+using IsoECS.GamePlay;
+using Newtonsoft.Json;
 
 namespace IsoECS.Entities
 {
@@ -13,10 +12,11 @@ namespace IsoECS.Entities
     /// Notes: use the entity ID for all references to an entity
     /// </summary>
     [Serializable]
-    public class Entity
+    public class Entity : IUnique
     {
         public static uint ID_COUNTER = 0;
 
+        public string UniqueID { get; set; }
         public uint ID { get; private set; }
         public Dictionary<Type, Component> Components { get; private set; }
 
