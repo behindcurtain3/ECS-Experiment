@@ -22,13 +22,14 @@ namespace IsoECS
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+        public static Random Random { get; private set; }
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
         List<Entity> entities;
         List<ISystem> systems;
         List<IRenderSystem> renderers;
-        Random random;
 
         RenderSystem renderSystem;
         DiagnosticInfo diagnostics;
@@ -40,6 +41,7 @@ namespace IsoECS
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            Random = new Random();
         }
 
         /// <summary>
@@ -52,19 +54,11 @@ namespace IsoECS
         {
             base.Initialize();
 
-            random = new Random();
-
             diagnostics = new DiagnosticInfo("System Performance");
 
             // Add the content to the textures singleton
             Textures.Instance.Graphics = GraphicsDevice;
             Textures.Instance.Content = Content;
-
-            // Load textures from config
-            Textures.Instance.LoadFromJson("Content/Data/textures.json", true);
-
-            // Load in entities
-            EntityLibrary.Instance.LoadFromJson("Content/Data/entities.json", true);
 
             systems = new List<ISystem>();
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
@@ -72,7 +66,10 @@ namespace IsoECS
             systems.Add(new ProductionSystem());
 
             renderers = new List<IRenderSystem>();
-            renderers.Add(new IsometricMapSystem());
+            renderers.Add(new IsometricMapSystem()
+            {
+                Graphics = GraphicsDevice
+            });
 
             renderSystem = new RenderSystem()
             {
@@ -87,6 +84,12 @@ namespace IsoECS
             // TODO: put this in a method somewhere
             string s = File.ReadAllText("Content/Data/Scenarios/alpha.json");
             Scenario scenario = JsonConvert.DeserializeObject<Scenario>(s);
+            
+            // Load textures from config
+            Textures.Instance.LoadFromJson(scenario.Textures, true);
+
+            // Load in entities
+            EntityLibrary.Instance.LoadFromJson(scenario.Library, true);
 
             // load scenario data
             GameData.Instance.LoadRecipesFromJson(scenario.Recipes, true);
@@ -95,21 +98,7 @@ namespace IsoECS
             {
                 Entity e = EntityLibrary.Instance.LoadEntity(o);
 
-                if (e.HasComponent<IsometricMapComponent>())
-                {
-                    IsometricMapComponent map = e.Get<IsometricMapComponent>();
-
-                    if (map.Terrain == null)
-                    {
-                        map = CreateMap(map.SpriteSheetName, map.TxWidth, map.TxHeight, map.PxTileWidth, map.PxTileHeight);
-
-                        // replace the map
-                        e.RemoveComponent(e.Get<IsometricMapComponent>());
-                        e.AddComponent(map);
-                    }
-                }
-
-                entities.Add(e);
+                EntityHelper.ActivateEntity(entities, e);
             }
 
             // add some nodes to the map
@@ -119,8 +108,8 @@ namespace IsoECS
 
                 node.AddComponent(new PositionComponent()
                 {
-                    X = random.Next(GraphicsDevice.Viewport.Width),
-                    Y = random.Next(GraphicsDevice.Viewport.Height)
+                    X = Random.Next(GraphicsDevice.Viewport.Width),
+                    Y = Random.Next(GraphicsDevice.Viewport.Height)
                 });
 
                 node.AddComponent(new Inventory());
@@ -204,40 +193,7 @@ namespace IsoECS
 
             base.Draw(gameTime);
         }
-
-        private IsometricMapComponent CreateMap(string spriteSheetName, int txWidth, int txHeight, int pxTileWidth, int pxTileHeight)
-        {
-            IsometricMapComponent map = new IsometricMapComponent();
-
-            map.Graphics = GraphicsDevice;
-            map.Buffer = new RenderTarget2D(map.Graphics, map.Graphics.Viewport.Width, map.Graphics.Viewport.Height);
-
-            map.SpriteSheetName = spriteSheetName;
-
-            map.TxWidth = txWidth;
-            map.TxHeight = txHeight;
-
-            map.PxTileWidth = pxTileWidth;
-            map.PxTileHeight = pxTileHeight;
-
-            map.PxTileHalfWidth = map.PxTileWidth / 2;
-            map.PxTileHalfHeight = map.PxTileHeight / 2;
-
-            // Create the tile data structure
-            map.Terrain = new int[1, txHeight, txWidth];
-
-            // fill in the array
-            for (int y = 0; y < map.TxHeight; y++)
-            {
-                for (int x = 0; x < map.TxWidth; x++)
-                {
-                    map.Terrain[0, y, x] = (int)Tiles.Grass;
-                }
-            }
-
-            return map;
-        }
-
+        
         private CollisionMapComponent CreateCollisionMap(IsometricMapComponent map)
         {
             CollisionMapComponent collisions = new CollisionMapComponent();

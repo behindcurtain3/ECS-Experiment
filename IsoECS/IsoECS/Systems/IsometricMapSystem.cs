@@ -11,6 +11,7 @@ namespace IsoECS.Systems
 {
     public class IsometricMapSystem : IRenderSystem
     {
+        public GraphicsDevice Graphics { get; set; }
 
         public void Draw(List<Entity> entities, SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
@@ -27,6 +28,12 @@ namespace IsoECS.Systems
             Vector2 position;
             Rectangle destination;
             Rectangle source;
+
+            if (map.Graphics == null)
+                map.Graphics = Graphics;
+
+            if (map.Buffer == null)
+                map.Buffer = new RenderTarget2D(map.Graphics, map.Graphics.Viewport.Width, map.Graphics.Viewport.Height);
 
             // Set the render target to the internal buffer
             map.Graphics.SetRenderTarget(map.Buffer);

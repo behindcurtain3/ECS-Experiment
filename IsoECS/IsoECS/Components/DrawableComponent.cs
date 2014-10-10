@@ -12,11 +12,15 @@ namespace IsoECS.Components
         public List<IGameDrawable> Drawables { get; set; }
 
         public List<DrawableSprite> Sprites { get; set; }
+        public List<DrawableText> Texts { get; set; }
+        public List<DrawableRoad> Roads { get; set; }
 
         public DrawableComponent()
         {
             Drawables = new List<IGameDrawable>();
             Sprites = new List<DrawableSprite>();
+            Texts = new List<DrawableText>();
+            Roads = new List<DrawableRoad>();
         }
     }
 }

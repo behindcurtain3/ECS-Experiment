@@ -13,7 +13,7 @@
 				},
 				{
 					"Type": "DrawableComponent",
-					"Sprites": [
+					"Roads": [
 						{
 							"SpriteSheet": "isometric_roads",
 							"ID": "single",

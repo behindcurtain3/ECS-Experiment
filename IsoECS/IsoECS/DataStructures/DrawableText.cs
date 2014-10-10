@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace IsoECS.DataStructures
 {
+    [Serializable]
     public class DrawableText : IGameDrawable
     {
         public bool Visible { get; set; }

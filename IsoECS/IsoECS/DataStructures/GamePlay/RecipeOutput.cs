@@ -8,11 +8,13 @@ namespace IsoECS.DataStructures.GamePlay
         // the name of the item that is output
         public string Item { get; set; }
 
-        // the amount per month per worker that is created in a standard situation
-        public double Rate { get; set; }
+        // the amount that is produced each time a worker completes a "block" of work
+        // block: think of it as a abstract way to track the production of output. A block could
+        // represent a worker gathering the needed materials, performing some work on them and then
+        // producing a good from the work.
+        public double AmountProduced { get; set; }
 
-        // if true this recipe constantly outputs at a fraction of the Rate
-        // if false it outputs in a lump sum
-        public bool ConstantProduction { get; set; }
+        // how hard each "block" of work is to accomplish
+        public double EffortRequired { get; set; }
     }
 }

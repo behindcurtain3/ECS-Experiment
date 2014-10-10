@@ -108,6 +108,10 @@
       <Name>misc_textures</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Sprites\spawner.json">
+      <Name>spawner</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\textures.json">
       <Name>textures</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -151,6 +155,13 @@
   <ItemGroup>
     <Compile Include="Data\Sprites\isometric_roads2.png">
       <Name>isometric_roads2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Sprites\spawner.png">
+      <Name>spawner</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

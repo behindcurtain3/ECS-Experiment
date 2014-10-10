@@ -51,5 +51,29 @@ namespace IsoECS.DataStructures
                 }
             }
         }
+
+        public void LoadItemsFromJson(string path, bool config = false)
+        {
+            string json = File.ReadAllText(path);
+
+            if (config)
+            {
+                JsonListConfig jsonConfig = JsonConvert.DeserializeObject<JsonListConfig>(json);
+                foreach (string str in jsonConfig.List)
+                {
+                    LoadItemsFromJson(str);
+                }
+            }
+            else
+            {
+                JObject file = JObject.Parse(json);
+                foreach (JObject o in file["Items"].ToObject<IEnumerable<JObject>>())
+                {
+                    Item i = JsonConvert.DeserializeObject<Item>(o.ToString());
+
+                    _items.Add(i.UniqueID, i);
+                }
+            }
+        }
     }
 }

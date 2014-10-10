@@ -5,6 +5,7 @@
 	"Content/Data/Sprites/isometric_roads.json",
 	"Content/Data/Sprites/isometric_roads2.json",
 	"Content/Data/Sprites/isometric_person.json",
+	"Content/Data/Sprites/spawner.json",
 	"Content/Data/Sprites/misc_textures.json",
 	"Content/Data/Sprites/debug.json"
   ]

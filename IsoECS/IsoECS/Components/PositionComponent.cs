@@ -1,5 +1,7 @@
 ﻿using System;
+using IsoECS.DataStructures.Json.Converters;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace IsoECS.Components
 {
@@ -8,6 +10,9 @@ namespace IsoECS.Components
     {
         public float X { get; set; }
         public float Y { get; set; }
+
+        [JsonConverter(typeof(PointConverter))]
+        public Point Index { get; set; }
 
         public Vector2 Position 
         {

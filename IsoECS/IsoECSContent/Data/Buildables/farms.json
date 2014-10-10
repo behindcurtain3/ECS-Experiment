@@ -24,6 +24,10 @@
 				]
 			},
 			{
+				"Type": "ProductionComponent",
+				"Recipe": "alpha-wheat"
+			},
+			{
 				"Type": "FoundationComponent",
 				"PlanType": "Fill",
 				"Plan": [

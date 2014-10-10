@@ -75,6 +75,53 @@
 					"Type": "MoveToTargetComponent"
 				}
 			]
+		},
+		{
+			"Components": [
+				{
+					"Type": "DrawableComponent",
+					"Roads": [
+						{
+							"SpriteSheet": "isometric_roads",
+							"ID": "four_way",
+							"Layer": 89,
+							"Updateable": false
+						}
+					],
+					"Sprites": [
+						{
+							"SpriteSheet": "spawner",
+							"ID": "northwest",
+						}
+					]
+				},				
+				{
+					"Type": "SpawnerComponent"
+				},
+				{
+					"Type": "RoadComponent"
+				},
+				{
+					"Type": "PositionComponent"
+				},
+				{
+					"Type": "FoundationComponent",
+					"PlanType": "Normal",
+					"Plan": [
+						{ "Offset": { "x": 0, "y": 0 } }
+					]
+				},
+				{
+					"Type": "CollisionComponent",
+					"PlanType": "Normal",
+					"Plan": [
+						{
+							"Value": 8,
+							"Offset": { "x": 0, "y": 0 }
+						}
+					]
+				}
+			]
 		}
 	]
 }

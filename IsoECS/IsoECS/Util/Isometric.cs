@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using IsoECS.Components.GamePlay;
+using IsoECS.GamePlay.Map;
 
 namespace IsoECS.Util
 {
@@ -72,6 +73,36 @@ namespace IsoECS.Util
             }
 
             return position;
+        }
+
+        public static IsometricMapComponent CreateMap(string spriteSheetName, int txWidth, int txHeight, int pxTileWidth, int pxTileHeight)
+        {
+            IsometricMapComponent map = new IsometricMapComponent();
+
+            map.SpriteSheetName = spriteSheetName;
+
+            map.TxWidth = txWidth;
+            map.TxHeight = txHeight;
+
+            map.PxTileWidth = pxTileWidth;
+            map.PxTileHeight = pxTileHeight;
+
+            map.PxTileHalfWidth = map.PxTileWidth / 2;
+            map.PxTileHalfHeight = map.PxTileHeight / 2;
+
+            // Create the tile data structure
+            map.Terrain = new int[1, txHeight, txWidth];
+
+            // fill in the array
+            for (int y = 0; y < map.TxHeight; y++)
+            {
+                for (int x = 0; x < map.TxWidth; x++)
+                {
+                    map.Terrain[0, y, x] = (int)Tiles.Grass;
+                }
+            }
+
+            return map;
         }
     }
 }

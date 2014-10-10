@@ -118,14 +118,16 @@
     <Compile Include="Components\GamePlay\CollisionMapComponent.cs" />
     <Compile Include="Components\GamePlay\FoundationComponent.cs" />
     <Compile Include="Components\GamePlay\FoundationPlannerComponent.cs" />
-    <Compile Include="Components\GamePlay\Generator.cs" />
+    <Compile Include="Components\GamePlay\ProductionComponent.cs" />
     <Compile Include="Components\GamePlay\Inventory.cs" />
     <Compile Include="Components\Controls\InputController.cs" />
     <Compile Include="Components\GamePlay\IsometricMapComponent.cs" />
     <Compile Include="Components\GamePlay\MoveToTargetComponent.cs" />
     <Compile Include="Components\GamePlay\RoadComponent.cs" />
     <Compile Include="Components\GamePlay\RoadPlannerComponent.cs" />
+    <Compile Include="Components\GamePlay\SpawnerComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
+    <Compile Include="DataStructures\DrawableRoad.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />
     <Compile Include="DataStructures\DrawableText.cs" />
     <Compile Include="DataStructures\EntityLibrary.cs" />
@@ -164,6 +166,7 @@
     <Compile Include="Systems\ProductionSystem.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
     <Compile Include="Util\DiagnosticInfo.cs" />
+    <Compile Include="Util\EntityHelper.cs" />
     <Compile Include="Util\Isometric.cs" />
     <Compile Include="Util\MathHelper.cs" />
     <Compile Include="Util\Pathfinder.cs" />

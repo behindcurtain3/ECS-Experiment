@@ -36,8 +36,6 @@ namespace IsoECS.Systems.GamePlay
             _camera = cameraEntity.Get<PositionComponent>();
             _map = mapEntity.Get<IsometricMapComponent>();
             _input = inputEntity.Get<InputController>();
-            _roadPlanner = _dataTracker.Get<RoadPlannerComponent>();
-            _collisionMap = _dataTracker.Get<CollisionMapComponent>();
             _foundationPlanner = _dataTracker.Get<FoundationPlannerComponent>();
 
             _db = new Dictionary<string, List<Entity>>();
@@ -125,53 +123,23 @@ namespace IsoECS.Systems.GamePlay
                     return;
 
                 Entity buildable = selectedEntity.DeepCopy();
-                buildable.AddComponent(new PositionComponent(drawablePosition.Position));
-                entities.Add(buildable);
 
-                // update the game data
-                foreach (Component c in buildable.Components.Values)
+                if (buildable.HasComponent<PositionComponent>())
                 {
-                    switch (c.GetType().Name)
-                    {
-                        case "CollisionComponent":
-                            CollisionComponent collision = (CollisionComponent)c;
-
-                            foreach (LocationValue lv in collision.Plan)
-                            {
-                                Point p = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
-
-                                if (_collisionMap.Collision.ContainsKey(p))
-                                    _collisionMap.Collision[p] = lv.Value;
-                                else
-                                    _collisionMap.Collision.Add(p, lv.Value);
-                            }
-                            break;
-
-                        case "FoundationComponent":
-                            FoundationComponent floor = (FoundationComponent)c;
-
-                            // update the floor planner
-                            foreach (LocationValue lv in floor.Plan)
-                            {
-                                Point update = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
-                                _foundationPlanner.SpaceTaken.Add(update, true);
-                            }
-                            break;
-
-                        case "RoadComponent":
-                            // setup the road component
-                            RoadComponent road = (RoadComponent)c;
-                            road.BuiltAt = index;
-
-                            // update the roads
-                            RoadsHelper.AddOrUpdateRoad(_roadPlanner, _map, index, true);
-
-                            // update the other roads
-                            List<Entity> roadEntities = entities.FindAll(delegate(Entity e) { return e.HasComponent<RoadComponent>(); });
-                            RoadsHelper.UpdateRoadsGfx(roadEntities, _roadPlanner);
-                            break;
-                    }
+                    PositionComponent aPosition = buildable.Get<PositionComponent>();
+                    aPosition.X = drawablePosition.X;
+                    aPosition.Y = drawablePosition.Y;
+                    aPosition.Index = index;
                 }
+                else
+                {
+                    PositionComponent bPosition = new PositionComponent(drawablePosition.Position);
+                    bPosition.Index = index;
+                    buildable.AddComponent(bPosition);
+                }
+
+                EntityHelper.ActivateEntity(entities, buildable);
+
             }
         }
     }

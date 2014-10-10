@@ -85,6 +85,8 @@ namespace IsoECS.DataStructures
 
                         // add any sprites to the drawable list
                         drawable.Drawables.AddRange(drawable.Sprites);
+                        drawable.Drawables.AddRange(drawable.Texts);
+                        drawable.Drawables.AddRange(drawable.Roads);
 
                         c = drawable;
                         break;
@@ -130,13 +132,17 @@ namespace IsoECS.DataStructures
                         c = move;
                         break;
 
+                    case "ProductionComponent":
+                        ProductionComponent production = JsonConvert.DeserializeObject<ProductionComponent>(o.ToString());
+                        c = production;
+                        break;
+
                     case "PositionComponent":
                         PositionComponent position = JsonConvert.DeserializeObject<PositionComponent>(o.ToString());
                         c = position;
                         break;
 
                     case "RoadComponent":
-                        // setup the road component (nothing atm)
                         RoadComponent road = JsonConvert.DeserializeObject<RoadComponent>(o.ToString());
                         c = road;
                         break;
@@ -144,6 +150,11 @@ namespace IsoECS.DataStructures
                     case "RoadPlannerComponent":
                         RoadPlannerComponent roadPlanner = JsonConvert.DeserializeObject<RoadPlannerComponent>(o.ToString());
                         c = roadPlanner;
+                        break;
+
+                    case "SpawnerComponent":
+                        SpawnerComponent spawner = JsonConvert.DeserializeObject<SpawnerComponent>(o.ToString());
+                        c = spawner;
                         break;
                 }
 
