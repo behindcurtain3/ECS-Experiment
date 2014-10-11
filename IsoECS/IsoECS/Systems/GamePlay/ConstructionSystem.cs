@@ -109,7 +109,7 @@ namespace IsoECS.Systems.GamePlay
             sprite.SpriteSheet = selectedBuildable.ConstructSpriteSheetName;
             sprite.ID = selectedBuildable.ConstructSourceID;
             sprite.Visible = Isometric.ValidIndex(_map, index.X, index.Y);
-            sprite.Layer = 1;
+            //sprite.Layer = 1;
 
             if (!sprite.Visible)
                 return;

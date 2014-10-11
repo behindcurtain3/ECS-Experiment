@@ -59,7 +59,7 @@ namespace IsoECS.Systems.GamePlay
 
         private void ResetCountdown()
         {
-            _spawnCountdown = Game1.Random.Next(1, 16) * 1000;
+            _spawnCountdown = Game1.Random.Next(5, 30) * 1000;
         }
     }
 }
