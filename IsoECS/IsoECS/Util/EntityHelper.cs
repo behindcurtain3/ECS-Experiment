@@ -31,6 +31,36 @@ namespace IsoECS.Util
             {
                 switch (c.GetType().Name)
                 {
+                    case "CitizenComponent":
+                        CitizenComponent citizen = (CitizenComponent)c;
+
+                        // fill in the data if it doesn't already exist
+                        if(String.IsNullOrWhiteSpace(citizen.Name))
+                        {
+                            // generate name
+                            string[] names = {"Steve", "John", "Bill" };
+                            citizen.Name = names[Game1.Random.Next(0, names.Length)];
+                        }
+
+                        if(String.IsNullOrWhiteSpace(citizen.FamilyName))
+                        {
+                            // generate family name
+                            string[] names = { "Johnson", "Miller", "Smith" };
+                            citizen.FamilyName = names[Game1.Random.Next(0, names.Length)];
+                        }
+
+                        if (citizen.Age == 0)
+                        {
+                            // generate age
+                            citizen.Age = Game1.Random.Next(14, 46);
+                        }
+
+                        if (citizen.Money == 0)
+                        {
+                            citizen.Money = Game1.Random.NextDouble() * 100;
+                        }
+                        break;
+
                     case "CollisionComponent":
                         CollisionComponent collision = (CollisionComponent)c;
 

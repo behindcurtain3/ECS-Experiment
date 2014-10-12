@@ -1,6 +1,8 @@
-﻿
+﻿using System;
+
 namespace IsoECS.Components.GamePlay
 {
+    [Serializable]
     public class CitizenComponent : Component
     {
         public string Name { get; set; }
