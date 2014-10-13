@@ -128,6 +128,7 @@ namespace IsoECS.Systems.GamePlay
                     aPosition.X = drawablePosition.X;
                     aPosition.Y = drawablePosition.Y;
                     aPosition.Index = index;
+                    aPosition.GenerateAt = string.Empty;
                 }
                 else
                 {

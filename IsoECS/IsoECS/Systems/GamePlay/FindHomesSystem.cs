@@ -54,8 +54,6 @@ namespace IsoECS.Systems.GamePlay
                             {
                                 citizen.HousingID = (int)potentialHome.ID;
                                 home.Tennants.Add((int)citizenEntity.ID);
-
-                                Console.WriteLine(String.Format("{0} has moved into Entity#{1}", citizen.Name, potentialHome.ID));
                                 break;
                             }
                         }
