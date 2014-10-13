@@ -28,6 +28,12 @@
 				"Recipe": "alpha-wheat"
 			},
 			{
+				"Type": "HousingComponent",
+				"Category": "Rural",
+				"MaxOccupants": 6,
+				"Rent": 10
+			},
+			{
 				"Type": "FoundationComponent",
 				"PlanType": "Fill",
 				"Plan": [

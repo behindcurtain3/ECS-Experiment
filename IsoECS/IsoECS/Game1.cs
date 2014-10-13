@@ -66,6 +66,7 @@ namespace IsoECS
             systems.Add(new ControlSystem());
             systems.Add(new ProductionSystem());
             systems.Add(new ImmigrationSystem());
+            systems.Add(new FindHomesSystem());
 
             renderers = new List<IRenderSystem>();
             renderers.Add(new IsometricMapSystem()

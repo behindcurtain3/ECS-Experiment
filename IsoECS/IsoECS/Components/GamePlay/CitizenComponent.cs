@@ -11,6 +11,16 @@ namespace IsoECS.Components.GamePlay
         public int MotherID { get; set; }
 
         public int Age { get; set; }
-        public double Money { get; set; }
+        public int Money { get; set; }
+
+        // ID of the entity this citizen lives at
+        public int HousingID { get; set; }
+
+        public CitizenComponent()
+        {
+            FatherID = -1;
+            MotherID = -1;
+            HousingID = -1;
+        }
     }
 }
