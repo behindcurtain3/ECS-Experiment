@@ -139,6 +139,11 @@ namespace IsoECS.DataStructures
                         c = foundationPlanner;
                         break;
                         
+                    case "GameDateComponent":
+                        GameDateComponent date = JsonConvert.DeserializeObject<GameDateComponent>(o.ToString());
+                        c = date;
+                        break;
+
                     case "HousingComponent":
                         HousingComponent housing = JsonConvert.DeserializeObject<HousingComponent>(o.ToString());
                         c = housing;
