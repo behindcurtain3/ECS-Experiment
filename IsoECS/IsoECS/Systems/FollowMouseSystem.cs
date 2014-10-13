@@ -74,6 +74,18 @@ namespace IsoECS.Systems
                     if (position.Position == targetPos)
                     {
                         moveable.PathToTarget.Waypoints.RemoveAt(0);
+
+                        // check the next waypoint to ensure it is still valid
+                        if (moveable.PathToTarget.Waypoints.Count > 0)
+                        {
+                            Point nextWaypoint = moveable.PathToTarget.Waypoints[0];
+
+                            // if the next waypoint is blocked, clear the path
+                            if (collisionMap.Collision[nextWaypoint] == -1)
+                            {
+                                moveable.PathToTarget = null;
+                            }
+                        }
                     }
                 }
             }
