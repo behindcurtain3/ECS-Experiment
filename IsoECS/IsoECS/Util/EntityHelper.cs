@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using IsoECS.Entities;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
-using Microsoft.Xna.Framework;
 using IsoECS.DataStructures;
+using IsoECS.Entities;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.Util
 {
@@ -99,6 +98,64 @@ namespace IsoECS.Util
                         }
                         break;
 
+                    case "PositionComponent":
+                        PositionComponent position = (PositionComponent)c;
+
+                        if(!String.IsNullOrWhiteSpace(position.GenerateAt))
+                        {
+                            int xIndex = -1;
+                            int yIndex = -1;
+
+                            switch (position.GenerateAt)
+                            {
+                                // random
+                                case "Edge":
+                                    int side = Game1.Random.Next(4);
+                        
+                                    switch (side)
+                                    {
+                                        case 0:
+                                            // northwest
+                                            xIndex = 0;
+                                            yIndex = Game1.Random.Next(1, map.TxHeight);
+                                            break;
+                                        case 1:
+                                            // northeast
+                                            xIndex = Game1.Random.Next(1, map.TxWidth);
+                                            yIndex = 0;
+                                            break;
+                                        case 2:
+                                            // southeast
+                                            xIndex = map.TxWidth - 1;
+                                            yIndex = Game1.Random.Next(1, map.TxHeight);
+                                            break;
+                                        default:
+                                            // southwest
+                                            xIndex = Game1.Random.Next(1, map.TxWidth);
+                                            yIndex = map.TxHeight - 1;
+                                            break;
+                                    }
+                                    break;
+                                case "NoEdge":
+                                    xIndex = Game1.Random.Next(1, map.TxWidth - 1);
+                                    yIndex = Game1.Random.Next(1, map.TxHeight - 1);
+                                    break;
+                                default:
+                                    xIndex = Game1.Random.Next(0, map.TxWidth);
+                                    yIndex = Game1.Random.Next(0, map.TxHeight);
+                                    break;
+                            }
+
+                            Vector2 pos = Isometric.GetIsometricPosition(map, 0, yIndex, xIndex);
+
+                            position.X = pos.X;
+                            position.Y = pos.Y;
+                            position.Index = new Point(xIndex, yIndex);
+                            position.GenerateAt = String.Empty;
+                            index = position.Index;
+                        }
+                        break;
+
                     case "RoadComponent":
                         // setup the road component
                         RoadComponent road = (RoadComponent)c;
@@ -113,44 +170,6 @@ namespace IsoECS.Util
                         break;
 
                     case "SpawnerComponent":
-                        DrawableComponent drawable = entity.Get<DrawableComponent>();
-
-                        // this should be put into the positioncomponent case w/ options
-                        // like: "random", "edge", "non-edge"
-                        int side = Game1.Random.Next(4);
-                        int x;
-                        int y;
-
-                        switch (side)
-                        {
-                            case 0:
-                                // northwest
-                                x = 0;
-                                y = Game1.Random.Next(1, map.TxHeight);
-                                break;
-                            case 1:
-                                // northeast
-                                x = Game1.Random.Next(1, map.TxWidth);
-                                y = 0;
-                                break;
-                            case 2:
-                                // southeast
-                                x = map.TxWidth - 1;
-                                y = Game1.Random.Next(1, map.TxHeight);
-                                break;
-                            default:
-                                // southwest
-                                x = Game1.Random.Next(1, map.TxWidth);
-                                y = map.TxHeight - 1;
-                                break;
-                        }
-
-                        Vector2 pos = Isometric.GetIsometricPosition(map, 0, y, x);
-
-                        entity.Get<PositionComponent>().X = pos.X;
-                        entity.Get<PositionComponent>().Y = pos.Y;
-                        entity.Get<PositionComponent>().Index = new Point(x, y);
-                        index = entity.Get<PositionComponent>().Index;
                         break;
                 }
             }

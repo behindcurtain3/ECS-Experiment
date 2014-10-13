@@ -14,6 +14,8 @@ namespace IsoECS.Components
         [JsonConverter(typeof(PointConverter))]
         public Point Index { get; set; }
 
+        public string GenerateAt { get; set; }
+
         public Vector2 Position 
         {
             get { return new Vector2(X, Y); }

@@ -76,7 +76,8 @@
 					]
 				},
 				{
-					"Type": "PositionComponent"
+					"Type": "PositionComponent",
+					"GenerateAt": "Random"
 				},
 				{
 					"Type": "MoveToTargetComponent"
@@ -112,7 +113,8 @@
 					"Type": "RoadComponent"
 				},
 				{
-					"Type": "PositionComponent"
+					"Type": "PositionComponent",
+					"GenerateAt": "Edge"
 				},
 				{
 					"Type": "FoundationComponent",
