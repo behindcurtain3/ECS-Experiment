@@ -119,6 +119,7 @@
     <Compile Include="Components\GamePlay\CollisionMapComponent.cs" />
     <Compile Include="Components\GamePlay\FoundationComponent.cs" />
     <Compile Include="Components\GamePlay\FoundationPlannerComponent.cs" />
+    <Compile Include="Components\GamePlay\GameDateComponent.cs" />
     <Compile Include="Components\GamePlay\HousingComponent.cs" />
     <Compile Include="Components\GamePlay\ProductionComponent.cs" />
     <Compile Include="Components\GamePlay\Inventory.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Systems\ControlSystem.cs" />
     <Compile Include="Systems\FollowMouseSystem.cs" />
     <Compile Include="Systems\GamePlay\ConstructionSystem.cs" />
+    <Compile Include="Systems\GamePlay\DateTimeSystem.cs" />
     <Compile Include="Systems\GamePlay\FindHomesSystem.cs" />
     <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />

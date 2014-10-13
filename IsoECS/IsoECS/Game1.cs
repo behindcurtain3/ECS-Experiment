@@ -64,6 +64,7 @@ namespace IsoECS
             systems = new List<ISystem>();
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
             systems.Add(new ControlSystem());
+            systems.Add(new DateTimeSystem());
             systems.Add(new ProductionSystem());
             systems.Add(new ImmigrationSystem());
             systems.Add(new FindHomesSystem());

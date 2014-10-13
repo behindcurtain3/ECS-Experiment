@@ -27,6 +27,13 @@
 					"Type": "CollisionMapComponent"
 				},
 				{
+					"Type": "GameDateComponent",
+					"MinutesPerHour": 60,
+					"HoursPerDay": 24,
+					"DaysPerMonth": 10,
+					"MonthsPerYear": 4
+				},
+				{
 					"Type": "PositionComponent"
 				}
 			]
