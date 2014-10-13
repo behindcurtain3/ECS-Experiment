@@ -138,6 +138,11 @@ namespace IsoECS.DataStructures
                         FoundationPlannerComponent foundationPlanner = JsonConvert.DeserializeObject<FoundationPlannerComponent>(o.ToString());
                         c = foundationPlanner;
                         break;
+                        
+                    case "HousingComponent":
+                        HousingComponent housing = JsonConvert.DeserializeObject<HousingComponent>(o.ToString());
+                        c = housing;
+                        break;
 
                     case "IsometricMapComponent":
                         IsometricMapComponent map = JsonConvert.DeserializeObject<IsometricMapComponent>(o.ToString());
