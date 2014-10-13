@@ -52,7 +52,7 @@ namespace IsoECS.Systems.GamePlay
                         {
                             HousingComponent home = potentialHome.Get<HousingComponent>();
 
-                            if (home.Rent <= citizen.Money)
+                            if (home.Rent <= citizen.Money && home.Tennants.Count < home.MaxOccupants)
                             {
                                 citizen.HousingID = (int)potentialHome.ID;
                                 home.Tennants.Add((int)citizenEntity.ID);

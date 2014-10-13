@@ -104,20 +104,18 @@ namespace IsoECS
                 EntityHelper.ActivateEntity(entities, e);
             }
 
-            // add some nodes to the map
+            // add some test entities to the map
             for (int j = 0; j < 3; j++)
             {
-                Entity node = new Entity();
+                Entity test = new Entity();
 
-                node.AddComponent(new PositionComponent()
+                test.AddComponent(new PositionComponent()
                 {
                     X = Random.Next(GraphicsDevice.Viewport.Width),
                     Y = Random.Next(GraphicsDevice.Viewport.Height)
                 });
 
-                node.AddComponent(new Inventory());
-
-                entities.Add(node);
+                EntityHelper.ActivateEntity(entities, test);
             }
 
             // TODO: create a settings file to read any key bindings from
