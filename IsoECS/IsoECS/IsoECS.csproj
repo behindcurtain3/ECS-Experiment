@@ -150,6 +150,7 @@
     <Compile Include="DataStructures\PathWaypoint.cs" />
     <Compile Include="DataStructures\Textures.cs" />
     <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\EntityManager.cs" />
     <Compile Include="GamePlay\Item.cs" />
     <Compile Include="GamePlay\IUnique.cs" />
     <Compile Include="GamePlay\Map\Tiles.cs" />

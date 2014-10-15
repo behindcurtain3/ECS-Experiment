@@ -13,7 +13,7 @@ namespace IsoECS.Systems.GamePlay
         private List<Entity> _spawners;
         private int _spawnCountdown;
 
-        public void Update(List<Entity> entities, int dt)
+        public void Update(EntityManager em, int dt)
         {
             _spawnCountdown -= dt;
             if (_spawnCountdown <= 0)
@@ -42,17 +42,17 @@ namespace IsoECS.Systems.GamePlay
                     spawned.AddComponent(bPosition);
                 }
 
-                EntityHelper.ActivateEntity(entities, spawned);
+                EntityHelper.ActivateEntity(em.Entities, spawned);
             }
         }
 
-        public void Init(List<Entity> entities)
+        public void Init(EntityManager em)
         {
-            _spawners = entities.FindAll(delegate(Entity e) { return e.HasComponent<SpawnerComponent>(); }).ToList();
+            _spawners = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<SpawnerComponent>(); }).ToList();
             ResetCountdown();
         }
 
-        public void Shutdown(List<Entity> entities)
+        public void Shutdown(EntityManager em)
         {
             _spawners.Clear();
         }

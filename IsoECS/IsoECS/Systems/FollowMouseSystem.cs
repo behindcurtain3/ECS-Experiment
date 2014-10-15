@@ -9,22 +9,20 @@ namespace IsoECS.Systems
 {
     public class FollowMouseSystem : ISystem
     {
-        public void Init(List<Entity> entities)
+        public void Init(EntityManager em)
         {
-
         }
 
-        public void Shutdown(List<Entity> entities)
+        public void Shutdown(EntityManager em)
         {
-
         }
 
-        public void Update(List<Entity> entities, int dt)
+        public void Update(EntityManager em, int dt)
         {
-            Entity inputEntity = entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
-            Entity cameraEntity = entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
-            Entity mapEntity = entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
-            Entity dataTracker = entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
+            Entity inputEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
+            Entity cameraEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
+            Entity mapEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
+            Entity dataTracker = em.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
             CollisionMapComponent collisionMap = dataTracker.Get<CollisionMapComponent>();
             InputController input = inputEntity.Get<InputController>();
             PositionComponent camera = cameraEntity.Get<PositionComponent>();
@@ -37,7 +35,7 @@ namespace IsoECS.Systems
             // pick out the tile index that the screen coords intersect
             Point mouseIndex = Isometric.GetPointAtScreenCoords(map, x, y);
 
-            List<Entity> followers = entities.FindAll(delegate(Entity e) { return e.HasComponent<MoveToTargetComponent>(); });
+            List<Entity> followers = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<MoveToTargetComponent>(); });
 
             foreach (Entity e in followers)
             {

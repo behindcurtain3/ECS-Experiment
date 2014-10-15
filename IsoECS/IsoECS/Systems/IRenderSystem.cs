@@ -6,6 +6,6 @@ namespace IsoECS.Systems
 {
     public interface IRenderSystem
     {
-        void Draw(List<Entity> entities, SpriteBatch spriteBatch, SpriteFont spriteFont);
+        void Draw(EntityManager em, SpriteBatch spriteBatch, SpriteFont spriteFont);
     }
 }

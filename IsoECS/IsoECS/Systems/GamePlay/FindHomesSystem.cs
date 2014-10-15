@@ -10,7 +10,7 @@ namespace IsoECS.Systems.GamePlay
         private int _updateRate = 2500;
         private int _updateCountdown;
 
-        public void Update(List<Entity> entities, int dt)
+        public void Update(EntityManager em, int dt)
         {
             // do this bc this system only needs to run every few seconds not each frame
             _updateCountdown -= dt;
@@ -18,8 +18,8 @@ namespace IsoECS.Systems.GamePlay
             {
                 _updateCountdown += _updateRate;
 
-                List<Entity> citizens = entities.FindAll(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); });
-                List<Entity> houses = entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); });
+                List<Entity> citizens = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); });
+                List<Entity> houses = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); });
 
                 // get all homes with vacanies
                 List<Entity> vacantHomes = new List<Entity>();
@@ -62,12 +62,12 @@ namespace IsoECS.Systems.GamePlay
             }
         }
 
-        public void Init(List<Entity> entities)
+        public void Init(EntityManager em)
         {
             _updateCountdown = _updateRate;
         }
 
-        public void Shutdown(List<Entity> entities)
+        public void Shutdown(EntityManager em)
         {
         }
     }

@@ -28,7 +28,7 @@ namespace IsoECS
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
-        List<Entity> entities;
+        EntityManager em;
         List<ISystem> systems;
         List<IRenderSystem> renderers;
 
@@ -82,7 +82,7 @@ namespace IsoECS
             };
             renderers.Add(renderSystem);
 
-            entities = new List<Entity>();
+            em = new EntityManager();
 
             // Load the scenario
             // TODO: put this in a method somewhere
@@ -102,7 +102,7 @@ namespace IsoECS
             {
                 Entity e = EntityLibrary.Instance.LoadEntity(o);
 
-                EntityHelper.ActivateEntity(entities, e);
+                EntityHelper.ActivateEntity(em.Entities, e);
             }
 
             // add some test entities to the map
@@ -116,7 +116,7 @@ namespace IsoECS
                     Y = Random.Next(GraphicsDevice.Viewport.Height)
                 });
 
-                EntityHelper.ActivateEntity(entities, test);
+                EntityHelper.ActivateEntity(em.Entities, test);
             }
 
             // TODO: create a settings file to read any key bindings from
@@ -128,7 +128,7 @@ namespace IsoECS
             inputControlEntity.Get<CameraController>().Down.AddRange(new List<Keys>() { Keys.S, Keys.Down });
             inputControlEntity.Get<CameraController>().Left.AddRange(new List<Keys>() { Keys.A, Keys.Left });
             inputControlEntity.Get<CameraController>().Right.AddRange(new List<Keys>() { Keys.D, Keys.Right });
-            entities.Add(inputControlEntity);
+            em.AddEntity(inputControlEntity);
 
             DrawableComponent diagDrawable = new DrawableComponent();
             diagDrawable.Drawables.Add(new DrawableText()
@@ -142,11 +142,11 @@ namespace IsoECS
             diagnosticEntity = new Entity();
             diagnosticEntity.AddComponent(new PositionComponent());
             diagnosticEntity.AddComponent(diagDrawable);
-            entities.Add(diagnosticEntity);
+            em.AddEntity(diagnosticEntity);
 
             // init the systems
             foreach (ISystem system in systems)
-                system.Init(entities);
+                system.Init(em);
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace IsoECS
             foreach (ISystem system in systems)
             {
                 diagnostics.RestartTiming(system.GetType().ToString());
-                system.Update(entities, gameTime.ElapsedGameTime.Milliseconds);
+                system.Update(em, gameTime.ElapsedGameTime.Milliseconds);
                 diagnostics.StopTiming(system.GetType().ToString());
             }
 
@@ -189,7 +189,7 @@ namespace IsoECS
             foreach (IRenderSystem render in renderers)
             {
                 diagnostics.RestartTiming(render.GetType().ToString());
-                render.Draw(entities, spriteBatch, spriteFont);
+                render.Draw(em, spriteBatch, spriteFont);
                 diagnostics.StopTiming(render.GetType().ToString());
             }
 

@@ -1,28 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IsoECS.Entities;
+﻿using System.Collections.Generic;
 using IsoECS.Components;
+using IsoECS.Entities;
 using Microsoft.Xna.Framework.Input;
 
 namespace IsoECS.Systems
 {
     public class InputSystem : ISystem
     {
-        public void Init(List<Entity> entities)
+        public void Init(EntityManager em)
         {
-
         }
 
-        public void Shutdown(List<Entity> entities)
+        public void Shutdown(EntityManager em)
         {
-
         }
 
-        public void Update(List<Entity> entities, int dt)
+        public void Update(EntityManager em, int dt)
         {
-            List<Entity> inputControls = entities.FindAll(delegate(Entity e) { return e.HasComponent<InputController>(); });
+            List<Entity> inputControls = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<InputController>(); });
 
             foreach (Entity e in inputControls)
             {

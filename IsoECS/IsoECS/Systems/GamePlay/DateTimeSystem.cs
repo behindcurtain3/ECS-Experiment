@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using IsoECS.Entities;
 using IsoECS.Components.GamePlay;
+using IsoECS.Entities;
 
 namespace IsoECS.Systems.GamePlay
 {
@@ -11,7 +11,7 @@ namespace IsoECS.Systems.GamePlay
         private int _updateRate = 50;
         private int _updateCountdown;
 
-        public void Update(List<Entity> entities, int dt)
+        public void Update(EntityManager em, int dt)
         {
             _updateCountdown -= dt;
 
@@ -19,7 +19,7 @@ namespace IsoECS.Systems.GamePlay
             {
                 _updateCountdown += _updateRate;
 
-                Entity dateEntity = entities.Find(delegate(Entity e) { return e.HasComponent<GameDateComponent>(); });
+                Entity dateEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<GameDateComponent>(); });
 
                 if (dateEntity != null)
                 {
@@ -29,14 +29,13 @@ namespace IsoECS.Systems.GamePlay
             }
         }
 
-        public void Init(List<Entity> entities)
+        public void Init(EntityManager em)
         {
             _updateCountdown = _updateRate;
         }
 
-        public void Shutdown(List<Entity> entities)
+        public void Shutdown(EntityManager em)
         {
-            throw new NotImplementedException();
         }
     }
 }

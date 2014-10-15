@@ -19,11 +19,11 @@ namespace IsoECS.Systems
         public Color ClearColor { get; set; }
         private List<DrawData> _allDrawables = new List<DrawData>();
 
-        public void Draw(List<Entity> entities, SpriteBatch spriteBatch, SpriteFont spriteFont)
+        public void Draw(EntityManager em, SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
             // Get the list of drawable text entities from the main list
-            List<Entity> drawables = entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
-            PositionComponent cameraPosition = entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
+            List<Entity> drawables = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
+            PositionComponent cameraPosition = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
 
             // Setup the scene
             Graphics.Clear(ClearColor);

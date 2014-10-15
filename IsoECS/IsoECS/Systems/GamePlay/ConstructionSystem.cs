@@ -23,13 +23,13 @@ namespace IsoECS.Systems.GamePlay
         private InputController _input;
         private FoundationPlannerComponent _foundationPlanner;
 
-        public void Init(List<Entity> entities)
+        public void Init(EntityManager em)
         {
-            _dataTracker = entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
+            _dataTracker = em.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
 
-            Entity inputEntity = entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
-            Entity cameraEntity = entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
-            Entity mapEntity = entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
+            Entity inputEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
+            Entity cameraEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
+            Entity mapEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
 
             _camera = cameraEntity.Get<PositionComponent>();
             _map = mapEntity.Get<IsometricMapComponent>();
@@ -51,14 +51,14 @@ namespace IsoECS.Systems.GamePlay
             }
         }
 
-        public void Shutdown(List<Entity> entities)
+        public void Shutdown(EntityManager em)
         {
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
             foreach(IGameDrawable sprite in drawable.Drawables)
                 sprite.Visible = false;
         }
 
-        public void Update(List<Entity> entities, int dt)
+        public void Update(EntityManager em, int dt)
         {
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
             PositionComponent drawablePosition = _dataTracker.Get<PositionComponent>();
@@ -137,7 +137,7 @@ namespace IsoECS.Systems.GamePlay
                     buildable.AddComponent(bPosition);
                 }
 
-                EntityHelper.ActivateEntity(entities, buildable);
+                EntityHelper.ActivateEntity(em.Entities, buildable);
 
             }
         }

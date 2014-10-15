@@ -25,20 +25,21 @@ namespace IsoECS.Systems
             ControlSystems.Add(typeof(CameraSystem), new CameraSystem());
         }
 
-        public void Init(List<Entity> entities)
+        public void Init(EntityManager em)
         {
             foreach (ISystem system in ControlSystems.Values)
-                system.Init(entities);
+                system.Init(em);
         }
 
-        public void Shutdown(List<Entity> entities)
+        public void Shutdown(EntityManager em)
         {
-
+            foreach (ISystem system in ControlSystems.Values)
+                system.Shutdown(em);
         }
 
-        public void Update(List<Entity> entities, int dt)
+        public void Update(EntityManager em, int dt)
         {
-            Entity input = entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
+            Entity input = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
             KeyboardState keyboard = input.Get<InputController>().CurrentKeyboard;
             KeyboardState prevKeyboard = input.Get<InputController>().PrevKeyboard;
 
@@ -51,13 +52,13 @@ namespace IsoECS.Systems
                     // either add or remove the system bound to the key
                     if (ControlSystems.ContainsKey(binding.Value))
                     {
-                        ControlSystems[binding.Value].Shutdown(entities);
+                        ControlSystems[binding.Value].Shutdown(em);
                         ControlSystems.Remove(binding.Value);
                     }
                     else
                     {
                         ISystem instance = (ISystem)Activator.CreateInstance(binding.Value);
-                        instance.Init(entities);
+                        instance.Init(em);
                         ControlSystems.Add(instance.GetType(), instance);
                     }
                 }
@@ -65,7 +66,7 @@ namespace IsoECS.Systems
 
             // Update the subsystems
             foreach (ISystem system in ControlSystems.Values)
-                system.Update(entities, dt);
+                system.Update(em, dt);
         }
     }
 }
