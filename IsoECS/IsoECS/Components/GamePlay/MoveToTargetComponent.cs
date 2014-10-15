@@ -7,6 +7,7 @@ namespace IsoECS.Components.GamePlay
     [Serializable]
     public class MoveToTargetComponent : Component
     {
+        public int TargetID { get; set; }
         public Point Target { get; set; }
         public Path PathToTarget { get; set; }
     }
