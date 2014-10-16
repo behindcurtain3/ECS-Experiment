@@ -19,32 +19,24 @@ namespace IsoECS.Behaviors
             {
                 HousingComponent house = housingEntity.Get<HousingComponent>();
 
-                if (house.Tennants.Count < house.MaxOccupants)
-                    vacantHomes.Add(housingEntity);
-            }
+                if (house.Tennants.Count >= house.MaxOccupants)
+                    continue;
 
-            if (vacantHomes.Count == 0)
-            {
-                // if there are no vacant homes,fail out of this behavior
-                Status = BehaviorStatus.FAILURE;
-                return;
-            }
-
-            // if they are attempt to find a living place
-            // TODO: check for appropriate level of housing (rich, middle class, poor)
-            foreach (Entity potentialHome in vacantHomes)
-            {
-                HousingComponent home = potentialHome.Get<HousingComponent>();
-
-                if (home.Rent <= citizen.Money && home.Tennants.Count < home.MaxOccupants)
+                // TODO: check for appropriate level of housing (rich, middle class, poor)
+                if (house.Rent <= citizen.Money)
                 {
-                    citizen.HousingID = (int)potentialHome.ID;
-                    home.Tennants.Add((int)self.ID);
+                    citizen.HousingID = (int)housingEntity.ID;
+                    house.Tennants.Add((int)self.ID);
+
+                    // TODO: enter sub behavior to move into the home (find a path there and then move there)
                     Status = BehaviorStatus.SUCCESS;
                     Console.WriteLine("Home found for citizen: " + String.Format("#{0}-{1}", self.ID, citizen.Name));
                     return;
-                }
+                }                
             }
+
+            // if no home was found enter failure state
+            Status = BehaviorStatus.FAILURE;
         }
     }
 }
