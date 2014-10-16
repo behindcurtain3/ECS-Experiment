@@ -137,8 +137,7 @@ namespace IsoECS.Systems.GamePlay
                     buildable.AddComponent(bPosition);
                 }
 
-                EntityHelper.ActivateEntity(em.Entities, buildable);
-
+                em.AddEntity(buildable);
             }
         }
     }

@@ -7,11 +7,11 @@ namespace IsoECS.Components.GamePlay
     {
         // holds the value of the collision at each map index (point)
         // -1 impassable
-        public Dictionary<Point, int> Collision { get; set; }
+        public Dictionary<Point, int> Map { get; set; }
 
         public CollisionMapComponent()
         {
-            Collision = new Dictionary<Point, int>();
+            Map = new Dictionary<Point, int>();
         }
 
     }

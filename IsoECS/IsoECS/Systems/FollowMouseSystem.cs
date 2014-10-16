@@ -79,7 +79,7 @@ namespace IsoECS.Systems
                             Point nextWaypoint = moveable.PathToTarget.Waypoints[0];
 
                             // if the next waypoint is blocked, clear the path
-                            if (collisionMap.Collision[nextWaypoint] == -1)
+                            if (collisionMap.Map[nextWaypoint] == -1)
                             {
                                 moveable.PathToTarget = null;
                             }

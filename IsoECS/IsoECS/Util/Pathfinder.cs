@@ -17,15 +17,15 @@ namespace IsoECS.Util
             _openList.Clear();
             _closedList.Clear();
 
-            if (!collisionMap.Collision.ContainsKey(end))
-                collisionMap.Collision.Add(end, 64);
-            if (!collisionMap.Collision.ContainsKey(start))
-                collisionMap.Collision.Add(start, 64);
+            if (!collisionMap.Map.ContainsKey(end))
+                collisionMap.Map.Add(end, 64);
+            if (!collisionMap.Map.ContainsKey(start))
+                collisionMap.Map.Add(start, 64);
 
-            if (start == end || collisionMap.Collision[end] == -1 || collisionMap.Collision[start] == -1)
+            if (start == end || collisionMap.Map[end] == -1 || collisionMap.Map[start] == -1)
                 return new Path();
 
-            _openList.Add(end, new PathWaypoint(end, collisionMap.Collision[end]));
+            _openList.Add(end, new PathWaypoint(end, collisionMap.Map[end]));
 
             while (_openList.Count > 0)
             {
@@ -65,16 +65,16 @@ namespace IsoECS.Util
                             continue;
 
                         Point p = new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y);
-                        if (!collisionMap.Collision.ContainsKey(p))
-                            collisionMap.Collision.Add(p, 64);
+                        if (!collisionMap.Map.ContainsKey(p))
+                            collisionMap.Map.Add(p, 64);
 
                         PathWaypoint waypoint = new PathWaypoint(
                                                             p,
-                                                            collisionMap.Collision[p],
+                                                            collisionMap.Map[p],
                                                             selectedNode
                                                             );
 
-                        if (collisionMap.Collision[waypoint.Location] != -1 && !_closedList.ContainsKey(waypoint.Location))
+                        if (collisionMap.Map[waypoint.Location] != -1 && !_closedList.ContainsKey(waypoint.Location))
                         {
                             if (_openList.ContainsKey(waypoint.Location))
                             {

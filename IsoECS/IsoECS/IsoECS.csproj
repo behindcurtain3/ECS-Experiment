@@ -173,7 +173,6 @@
     <Compile Include="Systems\ProductionSystem.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
     <Compile Include="Util\DiagnosticInfo.cs" />
-    <Compile Include="Util\EntityHelper.cs" />
     <Compile Include="Util\Isometric.cs" />
     <Compile Include="Util\MathHelper.cs" />
     <Compile Include="Util\Pathfinder.cs" />

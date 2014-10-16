@@ -42,7 +42,7 @@ namespace IsoECS.Systems.GamePlay
                     spawned.AddComponent(bPosition);
                 }
 
-                EntityHelper.ActivateEntity(em.Entities, spawned);
+                em.AddEntity(spawned);
             }
         }
 

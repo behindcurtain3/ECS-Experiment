@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using IsoECS.Entities;
+using IsoECS.Components.GamePlay;
 using Newtonsoft.Json.Linq;
 
 namespace IsoECS.GamePlay

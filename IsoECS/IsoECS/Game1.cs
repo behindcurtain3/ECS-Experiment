@@ -102,7 +102,7 @@ namespace IsoECS
             {
                 Entity e = EntityLibrary.Instance.LoadEntity(o);
 
-                EntityHelper.ActivateEntity(em.Entities, e);
+                em.AddEntity(e);
             }
 
             // add some test entities to the map
@@ -115,8 +115,7 @@ namespace IsoECS
                     X = Random.Next(GraphicsDevice.Viewport.Width),
                     Y = Random.Next(GraphicsDevice.Viewport.Height)
                 });
-
-                EntityHelper.ActivateEntity(em.Entities, test);
+                em.AddEntity(test);
             }
 
             // TODO: create a settings file to read any key bindings from
@@ -205,9 +204,9 @@ namespace IsoECS
                 for (int y = 0; y < map.TxHeight; y++)
                 {
                     if (map.Terrain[0, y, x] == (int)Tiles.Grass)
-                        collisions.Collision.Add(new Point(x, y), 64);
+                        collisions.Map.Add(new Point(x, y), 64);
                     else
-                        collisions.Collision.Add(new Point(x, y), -1);
+                        collisions.Map.Add(new Point(x, y), -1);
                 }
             }
 
