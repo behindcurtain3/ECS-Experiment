@@ -12,6 +12,7 @@ namespace IsoECS.DataStructures
 
         public bool Visible { get; set; }
         public Color Color { get; set; }
+        public float Alpha { get; set; }
         public float Rotation { get; set; }
         public SpriteEffects Effects { get; set; }
 
@@ -25,6 +26,7 @@ namespace IsoECS.DataStructures
             Color = Color.White;
             Static = false;
             Layer = 1;
+            Alpha = 1.0f;
         }
 
         public void Draw(GraphicsDevice graphics, SpriteBatch spriteBatch, SpriteFont font, float positionX, float positionY)
@@ -34,6 +36,14 @@ namespace IsoECS.DataStructures
             Rectangle source = Textures.Instance.GetSource(SpriteSheet, ID);
             Rectangle destination;
 
+            Color targetColor = new Color()
+            {
+                R = Color.R,
+                G = Color.G,
+                B = Color.B,
+                A = (byte)(Color.A * Alpha)
+            };
+
             if (Static)
                 destination = new Rectangle(0, 0, graphics.Viewport.Width, graphics.Viewport.Height);
             else
@@ -41,7 +51,7 @@ namespace IsoECS.DataStructures
 
             // TODO: needs to take into account the origin
             if (graphics.Viewport.Bounds.Contains(destination) || graphics.Viewport.Bounds.Intersects(destination))
-                spriteBatch.Draw(Textures.Instance.Get(SpriteSheet), destination, source, Color, Rotation, Textures.Instance.GetOrigin(SpriteSheet, ID), Effects, 0);
+                spriteBatch.Draw(Textures.Instance.Get(SpriteSheet), destination, source, targetColor, Rotation, Textures.Instance.GetOrigin(SpriteSheet, ID), Effects, 0);
         }
     }
 }

@@ -85,6 +85,9 @@ namespace IsoECS.Behaviors
                     self.Get<CitizenComponent>().HousingID = HousingID;
                     Status = BehaviorStatus.SUCCESS;
                     Console.WriteLine("Finished following a path: " + String.Format("#{0}-{1}", self.ID, Status));
+
+                    // Fadeout
+                    state.Push(new FadeOutBehavior());
                 }
                 else
                 {
@@ -100,6 +103,10 @@ namespace IsoECS.Behaviors
                     // reset the tracking house ID
                     HousingID = -1;
                 }
+            }
+            else
+            {
+                Status = finished.Status;
             }
         }
     }

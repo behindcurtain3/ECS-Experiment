@@ -27,7 +27,7 @@ namespace IsoECS.Systems
 
             // Setup the scene
             Graphics.Clear(ClearColor);
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 
             // TODO: render any background
             // TODO: this should be cached and only updated when drawbles are added, removed or changed

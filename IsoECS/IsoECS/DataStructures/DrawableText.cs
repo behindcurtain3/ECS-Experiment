@@ -15,6 +15,7 @@ namespace IsoECS.DataStructures
         public int Layer { get; set; }
         public string Text { get; set; }
         public Color Color { get; set; }
+        public float Alpha { get; set; }
 
         public DrawableText()
         {
@@ -22,11 +23,12 @@ namespace IsoECS.DataStructures
             Visible = true;
             Layer = 0;
             Static = true;
+            Alpha = 1.0f;
         }
 
         public void Draw(GraphicsDevice graphics, SpriteBatch spriteBatch, SpriteFont font, float cameraX, float cameraY)
         {
-            spriteBatch.DrawString(font, Text, new Vector2(cameraX, cameraY), Color);
+            spriteBatch.DrawString(font, Text, new Vector2(cameraX, cameraY), Color * Alpha);
         }
     }
 }
