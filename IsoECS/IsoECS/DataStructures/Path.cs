@@ -22,7 +22,7 @@ namespace IsoECS.DataStructures
             Waypoints = new List<Point>();
         }
 
-        public Path(PathWaypoint waypoint, Point start, Point end)
+        public Path(PathWaypoint waypoint, Point start, Point end, bool reversed = false)
         {
             Waypoints = new List<Point>();
 
@@ -35,6 +35,10 @@ namespace IsoECS.DataStructures
                 Waypoints.Add(p.Location);
                 p = p.Parent;
             }
+
+            // reverse the list
+            if (reversed)
+                Waypoints.Reverse();
         }
     }
 }

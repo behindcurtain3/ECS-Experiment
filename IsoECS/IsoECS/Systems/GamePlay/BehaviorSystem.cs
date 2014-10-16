@@ -33,7 +33,7 @@ namespace IsoECS.Systems.GamePlay
                 }
 
                 // check if the current behavior is still running
-                if (citizen.Behaviors.Peek().Status != BehaviorStatus.RUNNING)
+                while (citizen.Behaviors.Peek().Status != BehaviorStatus.RUNNING)
                 {
                     // if it isn't running pop it off the stack and report its status to the next behavior on the stack
                     Behavior completedBehavior = citizen.Behaviors.Pop();

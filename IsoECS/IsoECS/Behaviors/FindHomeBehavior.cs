@@ -29,7 +29,10 @@ namespace IsoECS.Behaviors
                     house.Tennants.Add((int)self.ID);
 
                     // TODO: enter sub behavior to move into the home (find a path there and then move there)
-                    Status = BehaviorStatus.SUCCESS;
+                    FindPathBehavior fpb = new FindPathBehavior();
+                    fpb.TargetID = housingEntity.ID;
+                    fpb.MoveToNearbyRoad = true;
+                    state.Push(fpb);
                     Console.WriteLine("Home found for citizen: " + String.Format("#{0}-{1}", self.ID, citizen.Name));
                     return;
                 }                
@@ -37,6 +40,35 @@ namespace IsoECS.Behaviors
 
             // if no home was found enter failure state
             Status = BehaviorStatus.FAILURE;
+        }
+
+        public override void OnSubFinished(EntityManager em, Entity self, Behavior finished, Stack<Behavior> state)
+        {
+            base.OnSubFinished(em, self, finished, state);
+
+            if (finished is FindPathBehavior)
+            {
+                FindPathBehavior fpb = (FindPathBehavior)finished;
+
+                if (fpb.GeneratedPath.Waypoints.Count > 0)
+                {
+                    FollowPathBehavior follow = new FollowPathBehavior();
+                    follow.PathToFollow = fpb.GeneratedPath;
+                    follow.Speed = 1.5f;
+                    state.Push(follow);
+                    Console.WriteLine("Path found to home for citizen: " + String.Format("#{0}", self.ID));
+                }
+                else
+                {
+                    Status = BehaviorStatus.FAILURE;
+                    Console.WriteLine("NO Path found to home for citizen: " + String.Format("#{0}", self.ID));
+                }
+            }
+            else if (finished is FollowPathBehavior)
+            {
+                Status = finished.Status;
+                Console.WriteLine("Finished finding a path: " + String.Format("#{0}-{1}", self.ID, Status));
+            }
         }
     }
 }

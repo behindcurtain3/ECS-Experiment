@@ -17,12 +17,12 @@ namespace IsoECS.Entities
         public static uint ID_COUNTER = 0;
 
         public string UniqueID { get; set; }
-        public uint ID { get; private set; }
+        public int ID { get; private set; }
         public Dictionary<Type, Component> Components { get; private set; }
 
         public Entity()
         {
-            ID = ++ID_COUNTER;
+            ID = (int)++ID_COUNTER;
             Components = new Dictionary<Type, Component>();
         }
 
@@ -75,7 +75,7 @@ namespace IsoECS.Entities
 
         private void ResetID()
         {
-            ID = ++ID_COUNTER;
+            ID = (int)++ID_COUNTER;
         }
     }
 }

@@ -112,6 +112,8 @@
   <ItemGroup>
     <Compile Include="Behaviors\DefaultBehavior.cs" />
     <Compile Include="Behaviors\FindHomeBehavior.cs" />
+    <Compile Include="Behaviors\FindPathBehavior.cs" />
+    <Compile Include="Behaviors\FollowPathBehavior.cs" />
     <Compile Include="Components\Controls\CameraController.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\DrawableComponent.cs" />
@@ -168,7 +170,6 @@
     <Compile Include="Systems\GamePlay\BehaviorSystem.cs" />
     <Compile Include="Systems\GamePlay\ConstructionSystem.cs" />
     <Compile Include="Systems\GamePlay\DateTimeSystem.cs" />
-    <Compile Include="Systems\GamePlay\FindHomesSystem.cs" />
     <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
     <Compile Include="Systems\GamePlay\MoveToLocationSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />

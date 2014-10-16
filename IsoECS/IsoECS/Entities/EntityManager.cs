@@ -12,10 +12,10 @@ namespace IsoECS.Entities
     public class EntityManager
     {
         public List<Entity> Entities { get; private set; }
-        private IsometricMapComponent Map { get; set; }
-        private RoadPlannerComponent Roads { get; set; }
-        private FoundationPlannerComponent Foundations { get; set; }
-        private CollisionMapComponent Collisions { get; set; }
+        public IsometricMapComponent Map { get; private set; }
+        public RoadPlannerComponent Roads { get; private set; }
+        public FoundationPlannerComponent Foundations { get; private set; }
+        public CollisionMapComponent Collisions { get; private set; }
 
         public EntityManager()
         {
