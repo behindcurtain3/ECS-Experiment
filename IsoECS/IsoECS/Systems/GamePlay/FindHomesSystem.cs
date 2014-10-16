@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using IsoECS.Components.GamePlay;
 using IsoECS.Entities;
+using IsoECS.Util;
+using IsoECS.Components;
 
 namespace IsoECS.Systems.GamePlay
 {
@@ -9,6 +11,20 @@ namespace IsoECS.Systems.GamePlay
     {
         private int _updateRate = 2500;
         private int _updateCountdown;
+
+        private CollisionMapComponent Collisions { get; set; }
+        private IsometricMapComponent Map { get; set; }
+
+        public void Init(EntityManager em)
+        {
+            Entity dataTracker = em.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
+            Collisions = dataTracker.Get<CollisionMapComponent>();
+
+            Entity mapEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
+            Map = mapEntity.Get<IsometricMapComponent>();
+
+            _updateCountdown = _updateRate;
+        }
 
         public void Update(EntityManager em, int dt)
         {
@@ -40,6 +56,7 @@ namespace IsoECS.Systems.GamePlay
                 foreach (Entity citizenEntity in citizens)
                 {
                     CitizenComponent citizen = citizenEntity.Get<CitizenComponent>();
+                    PositionComponent cPosition = citizenEntity.Get<PositionComponent>();
 
                     // check if the citizen is homeless
                     if (citizen.HousingID == -1)
@@ -54,17 +71,24 @@ namespace IsoECS.Systems.GamePlay
                             {
                                 citizen.HousingID = (int)potentialHome.ID;
                                 home.Tennants.Add((int)citizenEntity.ID);
+
+                                // move to their new home
+                                PositionComponent hPosition = potentialHome.Get<PositionComponent>();
+                                MoveToTargetComponent moveTo = new MoveToTargetComponent();
+                                moveTo.Speed = 1.5f;
+                                moveTo.PathToTarget = Pathfinder.Generate(Collisions, Map, cPosition.Index, hPosition.Index);
+                                moveTo.Target = hPosition.Index;
+
+                                if (moveTo.PathToTarget.Waypoints.Count == 0)
+                                    Console.WriteLine("Unable to find path to home for citizen.");
+
+                                citizenEntity.AddComponent(moveTo);
                                 break;
                             }
                         }
                     }
                 }
             }
-        }
-
-        public void Init(EntityManager em)
-        {
-            _updateCountdown = _updateRate;
         }
 
         public void Shutdown(EntityManager em)

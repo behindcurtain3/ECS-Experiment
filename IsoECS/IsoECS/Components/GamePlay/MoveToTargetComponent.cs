@@ -8,7 +8,9 @@ namespace IsoECS.Components.GamePlay
     public class MoveToTargetComponent : Component
     {
         public int TargetID { get; set; }
+
         public Point Target { get; set; }
         public Path PathToTarget { get; set; }
+        public float Speed { get; set; }
     }
 }

@@ -135,6 +135,7 @@
     <Compile Include="DataStructures\DrawableText.cs" />
     <Compile Include="DataStructures\EntityLibrary.cs" />
     <Compile Include="DataStructures\GameData.cs" />
+    <Compile Include="DataStructures\GamePlay\Brain.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeInput.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeOutput.cs" />
     <Compile Include="DataStructures\IGameDrawable.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="Systems\GamePlay\DateTimeSystem.cs" />
     <Compile Include="Systems\GamePlay\FindHomesSystem.cs" />
     <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
+    <Compile Include="Systems\GamePlay\MoveToLocationSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />
     <Compile Include="Systems\IRenderSystem.cs" />
     <Compile Include="Systems\IsometricMapSystem.cs" />

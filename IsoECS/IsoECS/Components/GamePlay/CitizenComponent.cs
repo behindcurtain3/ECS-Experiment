@@ -1,4 +1,6 @@
 ﻿using System;
+using IsoECS.DataStructures.GamePlay;
+using System.Collections.Generic;
 
 namespace IsoECS.Components.GamePlay
 {
@@ -16,11 +18,16 @@ namespace IsoECS.Components.GamePlay
         // ID of the entity this citizen lives at
         public int HousingID { get; set; }
 
+        // TODO: switch to a different component + use a behavior manager/brain
+        public Stack<Behavior> Behaviors { get; set; }
+
         public CitizenComponent()
         {
             FatherID = -1;
             MotherID = -1;
             HousingID = -1;
+
+            Behaviors = new Stack<Behavior>();
         }
     }
 }
