@@ -87,7 +87,7 @@ namespace IsoECS.Behaviors
                     Console.WriteLine("Finished following a path: " + String.Format("#{0}-{1}", self.ID, Status));
 
                     // Fadeout
-                    state.Push(new FadeOutBehavior());
+                    state.Push(new FadeBehavior() { FadeIn = false });
                 }
                 else
                 {

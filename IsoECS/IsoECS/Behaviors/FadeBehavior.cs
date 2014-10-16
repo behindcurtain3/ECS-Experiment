@@ -5,13 +5,15 @@ using IsoECS.Entities;
 
 namespace IsoECS.Behaviors
 {
-    public class FadeOutBehavior : Behavior
+    public class FadeBehavior : Behavior
     {
         public int FadeTime { get; set; }
         public int FadeCounter { get; set; }
+        public bool FadeIn { get; set; }
 
-        public FadeOutBehavior() : base()
+        public FadeBehavior() : base()
         {
+            FadeIn = true;
             FadeTime = 750;
             FadeCounter = FadeTime;
         }
@@ -19,6 +21,15 @@ namespace IsoECS.Behaviors
         public override void Init(EntityManager em, Entity self)
         {
             base.Init(em, self);
+
+            if (FadeIn)
+            {
+                DrawableComponent drawable = self.Get<DrawableComponent>();
+                foreach (IGameDrawable d in drawable.Drawables)
+                {
+                    d.Visible = true;
+                }
+            }
         }
 
         public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
@@ -29,14 +40,20 @@ namespace IsoECS.Behaviors
 
             foreach (IGameDrawable d in drawable.Drawables)
             {
-                d.Alpha = ((float)FadeCounter / (float)FadeTime);
+                if (FadeIn)
+                    d.Alpha = 1f - ((float)FadeCounter / (float)FadeTime);
+                else
+                    d.Alpha = ((float)FadeCounter / (float)FadeTime);
             }
 
             if (FadeCounter <= 0)
             {
-                foreach (IGameDrawable d in drawable.Drawables)
+                if (!FadeIn)
                 {
-                    d.Visible = false;
+                    foreach (IGameDrawable d in drawable.Drawables)
+                    {
+                        d.Visible = false;
+                    }
                 }
 
                 Status = BehaviorStatus.SUCCESS;
