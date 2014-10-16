@@ -104,6 +104,10 @@
 					]
 				},				
 				{
+					"Type": "PositionComponent",
+					"GenerateAt": "Edge"
+				},				
+				{
 					"Type": "SpawnerComponent",
 					"Spawns": [
 						"immigrant"
@@ -111,10 +115,6 @@
 				},
 				{
 					"Type": "RoadComponent"
-				},
-				{
-					"Type": "PositionComponent",
-					"GenerateAt": "Edge"
 				},
 				{
 					"Type": "FoundationComponent",

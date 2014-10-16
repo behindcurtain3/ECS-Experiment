@@ -64,7 +64,7 @@ namespace IsoECS.Entities
 
                         if (citizen.Money == 0)
                         {
-                            citizen.Money = (int)(Game1.Random.NextDouble() * 100);
+                            citizen.Money = Game1.Random.Next(20, 100);
                         }
                         break;
 

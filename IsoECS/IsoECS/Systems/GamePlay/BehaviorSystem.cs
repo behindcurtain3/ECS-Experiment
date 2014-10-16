@@ -26,11 +26,13 @@ namespace IsoECS.Systems.GamePlay
                 // TODO: add a "default" behavior if the citizen has none
                 if (citizen.Behaviors.Count == 0)
                 {
-                    DefaultBehavior db = new DefaultBehavior();
-                    db.Init(em, e);
-                    citizen.Behaviors.Push(db);
+                    citizen.Behaviors.Push(new DefaultBehavior());
                     continue;
                 }
+
+                // init if the behavior is starting
+                if (citizen.Behaviors.Peek().Status == BehaviorStatus.STARTING)
+                    citizen.Behaviors.Peek().Init(em, e);
 
                 // check if the current behavior is still running
                 while (citizen.Behaviors.Peek().Status != BehaviorStatus.RUNNING)
@@ -40,6 +42,10 @@ namespace IsoECS.Systems.GamePlay
 
                     // let the "higher" behavior know the sub behavior finished
                     citizen.Behaviors.Peek().OnSubFinished(em, e, completedBehavior, citizen.Behaviors);
+
+                    // after calling onsubfinished there might be a new behavior on top of the stack, make sure it is initialized
+                    if (citizen.Behaviors.Peek().Status == BehaviorStatus.STARTING)
+                        citizen.Behaviors.Peek().Init(em, e);
                 }
 
                 // update the current behavior

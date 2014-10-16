@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IsoECS.Entities;
-using IsoECS.DataStructures;
-using IsoECS.Components.GamePlay;
+﻿using System.Collections.Generic;
 using IsoECS.Components;
-using Microsoft.Xna.Framework;
+using IsoECS.DataStructures;
+using IsoECS.Entities;
 using IsoECS.Util;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.Behaviors
 {
@@ -32,9 +28,10 @@ namespace IsoECS.Behaviors
                 Vector2 arrivedAt = Isometric.MoveTowards(position.Position, Speed, targetPos);
                 position.X = arrivedAt.X;
                 position.Y = arrivedAt.Y;
-
+                
                 if (position.Position == targetPos)
                 {
+                    position.Index = PathToFollow.Waypoints[0];
                     PathToFollow.Waypoints.RemoveAt(0);
 
                     // check the next waypoint to ensure it is still valid

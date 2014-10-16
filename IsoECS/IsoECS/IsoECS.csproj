@@ -171,7 +171,6 @@
     <Compile Include="Systems\GamePlay\ConstructionSystem.cs" />
     <Compile Include="Systems\GamePlay\DateTimeSystem.cs" />
     <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
-    <Compile Include="Systems\GamePlay\MoveToLocationSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />
     <Compile Include="Systems\IRenderSystem.cs" />
     <Compile Include="Systems\IsometricMapSystem.cs" />

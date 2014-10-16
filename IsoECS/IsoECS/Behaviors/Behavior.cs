@@ -7,6 +7,7 @@ namespace IsoECS.Behaviors
     [Serializable]
     public enum BehaviorStatus
     {
+        STARTING,
         RUNNING,
         WAITING,
         SUCCESS,
@@ -17,6 +18,11 @@ namespace IsoECS.Behaviors
     public abstract class Behavior
     {
         public BehaviorStatus Status { get; set; }
+
+        public Behavior()
+        {
+            Status = BehaviorStatus.STARTING;
+        }
 
         public virtual void Init(EntityManager em, Entity self) 
         {

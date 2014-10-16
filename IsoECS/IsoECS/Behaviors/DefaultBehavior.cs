@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IsoECS.Entities;
+﻿using System.Collections.Generic;
 using IsoECS.Components.GamePlay;
+using IsoECS.Entities;
 
 namespace IsoECS.Behaviors
 {
@@ -18,7 +15,6 @@ namespace IsoECS.Behaviors
             if (citizen.HousingID == -1)
             {
                 FindHomeBehavior fhb = new FindHomeBehavior();
-                fhb.Init(em, self);
                 state.Push(fhb);
                 return;
             }

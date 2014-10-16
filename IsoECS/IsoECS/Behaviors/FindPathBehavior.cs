@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IsoECS.Entities;
 using IsoECS.Components;
+using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
+using IsoECS.Entities;
 using IsoECS.Util;
 using Microsoft.Xna.Framework;
-using IsoECS.Components.GamePlay;
 
 namespace IsoECS.Behaviors
 {
@@ -91,7 +89,7 @@ namespace IsoECS.Behaviors
                             if (!Isometric.ValidIndex(em.Map, p.X, p.Y))
                                 continue;
 
-                            if((!em.Foundations.SpaceTaken.ContainsKey(p) || !em.Foundations.SpaceTaken[p]) && !validLandings.Contains(p))
+                            if((!em.Collisions.Map.ContainsKey(p) || em.Collisions.Map[p] != -1) && !validLandings.Contains(p))
                                 validLandings.Add(p);
                         }
                     }
@@ -115,6 +113,7 @@ namespace IsoECS.Behaviors
                         return;
                     }
 
+                    Console.WriteLine("Path Generated for " + String.Format("#{0} - Length = {1}", self.ID, GeneratedPath.Waypoints.Count));
                     Status = BehaviorStatus.SUCCESS;
                 }
             }
