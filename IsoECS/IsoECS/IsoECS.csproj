@@ -111,7 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\DefaultBehavior.cs" />
-    <Compile Include="Behaviors\FadeOutBehavior.cs" />
+    <Compile Include="Behaviors\FadeBehavior.cs" />
     <Compile Include="Behaviors\FindHomeBehavior.cs" />
     <Compile Include="Behaviors\FindPathBehavior.cs" />
     <Compile Include="Behaviors\FollowPathBehavior.cs" />

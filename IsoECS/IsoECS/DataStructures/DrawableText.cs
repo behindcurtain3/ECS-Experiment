@@ -28,7 +28,15 @@ namespace IsoECS.DataStructures
 
         public void Draw(GraphicsDevice graphics, SpriteBatch spriteBatch, SpriteFont font, float cameraX, float cameraY)
         {
-            spriteBatch.DrawString(font, Text, new Vector2(cameraX, cameraY), Color * Alpha);
+            Color targetColor = new Color()
+            {
+                R = Color.R,
+                G = Color.G,
+                B = Color.B,
+                A = (byte)(Color.A * Alpha)
+            };
+
+            spriteBatch.DrawString(font, Text, new Vector2(cameraX, cameraY), targetColor);
         }
     }
 }
