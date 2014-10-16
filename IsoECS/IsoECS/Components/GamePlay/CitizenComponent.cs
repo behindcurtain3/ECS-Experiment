@@ -1,6 +1,6 @@
 ﻿using System;
-using IsoECS.DataStructures.GamePlay;
 using System.Collections.Generic;
+using IsoECS.Behaviors;
 
 namespace IsoECS.Components.GamePlay
 {

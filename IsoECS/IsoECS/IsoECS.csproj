@@ -110,6 +110,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\DefaultBehavior.cs" />
+    <Compile Include="Behaviors\FindHomeBehavior.cs" />
     <Compile Include="Components\Controls\CameraController.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\DrawableComponent.cs" />
@@ -135,7 +137,7 @@
     <Compile Include="DataStructures\DrawableText.cs" />
     <Compile Include="DataStructures\EntityLibrary.cs" />
     <Compile Include="DataStructures\GameData.cs" />
-    <Compile Include="DataStructures\GamePlay\Brain.cs" />
+    <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeInput.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeOutput.cs" />
     <Compile Include="DataStructures\IGameDrawable.cs" />
@@ -163,6 +165,7 @@
     <Compile Include="Systems\CameraSystem.cs" />
     <Compile Include="Systems\ControlSystem.cs" />
     <Compile Include="Systems\FollowMouseSystem.cs" />
+    <Compile Include="Systems\GamePlay\BehaviorSystem.cs" />
     <Compile Include="Systems\GamePlay\ConstructionSystem.cs" />
     <Compile Include="Systems\GamePlay\DateTimeSystem.cs" />
     <Compile Include="Systems\GamePlay\FindHomesSystem.cs" />

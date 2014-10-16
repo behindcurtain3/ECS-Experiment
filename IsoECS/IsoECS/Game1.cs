@@ -65,10 +65,9 @@ namespace IsoECS
             systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
             systems.Add(new ControlSystem());
             systems.Add(new DateTimeSystem());
-            systems.Add(new MoveToLocationSystem());
+            systems.Add(new BehaviorSystem());
             systems.Add(new ProductionSystem());
             systems.Add(new ImmigrationSystem());
-            systems.Add(new FindHomesSystem());
 
             renderers = new List<IRenderSystem>();
             renderers.Add(new IsometricMapSystem()
