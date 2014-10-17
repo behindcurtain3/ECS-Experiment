@@ -8,5 +8,11 @@ namespace IsoECS.Components.GamePlay
     {
         public string RoadType { get; set; }
         public Point BuiltAt { get; set; }
+        public bool Updateable { get; set; }
+
+        public RoadComponent()
+        {
+            Updateable = true;
+        }
     }
 }

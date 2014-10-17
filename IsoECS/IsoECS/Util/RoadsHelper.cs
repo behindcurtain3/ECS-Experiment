@@ -21,6 +21,7 @@ namespace IsoECS.Util
                 RoadComponent road = entity.Get<RoadComponent>();
                 DrawableComponent drawable = entity.Get<DrawableComponent>();
 
+                // TODO: handle the removal of entity somewhere else
                 if (!planner.Built.ContainsKey(road.BuiltAt))
                 {
                     // remove the entity
@@ -28,11 +29,13 @@ namespace IsoECS.Util
                 }
                 else
                 {
-                    road.RoadType = planner.Built[road.BuiltAt];
-                    foreach (DrawableSprite sprite in drawable.Drawables)
+                    if (road.Updateable)
                     {
-                        if(sprite is DrawableRoad && ((DrawableRoad)sprite).Updateable)
+                        road.RoadType = planner.Built[road.BuiltAt];
+                        foreach (DrawableSprite sprite in drawable.Drawables)
+                        {
                             sprite.ID = road.RoadType;
+                        }
                     }
                 }
             }

@@ -94,18 +94,16 @@
 			"Components": [
 				{
 					"Type": "DrawableComponent",
-					"Roads": [
+					"Sprites": [
+						{
+							"SpriteSheet": "spawner",
+							"ID": "northwest",
+						},
 						{
 							"SpriteSheet": "isometric_roads",
 							"ID": "four_way",
 							"Layer": 89,
 							"Updateable": false
-						}
-					],
-					"Sprites": [
-						{
-							"SpriteSheet": "spawner",
-							"ID": "northwest",
 						}
 					]
 				},				
@@ -120,7 +118,8 @@
 					]
 				},
 				{
-					"Type": "RoadComponent"
+					"Type": "RoadComponent",
+					"Updateable": false
 				},
 				{
 					"Type": "FoundationComponent",

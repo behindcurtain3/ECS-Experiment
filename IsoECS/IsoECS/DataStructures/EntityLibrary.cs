@@ -108,7 +108,6 @@ namespace IsoECS.DataStructures
                         // add any sprites to the drawable list
                         drawable.Drawables.AddRange(drawable.Sprites);
                         drawable.Drawables.AddRange(drawable.Texts);
-                        drawable.Drawables.AddRange(drawable.Roads);
 
                         c = drawable;
                         break;
