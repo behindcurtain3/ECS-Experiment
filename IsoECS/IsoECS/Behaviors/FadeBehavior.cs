@@ -33,7 +33,10 @@ namespace IsoECS.Behaviors
 
             foreach (IGameDrawable d in drawable.Drawables)
             {
-                FadeCounter = (int)(d.Alpha * FadeTime);
+                if(FadeIn)
+                    FadeCounter = FadeTime - (int)(d.Alpha * FadeTime);
+                else
+                    FadeCounter = (int)(d.Alpha * FadeTime);
                 break;
             }
         }
@@ -46,10 +49,13 @@ namespace IsoECS.Behaviors
 
             foreach (IGameDrawable d in drawable.Drawables)
             {
-                if (FadeIn)
-                    d.Alpha = 1f - ((float)FadeCounter / (float)FadeTime);
-                else
-                    d.Alpha = ((float)FadeCounter / (float)FadeTime);
+                if (d is DrawableSprite)
+                {
+                    if (FadeIn)
+                        d.Alpha = 1f - ((float)FadeCounter / (float)FadeTime);
+                    else
+                        d.Alpha = ((float)FadeCounter / (float)FadeTime);
+                }
             }
 
             if (FadeCounter <= 0)
@@ -58,7 +64,8 @@ namespace IsoECS.Behaviors
                 {
                     foreach (IGameDrawable d in drawable.Drawables)
                     {
-                        d.Visible = false;
+                        if(d is DrawableSprite)
+                            d.Visible = false;
                     }
                 }
 

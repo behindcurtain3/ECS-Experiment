@@ -10,6 +10,12 @@
 							"SpriteSheet": "isometric_person",
 							"ID": "male"
 						}
+					],
+					"Texts": [
+						{
+							"Text": "CitizenDebug",
+							"Static": false
+						}
 					]
 				},
 				{

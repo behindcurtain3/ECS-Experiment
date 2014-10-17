@@ -31,8 +31,16 @@ namespace IsoECS.Behaviors
             }
             else
             {
-                state.Push(new IdleBehavior());
-                PreviousBehavior = state.Peek();
+                if (citizen.JobID != -1 && PreviousBehavior.GetType() == typeof(IdleBehavior))
+                {
+                    state.Push(new GoToWorkBehavior());
+                    PreviousBehavior = state.Peek();
+                }
+                else
+                {
+                    state.Push(new IdleBehavior());
+                    PreviousBehavior = state.Peek();
+                }
             }
         }
     }

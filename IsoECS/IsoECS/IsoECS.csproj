@@ -116,6 +116,7 @@
     <Compile Include="Behaviors\FindJobBehavior.cs" />
     <Compile Include="Behaviors\FindPathBehavior.cs" />
     <Compile Include="Behaviors\FollowPathBehavior.cs" />
+    <Compile Include="Behaviors\GoToWorkBehavior.cs" />
     <Compile Include="Behaviors\IdleBehavior.cs" />
     <Compile Include="Components\Controls\CameraController.cs" />
     <Compile Include="Components\Component.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Systems\CameraSystem.cs" />
     <Compile Include="Systems\ControlSystem.cs" />
+    <Compile Include="Systems\DebugSystem.cs" />
     <Compile Include="Systems\FollowMouseSystem.cs" />
     <Compile Include="Systems\GamePlay\BehaviorSystem.cs" />
     <Compile Include="Systems\GamePlay\ConstructionSystem.cs" />

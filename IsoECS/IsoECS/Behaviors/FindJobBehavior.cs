@@ -6,7 +6,6 @@ namespace IsoECS.Behaviors
 {
     public class FindJobBehavior : Behavior
     {
-
         public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
         {
             List<Entity> potentialJobs = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<ProductionComponent>(); });
