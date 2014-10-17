@@ -113,7 +113,6 @@ namespace IsoECS.Behaviors
                         return;
                     }
 
-                    Console.WriteLine("Path Generated for " + String.Format("#{0} - Length = {1}", self.ID, GeneratedPath.Waypoints.Count));
                     Status = BehaviorStatus.SUCCESS;
                 }
             }

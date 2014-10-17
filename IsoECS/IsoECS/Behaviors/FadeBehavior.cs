@@ -27,6 +27,10 @@ namespace IsoECS.Behaviors
             {   
                 foreach (IGameDrawable d in drawable.Drawables)
                 {
+                    if (d is DrawableSprite)
+                        if (d.Alpha >= 1.0f)
+                            Status = BehaviorStatus.SUCCESS;
+
                     d.Visible = true;
                 }
             }

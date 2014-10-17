@@ -4,23 +4,16 @@ using IsoECS.Components.GamePlay;
 
 namespace IsoECS.Behaviors
 {
-    public class GoToWorkBehavior : Behavior
+    public class GoToBehavior : Behavior
     {
-        public int JobID { get; set; }
-
-        public override void Init(EntityManager em, Entity self)
-        {
-            base.Init(em, self);
-
-            JobID = self.Get<CitizenComponent>().JobID;
-        }
+        public int TargetID { get; set; }
 
         public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
         {
             FindPathBehavior fpb = new FindPathBehavior()
             {
                 MoveToNearbyRoad = true,
-                TargetID = JobID
+                TargetID = this.TargetID
             };
             state.Push(fpb);
         }

@@ -33,7 +33,7 @@ namespace IsoECS.Behaviors
             {
                 if (citizen.JobID != -1 && PreviousBehavior.GetType() == typeof(IdleBehavior))
                 {
-                    state.Push(new GoToWorkBehavior());
+                    state.Push(new GoToBehavior() { TargetID = citizen.JobID });
                     PreviousBehavior = state.Peek();
                 }
                 else
