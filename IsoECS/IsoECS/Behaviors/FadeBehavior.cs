@@ -22,13 +22,19 @@ namespace IsoECS.Behaviors
         {
             base.Init(em, self);
 
+            DrawableComponent drawable = self.Get<DrawableComponent>();
             if (FadeIn)
-            {
-                DrawableComponent drawable = self.Get<DrawableComponent>();
+            {   
                 foreach (IGameDrawable d in drawable.Drawables)
                 {
                     d.Visible = true;
                 }
+            }
+
+            foreach (IGameDrawable d in drawable.Drawables)
+            {
+                FadeCounter = (int)(d.Alpha * FadeTime);
+                break;
             }
         }
 
