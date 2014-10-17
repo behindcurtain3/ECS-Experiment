@@ -80,7 +80,7 @@
 					"GenerateAt": "Random"
 				},
 				{
-					"Type": "MoveToTargetComponent"
+					"Type": "CitizenComponent"
 				}
 			]
 		},

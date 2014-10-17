@@ -25,13 +25,8 @@
 			},
 			{
 				"Type": "ProductionComponent",
-				"Recipe": "alpha-wheat"
-			},
-			{
-				"Type": "HousingComponent",
-				"Category": "Rural",
-				"MaxOccupants": 6,
-				"Rent": 10
+				"Recipe": "alpha-wheat",
+				"MaxEmployees": 12
 			},
 			{
 				"Type": "FoundationComponent",
