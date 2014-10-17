@@ -5,6 +5,7 @@ using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using IsoECS.Entities;
+using IsoECS.Util;
 
 namespace IsoECS.Systems.GamePlay
 {
@@ -32,7 +33,8 @@ namespace IsoECS.Systems.GamePlay
 
                     string spawnID = spawner.Spawns[Game1.Random.Next(0, spawner.Spawns.Count)];
 
-                    Entity spawned = EntityLibrary.Instance.Get(spawnID).DeepCopy();
+                    Entity spawned = Serialization.DeepCopy<Entity>(EntityLibrary.Instance.Get(spawnID));
+                    spawned.ResetID();
 
                     if (spawned.HasComponent<PositionComponent>())
                     {

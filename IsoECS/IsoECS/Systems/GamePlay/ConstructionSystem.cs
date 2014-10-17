@@ -96,15 +96,12 @@ namespace IsoECS.Systems.GamePlay
             // pick out the tile index that the screen coords intersect
             Point index = Isometric.GetPointAtScreenCoords(_map, x, y);
 
-            // TODO: only update the drawable when first shown or the selection has changed
-            // translate the index into a screen position
+            // translate the index into a screen position and up the position component
             Vector2 dPositiion = Isometric.GetIsometricPosition(_map, 0, index.Y, index.X);
             drawablePosition.X = dPositiion.X;
             drawablePosition.Y = dPositiion.Y;
 
             bool spaceTaken = false;
-            //DrawableSprite sprite = (DrawableSprite)drawable.Get("Sprites")[0];
-
             foreach (LocationValue lv in foundation.Plan)
             {
                 if (_foundationPlanner.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
@@ -137,7 +134,8 @@ namespace IsoECS.Systems.GamePlay
                 if (spaceTaken)
                     return;
 
-                Entity buildable = selectedEntity.DeepCopy();
+                Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
+                buildable.ResetID();
 
                 if (buildable.HasComponent<PositionComponent>())
                 {
@@ -172,8 +170,11 @@ namespace IsoECS.Systems.GamePlay
 
             foreach (List<IGameDrawable> d in selectedDrawable.Drawables.Values)
             {
-                foreach(IGameDrawable gd in d)
-                    drawable.Add(gd.Layer, gd);
+                foreach (IGameDrawable gd in d)
+                {
+                    IGameDrawable nd = Serialization.DeepCopy<IGameDrawable>(gd);
+                    drawable.Add(nd.Layer, nd);
+                }
             }
         }
     }

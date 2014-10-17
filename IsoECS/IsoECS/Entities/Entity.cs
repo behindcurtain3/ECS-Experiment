@@ -61,19 +61,7 @@ namespace IsoECS.Entities
             return JsonConvert.SerializeObject(this);
         }
 
-        public Entity DeepCopy()
-        {
-            MemoryStream m = new MemoryStream();
-            BinaryFormatter b = new BinaryFormatter();
-            b.Serialize(m, this);
-            m.Position = 0;
-
-            Entity e = (Entity)b.Deserialize(m);
-            e.ResetID();
-            return e;
-        }
-
-        private void ResetID()
+        public void ResetID()
         {
             ID = (int)++ID_COUNTER;
         }

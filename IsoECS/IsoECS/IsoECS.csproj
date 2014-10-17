@@ -190,6 +190,7 @@
     <Compile Include="Util\MathHelper.cs" />
     <Compile Include="Util\Pathfinder.cs" />
     <Compile Include="Util\RoadsHelper.cs" />
+    <Compile Include="Util\Serialization.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
