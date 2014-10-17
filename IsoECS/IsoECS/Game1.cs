@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TomShane.Neoforce.Controls;
 
 namespace IsoECS
 {
@@ -62,7 +63,7 @@ namespace IsoECS
             Textures.Instance.Content = Content;
 
             systems = new List<ISystem>();
-            systems.Add(new InputSystem()); // input system should update before any other system that needs to read the input
+            systems.Add(new IsoECS.Systems.InputSystem()); // input system should update before any other system that needs to read the input
             systems.Add(new ControlSystem());
             systems.Add(new DateTimeSystem());
             systems.Add(new BehaviorSystem());
@@ -84,6 +85,11 @@ namespace IsoECS
             renderers.Add(renderSystem);
 
             em = new EntityManager();
+            em.UI = new Manager(this, "Default");
+            em.UI.AutoCreateRenderTarget = false;
+            em.UI.TargetFrames = 60;
+            em.UI.Initialize();
+            em.UI.RenderTarget = em.UI.CreateRenderTarget();
 
             // Load the scenario
             // TODO: put this in a method somewhere
@@ -135,7 +141,7 @@ namespace IsoECS
             {
                 Text = "",
                 Color = Color.White,
-                Visible = true,
+                Visible = false,
                 Layer = 0,
                 Static = true
             });
@@ -177,6 +183,9 @@ namespace IsoECS
 
             ((DrawableText)diagnosticEntity.Get<DrawableComponent>().Drawables[0]).Text = diagnostics.ShowTop(8, true);
 
+            // update the UI
+            em.UI.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -186,12 +195,16 @@ namespace IsoECS
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            em.UI.BeginDraw(gameTime);
+
             foreach (IRenderSystem render in renderers)
             {
                 diagnostics.RestartTiming(render.GetType().ToString());
                 render.Draw(em, spriteBatch, spriteFont);
                 diagnostics.StopTiming(render.GetType().ToString());
             }
+
+            em.UI.EndDraw();
 
             base.Draw(gameTime);
         }

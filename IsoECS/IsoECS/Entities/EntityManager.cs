@@ -6,12 +6,14 @@ using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using IsoECS.Util;
 using Microsoft.Xna.Framework;
+using TomShane.Neoforce.Controls;
 
 namespace IsoECS.Entities
 {
     public class EntityManager
     {
         public List<Entity> Entities { get; private set; }
+        public Manager UI { get; set; }
         public IsometricMapComponent Map { get; private set; }
         public RoadPlannerComponent Roads { get; private set; }
         public FoundationPlannerComponent Foundations { get; private set; }
@@ -34,7 +36,7 @@ namespace IsoECS.Entities
             Entities.Add(entity);
 
             // update the game data
-            foreach (Component c in entity.Components.Values.ToList())
+            foreach (IsoECS.Components.Component c in entity.Components.Values.ToList())
             {
                 switch (c.GetType().Name)
                 {
