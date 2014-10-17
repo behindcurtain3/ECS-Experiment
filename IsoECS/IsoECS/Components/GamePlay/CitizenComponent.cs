@@ -27,6 +27,9 @@ namespace IsoECS.Components.GamePlay
         // ID of the entity this citizen lives at
         public int HousingID { get; set; }
 
+        // ID of the entity this citizen works at
+        public int JobID { get; set; }
+
         // TODO: switch to a different component + use a behavior manager/brain
         public Stack<Behavior> Behaviors { get; set; }
 
@@ -35,6 +38,7 @@ namespace IsoECS.Components.GamePlay
             FatherID = -1;
             MotherID = -1;
             HousingID = -1;
+            JobID = -1;
             Gender = GamePlay.Gender.BOTH;
 
             Behaviors = new Stack<Behavior>();

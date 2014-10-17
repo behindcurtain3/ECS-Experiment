@@ -113,8 +113,10 @@
     <Compile Include="Behaviors\DefaultBehavior.cs" />
     <Compile Include="Behaviors\FadeBehavior.cs" />
     <Compile Include="Behaviors\FindHomeBehavior.cs" />
+    <Compile Include="Behaviors\FindJobBehavior.cs" />
     <Compile Include="Behaviors\FindPathBehavior.cs" />
     <Compile Include="Behaviors\FollowPathBehavior.cs" />
+    <Compile Include="Behaviors\IdleBehavior.cs" />
     <Compile Include="Components\Controls\CameraController.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\DrawableComponent.cs" />

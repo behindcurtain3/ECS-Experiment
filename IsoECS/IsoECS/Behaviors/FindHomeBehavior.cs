@@ -14,9 +14,6 @@ namespace IsoECS.Behaviors
             List<Entity> houses = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); });
             CitizenComponent citizen = self.Get<CitizenComponent>();
 
-            // get all homes with vacanies
-            List<Entity> vacantHomes = new List<Entity>();
-
             foreach (Entity housingEntity in houses)
             {
                 HousingComponent house = housingEntity.Get<HousingComponent>();
