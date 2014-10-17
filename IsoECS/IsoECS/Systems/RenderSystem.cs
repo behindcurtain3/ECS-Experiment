@@ -17,7 +17,10 @@ namespace IsoECS.Systems
     {
         public GraphicsDevice Graphics { get; set; }
         public Color ClearColor { get; set; }
-        private List<DrawData> _allDrawables = new List<DrawData>();
+        private List<DrawData> _background = new List<DrawData>();
+        private List<DrawData> _foundation = new List<DrawData>();
+        private List<DrawData> _foreground = new List<DrawData>();
+        private List<DrawData> _text = new List<DrawData>();
 
         public void Draw(EntityManager em, SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
@@ -31,46 +34,78 @@ namespace IsoECS.Systems
 
             // TODO: render any background
             // TODO: this should be cached and only updated when drawbles are added, removed or changed
-            _allDrawables.Clear();
-            DrawData dd;
+            _background.Clear();
+            _foundation.Clear();
+            _foreground.Clear();
+            _text.Clear();
+            
+            // TODO: separate the drawables out into their layers?
+            // Draw order (back to front):
+            // 1. Background
+            // 2. Foundation
+            // 3. Foreground
+            // 4. Text
             foreach (Entity e in drawables)
-            {
-                foreach (IGameDrawable d in e.Get<DrawableComponent>().Drawables)
-                {
-                    dd = new DrawData();
-                    dd.Position = e.Get<PositionComponent>();
-                    dd.Drawable = d;
-                    _allDrawables.Add(dd);
-                }
+            {   
+                AddToDrawables(_background, e.Get<DrawableComponent>().Get("Background"), e);
+                AddToDrawables(_foundation, e.Get<DrawableComponent>().Get("Foundation"), e);
+                AddToDrawables(_foreground, e.Get<DrawableComponent>().Get("Foreground"), e);
+                AddToDrawables(_text, e.Get<DrawableComponent>().Get("Text"), e);
             }
 
             // roughly good enough for now
-            _allDrawables.Sort(delegate(DrawData a, DrawData b)
-            {
-                // sort by Y position
-                if (b.Drawable.Layer == a.Drawable.Layer)
-                {
-                    return a.Position.Y.CompareTo(b.Position.Y);
-                }
-                else
-                {
-                    return b.Drawable.Layer.CompareTo(a.Drawable.Layer);
-                }
-            });
-            
-            foreach (DrawData d in _allDrawables)
-            {
-                // if the drawable is not visible continue
-                if (!d.Drawable.Visible) continue;
+            _background.Sort(SortDrawables);
+            _foundation.Sort(SortDrawables);
+            _foreground.Sort(SortDrawables);
+            _text.Sort(SortDrawables);
 
-                if(d.Drawable.Static)
-                    d.Drawable.Draw(Graphics, spriteBatch, spriteFont, (int)d.Position.X, (int)d.Position.Y);
-                else
-                    d.Drawable.Draw(Graphics, spriteBatch, spriteFont, (int)(d.Position.X - cameraPosition.X), (int)(d.Position.Y - cameraPosition.Y));
+            foreach (DrawData d in _background)
+            {
+                Draw(spriteBatch, spriteFont, d, cameraPosition);
+            }
+            foreach (DrawData d in _foundation)
+            {
+                Draw(spriteBatch, spriteFont, d, cameraPosition);
+            }
+            foreach (DrawData d in _foreground)
+            {
+                Draw(spriteBatch, spriteFont, d, cameraPosition);
+            }
+            foreach (DrawData d in _text)
+            {
+                Draw(spriteBatch, spriteFont, d, cameraPosition);
             }
 
             // end the scene
             spriteBatch.End();
+        }
+
+        private void AddToDrawables(List<DrawData> addTo, List<IGameDrawable> list, Entity e)
+        {
+            DrawData dd;
+            foreach (IGameDrawable d in list)
+            {
+                dd = new DrawData();
+                dd.Position = e.Get<PositionComponent>();
+                dd.Drawable = d;
+                addTo.Add(dd);
+            }
+        }
+
+        private void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont, DrawData dd, PositionComponent cameraPosition)
+        {
+            // if the drawable is not visible continue
+            if (!dd.Drawable.Visible) return;
+
+            if (dd.Drawable.Static)
+                dd.Drawable.Draw(Graphics, spriteBatch, spriteFont, (int)dd.Position.X, (int)dd.Position.Y);
+            else
+                dd.Drawable.Draw(Graphics, spriteBatch, spriteFont, (int)(dd.Position.X - cameraPosition.X), (int)(dd.Position.Y - cameraPosition.Y));
+        }
+
+        private int SortDrawables(DrawData a, DrawData b)
+        {
+            return a.Position.Y.CompareTo(b.Position.Y);
         }
     }
 }

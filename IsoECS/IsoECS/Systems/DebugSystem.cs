@@ -21,7 +21,7 @@ namespace IsoECS.Systems
                 DrawableComponent drawable = e.Get<DrawableComponent>();
                 CitizenComponent citizen = e.Get<CitizenComponent>();
 
-                foreach (IGameDrawable d in drawable.Drawables)
+                foreach (IGameDrawable d in drawable.Get("Text"))
                 {
                     if (d is DrawableText)
                     {

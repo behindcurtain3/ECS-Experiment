@@ -10,9 +10,9 @@ namespace IsoECS.DataStructures
     [Serializable]
     public class DrawableText : IGameDrawable
     {
+        public string Layer { get; set; }
         public bool Visible { get; set; }
         public bool Static { get; set; }
-        public int Layer { get; set; }
         public string Text { get; set; }
         public Color Color { get; set; }
         public float Alpha { get; set; }
@@ -21,7 +21,6 @@ namespace IsoECS.DataStructures
         {
             Color = Color.White;
             Visible = true;
-            Layer = 0;
             Static = true;
             Alpha = 1.0f;
         }

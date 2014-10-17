@@ -13,13 +13,18 @@
 			},
 			{
 				"Type": "DrawableComponent",
-				"Sprites": [
+				"Drawables": [
 					{
-						"SpriteSheet": "small-insula",
-						"ID": "default",
-						"Visible": true,
-						"Color": "255, 255, 255, 255",
-						"Layer": 11
+						"Type": "Sprite",
+						"Sprites": [
+							{
+								"Layer": "Foreground",
+								"SpriteSheet": "small-insula",
+								"ID": "default",
+								"Visible": true,
+								"Color": "255, 255, 255, 255",
+							}
+						]
 					}
 				]
 			},

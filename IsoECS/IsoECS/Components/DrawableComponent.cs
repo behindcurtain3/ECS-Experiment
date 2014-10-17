@@ -9,16 +9,29 @@ namespace IsoECS.Components
     [Serializable]
     public class DrawableComponent : Component
     {
-        public List<IGameDrawable> Drawables { get; set; }
-
-        public List<DrawableSprite> Sprites { get; set; }
-        public List<DrawableText> Texts { get; set; }
+        // Stores all drawables
+        // the string is a reference to the layer the drawables belong on
+        public Dictionary<string, List<IGameDrawable>> Drawables { get; set; }
 
         public DrawableComponent()
         {
-            Drawables = new List<IGameDrawable>();
-            Sprites = new List<DrawableSprite>();
-            Texts = new List<DrawableText>();
+            Drawables = new Dictionary<string, List<IGameDrawable>>();
+        }
+
+        public void Add(string layer, IGameDrawable drawable)
+        {
+            if (!Drawables.ContainsKey(layer))
+                Drawables.Add(layer, new List<IGameDrawable>());
+
+            Drawables[layer].Add(drawable);
+        }
+
+        public List<IGameDrawable> Get(string layer)
+        {
+            if (!Drawables.ContainsKey(layer))
+                Drawables.Add(layer, new List<IGameDrawable>());
+
+            return Drawables[layer];
         }
     }
 }

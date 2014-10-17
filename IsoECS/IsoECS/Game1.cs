@@ -137,12 +137,12 @@ namespace IsoECS
             em.AddEntity(inputControlEntity);
 
             DrawableComponent diagDrawable = new DrawableComponent();
-            diagDrawable.Drawables.Add(new DrawableText()
+            diagDrawable.Add("Text", new DrawableText()
             {
                 Text = "",
                 Color = Color.White,
-                Visible = false,
-                Layer = 0,
+                Visible = true,
+                Layer = "Text",
                 Static = true
             });
             diagnosticEntity = new Entity();
@@ -181,7 +181,7 @@ namespace IsoECS
                 diagnostics.StopTiming(system.GetType().ToString());
             }
 
-            ((DrawableText)diagnosticEntity.Get<DrawableComponent>().Drawables[0]).Text = diagnostics.ShowTop(8, true);
+            ((DrawableText)diagnosticEntity.Get<DrawableComponent>().Drawables["Text"][0]).Text = diagnostics.ShowTop(8, true);
 
             // update the UI
             em.UI.Update(gameTime);

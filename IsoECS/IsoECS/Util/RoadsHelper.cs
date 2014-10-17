@@ -32,9 +32,9 @@ namespace IsoECS.Util
                     if (road.Updateable)
                     {
                         road.RoadType = planner.Built[road.BuiltAt];
-                        foreach (DrawableSprite sprite in drawable.Drawables)
+                        foreach (IGameDrawable sprite in drawable.Drawables["Foundation"])
                         {
-                            sprite.ID = road.RoadType;
+                            ((DrawableSprite)sprite).ID = road.RoadType;
                         }
                     }
                 }

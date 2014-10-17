@@ -10,6 +10,7 @@ namespace IsoECS.DataStructures
         public string SpriteSheet { get; set; }
         public string ID { get; set; }
 
+        public string Layer { get; set; }
         public bool Visible { get; set; }
         public Color Color { get; set; }
         public float Alpha { get; set; }
@@ -18,14 +19,12 @@ namespace IsoECS.DataStructures
 
         // does this move when the camera moves?
         public bool Static { get; set; }
-        public int Layer { get; set; }
 
         public DrawableSprite()
         {
             Visible = true;
             Color = Color.White;
             Static = false;
-            Layer = 1;
             Alpha = 1.0f;
         }
 

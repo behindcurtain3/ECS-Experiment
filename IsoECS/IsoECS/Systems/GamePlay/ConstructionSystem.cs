@@ -49,13 +49,24 @@ namespace IsoECS.Systems.GamePlay
 
                 _db[bc.Category].Add(e);
             }
+
+            SelectEntity();
         }
 
         public void Shutdown(EntityManager em)
         {
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
-            foreach(IGameDrawable sprite in drawable.Drawables)
-                sprite.Visible = false;
+            
+            foreach (List<IGameDrawable> d in drawable.Drawables.Values)
+            {
+                foreach (IGameDrawable gd in d)
+                {
+                    gd.Alpha = 1.0f;
+                    gd.Visible = true;
+                }
+            }
+
+            drawable.Drawables.Clear();
         }
 
         public void Update(EntityManager em, int dt)
@@ -70,6 +81,8 @@ namespace IsoECS.Systems.GamePlay
 
                 if (_selection >= _db[categories[_category]].Count)
                     _selection = 0;
+
+                SelectEntity();
             }
 
             Entity selectedEntity = _db[categories[_category]][_selection];
@@ -90,7 +103,7 @@ namespace IsoECS.Systems.GamePlay
             drawablePosition.Y = dPositiion.Y;
 
             bool spaceTaken = false;
-            DrawableSprite sprite = (DrawableSprite)drawable.Drawables[0];
+            //DrawableSprite sprite = (DrawableSprite)drawable.Get("Sprites")[0];
 
             foreach (LocationValue lv in foundation.Plan)
             {
@@ -100,20 +113,24 @@ namespace IsoECS.Systems.GamePlay
                     break;
                 }
             }
+
+            bool visible = Isometric.ValidIndex(_map, index.X, index.Y);
+
+            foreach (List<IGameDrawable> d in drawable.Drawables.Values)
+            {
+                foreach (IGameDrawable gd in d)
+                    gd.Visible = visible;
+            }
+
+            foreach (List<IGameDrawable> d in drawable.Drawables.Values)
+            {
+                foreach (IGameDrawable gd in d)
+                    gd.Alpha = (spaceTaken) ? 0.5f : 0.85f;
+            }
             
-            if (!spaceTaken)
-                sprite.Color = new Color(sprite.Color.R, sprite.Color.G, sprite.Color.B, 228);
-            else
-                sprite.Color = new Color(128, 128, 128, 128);
-
-            sprite.SpriteSheet = selectedBuildable.ConstructSpriteSheetName;
-            sprite.ID = selectedBuildable.ConstructSourceID;
-            sprite.Visible = Isometric.ValidIndex(_map, index.X, index.Y);
-            //sprite.Layer = 1;
-
-            if (!sprite.Visible)
+            if (!visible)
                 return;
-
+            
             if (_input.CurrentMouse.LeftButton == ButtonState.Pressed && (selectedBuildable.DragBuildEnabled || _input.PrevMouse.LeftButton != ButtonState.Pressed))
             {
                 // don't build over a spot that is already taken
@@ -138,6 +155,25 @@ namespace IsoECS.Systems.GamePlay
                 }
 
                 em.AddEntity(buildable);
+            }
+        }
+
+        // called when the selected entity changes
+        private void SelectEntity()
+        {
+            List<string> categories = new List<string>(_db.Keys);
+            DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
+            Entity selectedEntity = _db[categories[_category]][_selection];
+            BuildableComponent selectedBuildable = selectedEntity.Get<BuildableComponent>();
+            DrawableComponent selectedDrawable = selectedEntity.Get<DrawableComponent>();
+            FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
+
+            drawable.Drawables.Clear();
+
+            foreach (List<IGameDrawable> d in selectedDrawable.Drawables.Values)
+            {
+                foreach(IGameDrawable gd in d)
+                    drawable.Add(gd.Layer, gd);
             }
         }
     }
