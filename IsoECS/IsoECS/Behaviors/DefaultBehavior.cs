@@ -18,6 +18,9 @@ namespace IsoECS.Behaviors
             // look for a secondary behavior to do
             CitizenComponent citizen = self.Get<CitizenComponent>();
 
+            // TODO: need to implement "archetype" behaviors like: child, student, adult, retired etc
+            // these top-level behaviors will manage the needs and invoke appropriate sub-behaviors
+
             // the citizen is homeless, find them a home!
             if (citizen.HousingID == -1 && PreviousBehavior.GetType() != typeof(FindHomeBehavior))
             {

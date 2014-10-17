@@ -87,6 +87,11 @@ namespace IsoECS.DataStructures
                         c = citizen;
                         break;
 
+                    case "CityInformationComponent":
+                        CityInformationComponent city = JsonConvert.DeserializeObject<CityInformationComponent>(o.ToString());
+                        c = city;
+                        break;
+
                     case "CollisionComponent":
                         CollisionComponent collision = JsonConvert.DeserializeObject<CollisionComponent>(o.ToString());
                         c = collision;
