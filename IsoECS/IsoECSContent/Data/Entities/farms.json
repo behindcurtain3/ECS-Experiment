@@ -26,7 +26,8 @@
 			{
 				"Type": "ProductionComponent",
 				"Recipe": "alpha-wheat",
-				"MaxEmployees": 12
+				"MaxEmployees": 12,
+				"EmployeeGender": "MALE"
 			},
 			{
 				"Type": "FoundationComponent",

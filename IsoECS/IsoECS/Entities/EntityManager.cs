@@ -56,6 +56,11 @@ namespace IsoECS.Entities
                             citizen.FamilyName = names[Game1.Random.Next(0, names.Length)];
                         }
 
+                        if (citizen.Gender == Gender.BOTH)
+                        {
+                            citizen.Gender = (Gender)Game1.Random.Next(1, 3);
+                        }
+
                         if (citizen.Age == 0)
                         {
                             // generate age

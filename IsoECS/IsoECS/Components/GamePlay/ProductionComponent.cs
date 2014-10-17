@@ -11,10 +11,12 @@ namespace IsoECS.Components.GamePlay
 
         public List<int> Employees { get; set; }
         public int MaxEmployees { get; set; }
+        public Gender EmployeeGender { get; set; }
 
         public ProductionComponent()
         {
             Employees = new List<int>();
+            EmployeeGender = Gender.BOTH;
         }
     }
 }
