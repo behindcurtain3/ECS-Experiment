@@ -4,7 +4,7 @@
 		"Components": [
 			{
 				"Type": "BuildableComponent",
-				"Category": "Transportation",
+				"Category": "Farming",
 				"Name": "Wheat Farm",
 				"Description": "A countryside farm that produces wheat.",
 				"ConstructSpriteSheetName": "misc",

@@ -6,13 +6,16 @@ using IsoECS.Entities;
 using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using TomShane.Neoforce.Controls;
 
 namespace IsoECS.Systems.GamePlay
 {
     public class ConstructionSystem : ISystem
     {
-        private int _category = 0;
-        private int _selection = 0;
+        public List<Keys> HotKeys { get; set; }
+
+        private string _category;
+        private int _selection = -1;
 
         private Dictionary<string, List<Entity>> _db;
 
@@ -23,8 +26,13 @@ namespace IsoECS.Systems.GamePlay
         private InputController _input;
         private FoundationPlannerComponent _foundationPlanner;
 
+        private List<Button> _buttons = new List<Button>();
+        private Manager _mgr;
+
         public void Init(EntityManager em)
         {
+            HotKeys = new List<Keys>() { Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
+            _mgr = em.UI;
             _dataTracker = em.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
 
             Entity inputEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
@@ -50,7 +58,7 @@ namespace IsoECS.Systems.GamePlay
                 _db[bc.Category].Add(e);
             }
 
-            SelectEntity();
+            CreateCategoryButtons();
         }
 
         public void Shutdown(EntityManager em)
@@ -67,10 +75,51 @@ namespace IsoECS.Systems.GamePlay
             }
 
             drawable.Drawables.Clear();
+            ClearButtons();
         }
 
         public void Update(EntityManager em, int dt)
         {
+            // a category has not been chosen
+            if(string.IsNullOrWhiteSpace(_category))
+            {
+                // listen for hotkeys
+                for (int i = 0; i < _buttons.Count; i++)
+                {
+                    if (_input.CurrentKeyboard.IsKeyDown(HotKeys[i]) && !_input.PrevKeyboard.IsKeyDown(HotKeys[i]))
+                    {
+                        DisplayCategory((string)_buttons[i].Tag);
+                        break;
+                    }
+                }
+            }
+            // a category has been chosen but no selection
+            else
+            {
+                // listen for hotkeys
+                if (_input.CurrentKeyboard.IsKeyDown(Keys.Escape) && !_input.PrevKeyboard.IsKeyDown(Keys.Escape))
+                {
+                    _category = null;
+                    _selection = -1;
+                    DeselectEntity();
+                    ClearButtons();
+                    CreateCategoryButtons();
+                    return;
+                }
+                for (int i = 0; i < _buttons.Count; i++)
+                {
+                    if (_input.CurrentKeyboard.IsKeyDown(HotKeys[i]) && !_input.PrevKeyboard.IsKeyDown(HotKeys[i]))
+                    {
+                        _selection = (int)_buttons[i].Tag;
+                        SelectEntity();
+                        break;
+                    }
+                }
+            }
+
+            if(string.IsNullOrWhiteSpace(_category) || _selection == -1)
+                return;
+
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
             PositionComponent drawablePosition = _dataTracker.Get<PositionComponent>();
 
@@ -79,13 +128,13 @@ namespace IsoECS.Systems.GamePlay
             {
                 _selection++;
 
-                if (_selection >= _db[categories[_category]].Count)
+                if (_selection >= _db[_category].Count)
                     _selection = 0;
 
                 SelectEntity();
             }
 
-            Entity selectedEntity = _db[categories[_category]][_selection];
+            Entity selectedEntity = _db[_category][_selection];
             BuildableComponent selectedBuildable = selectedEntity.Get<BuildableComponent>();
             FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
             
@@ -161,7 +210,7 @@ namespace IsoECS.Systems.GamePlay
         {
             List<string> categories = new List<string>(_db.Keys);
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
-            Entity selectedEntity = _db[categories[_category]][_selection];
+            Entity selectedEntity = _db[_category][_selection];
             BuildableComponent selectedBuildable = selectedEntity.Get<BuildableComponent>();
             DrawableComponent selectedDrawable = selectedEntity.Get<DrawableComponent>();
             FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
@@ -176,6 +225,102 @@ namespace IsoECS.Systems.GamePlay
                     drawable.Add(kvp.Key, nd);
                 }
             }
+        }
+
+        private void DeselectEntity()
+        {
+            DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
+
+            drawable.Drawables.Clear();
+        }
+
+        private void ClearButtons()
+        {
+            foreach (Button btn in _buttons)
+                _mgr.Remove(btn);
+
+            _buttons.Clear();
+        }
+
+        private void CreateCategoryButtons()
+        {
+            Button btn;
+            foreach (string category in _db.Keys)
+            {
+                btn = CreateButton(category);
+                btn.Click += new EventHandler(CategoryBtn_Click);
+                btn.Tag = category;
+
+                _mgr.Add(btn);
+                _buttons.Add(btn);
+            }
+
+            PositionButtons();
+        }
+
+        private void CreateButtonsForCategory(string category)
+        {
+            List<Entity> entities = _db[category];
+            Button btn;
+
+            foreach (Entity e in entities)
+            {
+                BuildableComponent buildable = e.Get<BuildableComponent>();
+
+                btn = CreateButton(buildable.Name);
+                btn.Click += new EventHandler(Selection_Click);
+                btn.Tag = _buttons.Count;
+
+                _mgr.Add(btn);
+                _buttons.Add(btn);
+            }
+
+            PositionButtons();
+        }
+
+        private Button CreateButton(string text)
+        {
+            Button btn = new Button(_mgr)
+            {
+                Text = string.Format("{0}. {1}", (_buttons.Count + 1), text),
+                Width = 125,
+                Height = 16,
+                Left = 5
+            };
+
+            return btn;
+        }
+
+        private void PositionButtons()
+        {
+            // TODO: height should be the graphics device viewport height
+            int height = 400;
+
+            for (int i = 0; i < _buttons.Count; i++)
+            {
+                _buttons[i].Top = height - ((_buttons.Count - i) * _buttons[i].Height) + (i * 3);
+            }
+        }
+
+        private void CategoryBtn_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            string category = (string)btn.Tag;
+            DisplayCategory(category);
+        }
+
+        private void Selection_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            _selection = (int)btn.Tag;
+            SelectEntity();
+        }
+
+        private void DisplayCategory(string category)
+        {
+            ClearButtons();
+            CreateButtonsForCategory(category);
+            _category = category;
         }
     }
 }

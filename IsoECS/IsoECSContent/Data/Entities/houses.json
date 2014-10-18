@@ -4,7 +4,7 @@
 		"Components": [
 			{
 				"Type": "BuildableComponent",
-				"Category": "Transportation",
+				"Category": "Residential",
 				"Name": "Small Insula",
 				"Description": "Small Apartment",
 				"ConstructSpriteSheetName": "small-insula",
