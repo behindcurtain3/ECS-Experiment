@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
@@ -51,7 +50,6 @@ namespace IsoECS.Systems.GamePlay
                     }
 
                     em.AddEntity(spawned);
-                    Console.WriteLine(string.Format("Citizen #{0} has immigrated.", spawned.ID));
                 }
             }
         }

@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace IsoECS.DataStructures
 {

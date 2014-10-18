@@ -22,7 +22,8 @@
 								{
 									"Layer": "Text",
 									"Text": "CitizenDebug",
-									"Static": false
+									"Static": false,
+									"Visible": false
 								}
 							]
 						}

@@ -18,6 +18,7 @@ namespace IsoECS.Entities
         public RoadPlannerComponent Roads { get; private set; }
         public FoundationPlannerComponent Foundations { get; private set; }
         public CollisionMapComponent Collisions { get; private set; }
+        public CityInformationComponent CityInformation { get; private set; }
 
         public EntityManager()
         {
@@ -73,6 +74,10 @@ namespace IsoECS.Entities
                         {
                             citizen.Money = Game1.Random.Next(20, 100);
                         }
+                        break;
+
+                    case "CityInformationComponent":
+                        CityInformation = (CityInformationComponent)c;
                         break;
 
                     case "CollisionComponent":

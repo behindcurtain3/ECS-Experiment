@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace IsoECS.Util
@@ -16,8 +12,7 @@ namespace IsoECS.Util
             b.Serialize(m, obj);
             m.Position = 0;
 
-            T nobj = (T)b.Deserialize(m);
-            return nobj;
+            return (T)b.Deserialize(m);
         }
     }
 }

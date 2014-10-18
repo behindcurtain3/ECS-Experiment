@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TomShane.Neoforce.Controls;
+using IsoECS.Systems.UI;
 
 namespace IsoECS
 {
@@ -70,6 +71,7 @@ namespace IsoECS
             systems.Add(new DebugSystem());
             systems.Add(new ProductionSystem());
             systems.Add(new ImmigrationSystem());
+            systems.Add(new CityInformationSystem());
 
             renderers = new List<IRenderSystem>();
             renderers.Add(new IsometricMapSystem()
@@ -141,7 +143,7 @@ namespace IsoECS
             {
                 Text = "",
                 Color = Color.White,
-                Visible = true,
+                Visible = false,
                 Layer = "Text",
                 Static = true
             });
