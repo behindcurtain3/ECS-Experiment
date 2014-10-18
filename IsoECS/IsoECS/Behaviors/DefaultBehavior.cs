@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using IsoECS.Components.GamePlay;
 using IsoECS.Entities;
+using IsoECS.Components;
+using IsoECS.Util;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.Behaviors
 {
@@ -34,15 +37,49 @@ namespace IsoECS.Behaviors
             }
             else
             {
-                if (citizen.JobID != -1 && PreviousBehavior.GetType() == typeof(IdleBehavior))
+                // go to work
+                if (citizen.JobID != -1 && PreviousBehavior.GetType() == typeof(IdleBehavior) && citizen.InsideID != citizen.JobID)
                 {
-                    state.Push(new GoToBehavior() { TargetID = citizen.JobID });
+                    state.Push(new ExitBuildingBehavior() { ExitID = citizen.InsideID, TargetID = citizen.JobID });
+                    PreviousBehavior = state.Peek();
+                }
+                // go home
+                else if (citizen.HousingID != -1 && PreviousBehavior.GetType() == typeof(IdleBehavior) && citizen.InsideID != citizen.HousingID)
+                {
+                    state.Push(new ExitBuildingBehavior() { ExitID = citizen.InsideID, TargetID = citizen.HousingID });
                     PreviousBehavior = state.Peek();
                 }
                 else
                 {
                     state.Push(new IdleBehavior());
                     PreviousBehavior = state.Peek();
+                }
+            }
+        }
+
+        public override void OnSubFinished(EntityManager em, Entity self, Behavior finished, Stack<Behavior> state)
+        {
+            base.OnSubFinished(em, self, finished, state);
+
+            if (finished is ExitBuildingBehavior)
+            {
+                ExitBuildingBehavior exit = (ExitBuildingBehavior)finished;
+
+                if (exit.Status == BehaviorStatus.SUCCESS)
+                {
+                    // make sure the citizen starts at the right position
+                    PositionComponent position = self.Get<PositionComponent>();
+                    Vector2 startAt = Isometric.GetIsometricPosition(em.Map, 0, exit.SelectedPath.Start.Y, exit.SelectedPath.Start.X);
+                    position.X = startAt.X;
+                    position.Y = startAt.Y;
+                    position.Index = exit.SelectedPath.Start;
+
+                    GoToBehavior g2b = new GoToBehavior()
+                    {
+                        GeneratedPath = exit.SelectedPath,
+                        TargetID = exit.TargetID
+                    };
+                    state.Push(g2b);
                 }
             }
         }

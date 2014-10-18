@@ -114,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\DefaultBehavior.cs" />
+    <Compile Include="Behaviors\ExitBuildingBehavior.cs" />
     <Compile Include="Behaviors\FadeBehavior.cs" />
     <Compile Include="Behaviors\FindHomeBehavior.cs" />
     <Compile Include="Behaviors\FindJobBehavior.cs" />

@@ -1,21 +1,30 @@
 ﻿using System.Collections.Generic;
 using IsoECS.Entities;
 using IsoECS.Components.GamePlay;
+using IsoECS.DataStructures;
 
 namespace IsoECS.Behaviors
 {
     public class GoToBehavior : Behavior
     {
         public int TargetID { get; set; }
+        public Path GeneratedPath { get; set; }
 
         public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
         {
-            FindPathBehavior fpb = new FindPathBehavior()
+            if (GeneratedPath == null)
             {
-                MoveToNearbyRoad = true,
-                TargetID = this.TargetID
-            };
-            state.Push(fpb);
+                FindPathBehavior fpb = new FindPathBehavior()
+                {
+                    MoveToNearbyRoad = true,
+                    TargetID = this.TargetID
+                };
+                state.Push(fpb);
+            }
+            else
+            {
+                FollowPath(state, GeneratedPath, 1.5f);
+            }
         }
 
         public override void OnSubFinished(EntityManager em, Entity self, Behavior finished, Stack<Behavior> state)
@@ -24,14 +33,7 @@ namespace IsoECS.Behaviors
             {
                 if (finished.Status == BehaviorStatus.SUCCESS)
                 {
-                    // follow path
-                    FollowPathBehavior fpb = new FollowPathBehavior()
-                    {
-                        PathToFollow = ((FindPathBehavior)finished).GeneratedPath,
-                        Speed = 1.5f
-                    };
-                    state.Push(fpb);
-                    state.Push(new FadeBehavior() { FadeIn = true });
+                    FollowPath(state, ((FindPathBehavior)finished).GeneratedPath, 1.5f);
                 }
                 else
                 {
@@ -45,6 +47,7 @@ namespace IsoECS.Behaviors
                 {
                     // Fadeout
                     state.Push(new FadeBehavior() { FadeIn = false });
+                    self.Get<CitizenComponent>().InsideID = TargetID;
                 }
                 else
                 {
@@ -59,5 +62,16 @@ namespace IsoECS.Behaviors
             }
         }
 
+        private void FollowPath(Stack<Behavior> state, Path p, float speed)
+        {
+            // follow path
+            FollowPathBehavior fpb = new FollowPathBehavior()
+            {
+                PathToFollow = p,
+                Speed = speed
+            };
+            state.Push(fpb);
+            state.Push(new FadeBehavior() { FadeIn = true });
+        }
     }
 }

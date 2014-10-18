@@ -17,6 +17,8 @@ namespace IsoECS.DataStructures
         [JsonConverter(typeof(PointConverter))]
         public Point End { get; set; }
 
+        public int Length { get; set; }
+
         public Path()
         {
             Waypoints = new List<Point>();
@@ -28,12 +30,18 @@ namespace IsoECS.DataStructures
 
             Start = start;
             End = end;
+            Length = 0;
 
             PathWaypoint p = waypoint;
             while (p != null)
             {
                 Waypoints.Add(p.Location);
                 p = p.Parent;
+                if (p != null)
+                {
+                    if (p.Length > Length)
+                        Length = p.Length;
+                }
             }
 
             // reverse the list

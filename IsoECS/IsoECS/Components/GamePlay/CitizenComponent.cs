@@ -30,6 +30,9 @@ namespace IsoECS.Components.GamePlay
         // ID of the entity this citizen works at
         public int JobID { get; set; }
 
+        // ID of the entity this citizen is "inside" (IE: inside a building)
+        public int InsideID { get; set; }
+
         // TODO: switch to a different component + use a behavior manager/brain
         public Stack<Behavior> Behaviors { get; set; }
 
