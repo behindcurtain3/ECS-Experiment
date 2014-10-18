@@ -11,6 +11,7 @@
 			"Components": [
 				{
 					"Type": "DrawableComponent",
+					"Drawables": { }
 				},
 				{
 					"Type": "RoadPlannerComponent"
@@ -51,19 +52,15 @@
 				},
 				{
 					"Type": "DrawableComponent",
-					"Drawables": [
-						{
-							"Type": "Sprite",
-							"Sprites": [
-								{
-									"Layer": "Background",
-									"Static": true,
-									"SpriteSheet": "internal_map_texture",
-									"ID": "internal_map_source"
-								}
-							]
-						}
-					]
+					"Drawables": {
+						"Background": [
+							{
+								"Static": true,
+								"SpriteSheet": "internal_map_texture",
+								"ID": "internal_map_source"
+							}
+						]
+					}
 				},
 				{
 					"Type": "PositionComponent"
@@ -74,18 +71,14 @@
 			"Components": [
 				{
 					"Type": "DrawableComponent",
-					"Drawables": [
-						{
-							"Type": "Sprite",
-							"Sprites": [
-								{
-									"Layer": "Foreground",
-									"SpriteSheet": "isometric_person",
-									"ID": "male"
-								}
-							]
-						}
-					]
+					"Drawables": {
+						"Foreground": [
+							{
+								"SpriteSheet": "isometric_person",
+								"ID": "male"
+							}
+						]
+					}
 				},
 				{
 					"Type": "PositionComponent",
@@ -100,24 +93,20 @@
 			"Components": [
 				{
 					"Type": "DrawableComponent",
-					"Drawables": [
-						{
-							"Type": "Sprite",
-							"Sprites": [
-								{
-									"Layer": "Foreground",
-									"SpriteSheet": "spawner",
-									"ID": "northwest",
-								},
-								{
-									"Layer": "Foundation",
-									"SpriteSheet": "isometric_roads",
-									"ID": "four_way",
-									"Updateable": false
-								}
-							]
-						}
-					]
+					"Drawables": {
+						"Foundation": [
+							{
+								"SpriteSheet": "isometric_roads",
+								"ID": "four_way",
+							}
+						],
+						"Foreground": [
+							{
+								"SpriteSheet": "spawner",
+								"ID": "northwest",
+							}
+						]
+					}
 				},				
 				{
 					"Type": "PositionComponent",

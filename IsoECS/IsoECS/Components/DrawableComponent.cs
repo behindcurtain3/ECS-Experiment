@@ -20,10 +20,17 @@ namespace IsoECS.Components
 
         public void Add(string layer, IGameDrawable drawable)
         {
-            if (!Drawables.ContainsKey(layer))
-                Drawables.Add(layer, new List<IGameDrawable>());
+            try
+            {
+                if (!Drawables.ContainsKey(layer))
+                    Drawables.Add(layer, new List<IGameDrawable>());
 
-            Drawables[layer].Add(drawable);
+                Drawables[layer].Add(drawable);
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
         }
 
         public List<IGameDrawable> Get(string layer)

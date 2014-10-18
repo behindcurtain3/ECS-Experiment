@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using IsoECS.Entities;
-using TomShane.Neoforce.Controls;
-using Microsoft.Xna.Framework;
 using IsoECS.Components.GamePlay;
+using IsoECS.Entities;
+using Microsoft.Xna.Framework;
+using TomShane.Neoforce.Controls;
 
 namespace IsoECS.Systems.UI
 {

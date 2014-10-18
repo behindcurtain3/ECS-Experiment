@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TomShane.Neoforce.Controls;
 using IsoECS.Systems.UI;
+using IsoECS.DataStructures.Json.Converters;
 
 namespace IsoECS
 {

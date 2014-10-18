@@ -13,20 +13,16 @@
 				},
 				{
 					"Type": "DrawableComponent",
-					"Drawables": [
-						{
-							"Type": "Sprite",
-							"Sprites": [
-								{
-									"Layer": "Foundation",
-									"SpriteSheet": "isometric_roads",
-									"ID": "single",
-									"Visible": true,
-									"Color": "255, 255, 255, 255"
-								}
-							]
-						}
-					]
+					"Drawables": {
+						"Foundation": [
+							{
+								"SpriteSheet": "isometric_roads",
+								"ID": "single",
+								"Visible": true,
+								"Color": "255, 255, 255, 255"
+							}
+						]
+					}
 				},
 				{
 					"Type": "RoadComponent"

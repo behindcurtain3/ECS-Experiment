@@ -8,6 +8,7 @@ using IsoECS.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.Xna.Framework;
+using IsoECS.DataStructures.Json.Converters;
 
 namespace IsoECS.DataStructures
 {
@@ -103,56 +104,7 @@ namespace IsoECS.DataStructures
                         break;
 
                     case "DrawableComponent":
-                        DrawableComponent drawable = new DrawableComponent();// = JsonConvert.DeserializeObject<DrawableComponent>(o.ToString());
-                        JToken t;
-
-                        if (!o.TryGetValue("Drawables", out t))
-                        {
-                            c = drawable;
-                            break;
-                        }
-
-                        IEnumerable<JObject> drawables = o["Drawables"].ToObject<IEnumerable<JObject>>();
-
-                        foreach (JObject dList in drawables)
-                        {
-                            if (!dList.TryGetValue("Type", out t))
-                                continue;
-
-                            switch (t.ToString())
-                            {
-                                case "Sprite":
-                                    IEnumerable<JObject> sList = dList["Sprites"].ToObject<IEnumerable<JObject>>();
-
-                                    foreach (JObject sObj in sList)
-                                    {
-                                        DrawableSprite sprite = JsonConvert.DeserializeObject<DrawableSprite>(sObj.ToString());
-
-                                        if (string.IsNullOrWhiteSpace(sprite.Layer))
-                                            continue;
-
-                                        drawable.Add(sprite.Layer, sprite);
-                                    }                                    
-                                    break;
-
-                                case "Text":
-                                    IEnumerable<JObject> tList = dList["Texts"].ToObject<IEnumerable<JObject>>();
-
-                                    foreach (JObject tObj in tList)
-                                    {
-                                        DrawableText text = JsonConvert.DeserializeObject<DrawableText>(tObj.ToString());
-
-                                        if(string.IsNullOrWhiteSpace(text.Layer))
-                                            continue;
-
-                                        drawable.Add(text.Layer, text);
-                                    }
-                                    break;
-                            }
-                        }
-                        
-                        // TODO: handle the deserialization of IGameDrawables
-                        
+                        DrawableComponent drawable = JsonConvert.DeserializeObject<DrawableComponent>(o.ToString(), new DrawableConverter());
                         c = drawable;
                         break;
 

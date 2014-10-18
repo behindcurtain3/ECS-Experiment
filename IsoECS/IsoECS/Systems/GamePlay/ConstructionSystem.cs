@@ -168,12 +168,12 @@ namespace IsoECS.Systems.GamePlay
 
             drawable.Drawables.Clear();
 
-            foreach (List<IGameDrawable> d in selectedDrawable.Drawables.Values)
+            foreach (KeyValuePair<string, List<IGameDrawable>> kvp in selectedDrawable.Drawables)
             {
-                foreach (IGameDrawable gd in d)
+                foreach (IGameDrawable gd in kvp.Value)
                 {
                     IGameDrawable nd = Serialization.DeepCopy<IGameDrawable>(gd);
-                    drawable.Add(nd.Layer, nd);
+                    drawable.Add(kvp.Key, nd);
                 }
             }
         }

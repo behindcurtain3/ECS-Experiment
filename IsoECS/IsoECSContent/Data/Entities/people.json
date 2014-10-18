@@ -5,29 +5,21 @@
 			"Components": [
 				{
 					"Type": "DrawableComponent",
-					"Drawables": [
-						{
-							"Type": "Sprite",
-							"Sprites": [
-								{
-									"Layer": "Foreground",
-									"SpriteSheet": "isometric_person",
-									"ID": "male"
-								}
-							]
-						},
-						{
-							"Type": "Text",
-							"Texts": [
-								{
-									"Layer": "Text",
-									"Text": "CitizenDebug",
-									"Static": false,
-									"Visible": false
-								}
-							]
-						}
-					]
+					"Drawables": {
+						"Foreground": [
+							{
+								"SpriteSheet": "isometric_person",
+								"ID": "male"
+							}
+						],
+						"Text": [
+							{
+								"Text": "CitizenDebug",
+								"Static": false,
+								"Visible": false
+							}
+						]
+					}
 				},
 				{
 					"Type": "CitizenComponent"

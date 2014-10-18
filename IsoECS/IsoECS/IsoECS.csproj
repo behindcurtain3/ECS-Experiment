@@ -150,6 +150,8 @@
     <Compile Include="DataStructures\GamePlay\RecipeInput.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeOutput.cs" />
     <Compile Include="DataStructures\IGameDrawable.cs" />
+    <Compile Include="DataStructures\Json\Converters\DrawableConverter.cs" />
+    <Compile Include="DataStructures\Json\Converters\JsonCreationConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\PointConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\VectorConverter.cs" />
