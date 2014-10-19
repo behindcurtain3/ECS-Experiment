@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using IsoECS.Entities;
 using IsoECS.Components.GamePlay;
-using IsoECS.GamePlay;
 using IsoECS.DataStructures;
 using IsoECS.DataStructures.GamePlay;
+using IsoECS.Entities;
+using IsoECS.GamePlay;
 
 namespace IsoECS.Systems
 {
@@ -32,15 +32,15 @@ namespace IsoECS.Systems
                 if (string.IsNullOrWhiteSpace(p.Recipe))
                     continue;
 
-                Recipe r = GameData.Instance.GetRecipe(p.Recipe);
-
                 // determines how much work is done
+                // TODO: check for divide by zero?
                 float workerPercentage = (float)p.Employees.Count / (float)p.MaxEmployees;
                 long elapsed = em.Date.MinutesElapsed(p.LastTick);
 
                 p.WorkDone += (elapsed * workerPercentage);
                 p.LastTick = em.Date.Time;
 
+                Recipe r = GameData.Instance.GetRecipe(p.Recipe);
                 if (p.WorkDone >= r.Stages[p.CurrentStage].WorkRequired)
                 {
                     // TODO: check the inputs and modify or elminate the output based on the amount of inputs present
@@ -51,14 +51,15 @@ namespace IsoECS.Systems
                     foreach (RecipeOutput output in stage.Outputs)
                     {
                         inventory.Add(output.Item, output.AmountProduced);
-                        Console.WriteLine(string.Format("#{0} has produced: {1} -> {2}", e.ID, output.Item, inventory.Items[output.Item]));
+                        Console.WriteLine(string.Format("#{0} has produced: {1} -> {2} +{3}", e.ID, output.Item, inventory.Items[output.Item], output.AmountProduced));
                     }
 
+                    // go to next stage in the recipe
                     p.CurrentStage++;
-
                     if (p.CurrentStage >= r.Stages.Count)
                         p.CurrentStage = 0;
 
+                    // reset the work done
                     p.WorkDone = 0;
                 }
             }

@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using IsoECS.GamePlay;
 
 namespace IsoECS.DataStructures
 {
-    public interface IGameDrawable
+    public interface IGameDrawable : IUnique
     {
         string Layer { get; set; }
         bool Visible { get; set; }        

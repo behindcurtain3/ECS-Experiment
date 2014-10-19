@@ -13,16 +13,9 @@
 			},
 			{
 				"Type": "DrawableComponent",
-				"Drawables": {
-					"Foreground": [
-						{
-							"SpriteSheet": "misc",
-							"ID": "3x3",
-							"Visible": true,
-							"Color": "255, 255, 255, 255"
-						}
-					]
-				}
+				"Sources": [
+					"wheat-farm-stage1"
+				]
 			},
 			{
 				"Type": "ProductionComponent",

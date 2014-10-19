@@ -9,6 +9,7 @@ namespace IsoECS.DataStructures
     [Serializable]
     public class DrawableText : IGameDrawable
     {
+        public string UniqueID { get; set; }
         public string Layer { get; set; }
         public bool Visible { get; set; }
         public bool Static { get; set; }

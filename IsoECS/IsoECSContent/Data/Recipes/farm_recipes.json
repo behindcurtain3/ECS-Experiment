@@ -13,13 +13,22 @@
 							"Bonus": 0.2,
 							"Required": false
 						}
-					],
+					]
+				},
+				{
+					"WorkRequired": 30
+				},
+				{
+					"WorkRequired": 30
+				},
+				{
+					"WorkRequired": 30,
 					"Outputs": [
 						{
 							"Item": "alpha-grain",
 							"AmountProduced": 50
 						}
-					]		
+					]
 				}
 			]
 		}

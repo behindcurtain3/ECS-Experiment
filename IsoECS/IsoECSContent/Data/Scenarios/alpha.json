@@ -4,6 +4,7 @@
 
 	"Textures": "Content/Data/textures.json",
 	"Library": "Content/Data/entities.json",
+	"Drawables": "Content/Data/drawables.json",
 	"Recipes": "Content/Data/recipes.json",
 
 	"DefaultEntities" : [

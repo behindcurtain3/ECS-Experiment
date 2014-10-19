@@ -1,0 +1,17 @@
+{
+	"DrawableComponents": [
+		{
+			"Drawables": {
+				"Foreground": [
+					{
+						"UniqueID": "wheat-farm-stage1",
+						"SpriteSheet": "misc",
+						"ID": "3x3",
+						"Visible": true,
+						"Color": "255, 255, 255, 255"
+					}
+				]
+			}
+		}
+	]
+}

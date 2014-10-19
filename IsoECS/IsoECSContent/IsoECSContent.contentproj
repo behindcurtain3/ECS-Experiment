@@ -56,6 +56,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\drawables.json">
+      <Name>drawables</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Drawables\farm-drawables.json">
+      <Name>farm-drawables</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\entities.json">
       <Name>entities</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -106,6 +106,9 @@ namespace IsoECS
             // Load textures from config
             Textures.Instance.LoadFromJson(scenario.Textures, true);
 
+            // Load the drawables
+            DrawableLibrary.Instance.LoadFromJson(scenario.Drawables, true);
+
             // Load in entities
             EntityLibrary.Instance.LoadFromJson(scenario.Library, true);
 

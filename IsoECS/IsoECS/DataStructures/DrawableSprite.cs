@@ -7,6 +7,7 @@ namespace IsoECS.DataStructures
     [Serializable]
     public class DrawableSprite : IGameDrawable
     {
+        public string UniqueID { get; set; }
         public string SpriteSheet { get; set; }
         public string ID { get; set; }
 

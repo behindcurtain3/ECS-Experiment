@@ -143,6 +143,7 @@
     <Compile Include="Components\GamePlay\RoadPlannerComponent.cs" />
     <Compile Include="Components\GamePlay\SpawnerComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
+    <Compile Include="DataStructures\DrawableLibrary.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />
     <Compile Include="DataStructures\DrawableText.cs" />
     <Compile Include="DataStructures\EntityLibrary.cs" />

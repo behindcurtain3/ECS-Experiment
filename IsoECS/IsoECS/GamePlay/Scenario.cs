@@ -12,6 +12,7 @@ namespace IsoECS.GamePlay
         public string Description { get; set; }
 
         public string Textures { get; set; }
+        public string Drawables { get; set; }
         public string Library { get; set; }
         public string Recipes { get; set; }
 

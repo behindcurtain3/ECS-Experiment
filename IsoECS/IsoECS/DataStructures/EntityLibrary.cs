@@ -104,7 +104,40 @@ namespace IsoECS.DataStructures
                         break;
 
                     case "DrawableComponent":
-                        DrawableComponent drawable = JsonConvert.DeserializeObject<DrawableComponent>(o.ToString(), new DrawableConverter());
+                        DrawableComponent drawable = null;
+                        if (o["Sources"] != null)
+                        {
+                            drawable = new DrawableComponent();
+
+                            IEnumerable<string> sources = o["Sources"].Values<string>();
+                            foreach (string str in sources)
+                            {
+                                IGameDrawable d = DrawableLibrary.Instance.Get(str);
+
+                                drawable.Add(d.Layer, d);
+                            }
+
+                        }
+                        else
+                        {
+                            DrawableComponent dd = JsonConvert.DeserializeObject<DrawableComponent>(o.ToString(), new DrawableConverter());
+
+                            if (drawable != null)
+                            {
+                                foreach (KeyValuePair<string, List<IGameDrawable>> kvp in dd.Drawables)
+                                {
+                                    foreach (IGameDrawable d in kvp.Value)
+                                    {
+                                        drawable.Add(kvp.Key, d);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                drawable = dd;
+                            }
+                        }
+
                         c = drawable;
                         break;
 
