@@ -188,6 +188,7 @@
     <Compile Include="Systems\ISystem.cs" />
     <Compile Include="Systems\ProductionSystem.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
+    <Compile Include="Systems\Threaded\PathfinderSystem.cs" />
     <Compile Include="Systems\UI\CityInformationSystem.cs" />
     <Compile Include="Util\DiagnosticInfo.cs" />
     <Compile Include="Util\Isometric.cs" />

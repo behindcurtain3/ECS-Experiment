@@ -18,6 +18,8 @@ using Newtonsoft.Json.Linq;
 using TomShane.Neoforce.Controls;
 using IsoECS.Systems.UI;
 using IsoECS.DataStructures.Json.Converters;
+using System.Threading;
+using IsoECS.Systems.Threaded;
 
 namespace IsoECS
 {
@@ -34,6 +36,7 @@ namespace IsoECS
         EntityManager em;
         List<ISystem> systems;
         List<IRenderSystem> renderers;
+        Thread pathThread;
 
         RenderSystem renderSystem;
         DiagnosticInfo diagnostics;
@@ -115,6 +118,15 @@ namespace IsoECS
                 em.AddEntity(e);
             }
 
+            // start up the pathfinder thread
+            PathfinderSystem pfs = new PathfinderSystem()
+            {
+                Map = em.Map,
+                Collisions = em.Collisions
+            };
+            pathThread = new Thread(new ThreadStart(pfs.Run));
+            pathThread.Start();
+
             // add some test entities to the map
             for (int j = 0; j < 3; j++)
             {
@@ -167,6 +179,13 @@ namespace IsoECS
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteFont = Content.Load<SpriteFont>("Default");
+        }
+
+        protected override void UnloadContent()
+        {
+            base.UnloadContent();
+
+            pathThread.Abort();
         }
         
         /// <summary>

@@ -123,17 +123,6 @@ namespace IsoECS.Systems.GamePlay
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
             PositionComponent drawablePosition = _dataTracker.Get<PositionComponent>();
 
-            List<string> categories = new List<string>(_db.Keys);
-            if (_input.CurrentKeyboard.IsKeyDown(Keys.OemPlus) && !_input.PrevKeyboard.IsKeyDown(Keys.OemPlus))
-            {
-                _selection++;
-
-                if (_selection >= _db[_category].Count)
-                    _selection = 0;
-
-                SelectEntity();
-            }
-
             Entity selectedEntity = _db[_category][_selection];
             BuildableComponent selectedBuildable = selectedEntity.Get<BuildableComponent>();
             FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
