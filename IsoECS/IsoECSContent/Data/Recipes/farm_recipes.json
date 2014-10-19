@@ -15,17 +15,38 @@
 						}
 					],
 					"AddToDrawableComponent": [
-						"wheat-farm-stage1"
+						"wheat-farm-foreground-stage1"
+					],
+					"RemoveFromDrawableComponent": [
+						"wheat-farm-foreground-stage4"
 					]
 				},
 				{
-					"WorkRequired": 30
-				},
-				{
-					"WorkRequired": 30
+					"WorkRequired": 30,
+					"AddToDrawableComponent": [
+						"wheat-farm-foreground-stage2"
+					],
+					"RemoveFromDrawableComponent": [
+						"wheat-farm-foreground-stage1"
+					]
 				},
 				{
 					"WorkRequired": 30,
+					"AddToDrawableComponent": [
+						"wheat-farm-foreground-stage3"
+					],
+					"RemoveFromDrawableComponent": [
+						"wheat-farm-foreground-stage2"
+					]
+				},
+				{
+					"WorkRequired": 30,
+					"AddToDrawableComponent": [
+						"wheat-farm-foreground-stage4"
+					],
+					"RemoveFromDrawableComponent": [
+						"wheat-farm-foreground-stage3"
+					],
 					"Outputs": [
 						{
 							"Item": "alpha-grain",

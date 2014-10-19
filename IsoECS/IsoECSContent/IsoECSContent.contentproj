@@ -100,6 +100,10 @@
       <Name>alpha</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Sprites\wheat-farm-foreground.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>wheat-farm-foreground</Name>
+    </None>
     <None Include="Data\Sprites\debug.json">
       <Name>debug</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -130,6 +134,10 @@
     </None>
     <None Include="Data\Sprites\spawner.json">
       <Name>spawner</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Sprites\wheat-farm-foundation.json">
+      <Name>wheat-farm-foundation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\textures.json">
@@ -193,6 +201,18 @@
   <ItemGroup>
     <Compile Include="Data\Sprites\small-insula.png">
       <Name>small-insula</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Sprites\wheat-farm-foreground.png">
+      <Name>wheat-farm-foreground</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Data\Sprites\wheat-farm-foundation.png">
+      <Name>wheat-farm-foundation</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

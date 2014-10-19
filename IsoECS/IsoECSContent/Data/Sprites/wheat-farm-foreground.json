@@ -1,0 +1,26 @@
+{
+    "Texture": "Data/Sprites/wheat-farm-foreground",
+	"Name": "wheat-farm-foreground",
+    "Sources": [
+        {
+            "ID": "stage1",
+			"Source": {"x":0,"y":0,"width":96,"height":56},
+			"Origin": {"x":32,"y":24}
+        },
+		{
+            "ID": "stage2",
+			"Source": {"x":96,"y":0,"width":96,"height":56},
+			"Origin": {"x":32,"y":24}
+        },
+		{
+            "ID": "stage3",
+			"Source": {"x":192,"y":0,"width":96,"height":56},
+			"Origin": {"x":32,"y":24}
+        },
+		{
+            "ID": "stage4",
+			"Source": {"x":288,"y":0,"width":96,"height":56},
+			"Origin": {"x":32,"y":24}
+        }
+	]
+}

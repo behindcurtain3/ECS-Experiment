@@ -2,13 +2,33 @@
 	"DrawableComponents": [
 		{
 			"Drawables": {
+				"Foundation": [
+					{
+						"UniqueID": "wheat-farm-foundation",
+						"SpriteSheet": "wheat-farm-foundation",
+						"ID": "default"
+					}
+				],
 				"Foreground": [
 					{
-						"UniqueID": "wheat-farm-stage1",
-						"SpriteSheet": "misc",
-						"ID": "3x3",
-						"Visible": true,
-						"Color": "255, 255, 255, 255"
+						"UniqueID": "wheat-farm-foreground-stage1",
+						"SpriteSheet": "wheat-farm-foreground",
+						"ID": "stage1"
+					},
+					{
+						"UniqueID": "wheat-farm-foreground-stage2",
+						"SpriteSheet": "wheat-farm-foreground",
+						"ID": "stage2"
+					},
+					{
+						"UniqueID": "wheat-farm-foreground-stage3",
+						"SpriteSheet": "wheat-farm-foreground",
+						"ID": "stage3"
+					},
+					{
+						"UniqueID": "wheat-farm-foreground-stage4",
+						"SpriteSheet": "wheat-farm-foreground",
+						"ID": "stage4"
 					}
 				]
 			}

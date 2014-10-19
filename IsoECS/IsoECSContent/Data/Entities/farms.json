@@ -14,7 +14,8 @@
 			{
 				"Type": "DrawableComponent",
 				"Sources": [
-					"wheat-farm-stage1"
+					"wheat-farm-foundation",
+					"wheat-farm-foreground-stage1"
 				]
 			},
 			{

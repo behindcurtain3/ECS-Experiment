@@ -1,0 +1,11 @@
+{
+    "Texture": "Data/Sprites/wheat-farm-foundation",
+	"Name": "wheat-farm-foundation",
+    "Sources": [
+        {
+            "ID": "default",
+			"Source": {"x":0,"y":0,"width":96,"height":56},
+			"Origin": {"x":32,"y":24}
+        }
+	]
+}
