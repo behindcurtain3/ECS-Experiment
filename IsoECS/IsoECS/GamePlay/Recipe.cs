@@ -24,6 +24,8 @@ namespace IsoECS.GamePlay
     {
         public List<RecipeInput> Inputs { get; set; }
         public List<RecipeOutput> Outputs { get; set; }
+        public List<string> AddToDrawableComponent { get; set; }
+        public List<string> RemoveFromDrawableComponent { get; set; }
 
         // a measure of time required in in-game minutes to complete this stage of the recipe
         // minutesPassed * (numEmployees / maxEmployees) = work done
@@ -34,6 +36,8 @@ namespace IsoECS.GamePlay
         {
             Inputs = new List<RecipeInput>();
             Outputs = new List<RecipeOutput>();
+            AddToDrawableComponent = new List<string>();
+            RemoveFromDrawableComponent = new List<string>();
         }
     }
 }

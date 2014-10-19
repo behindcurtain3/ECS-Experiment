@@ -24,11 +24,20 @@ namespace IsoECS.Components
                 if (!Drawables.ContainsKey(layer))
                     Drawables.Add(layer, new List<IGameDrawable>());
 
-                Drawables[layer].Add(drawable);
+                if(!Drawables[layer].Contains(drawable))
+                    Drawables[layer].Add(drawable);
             }
             catch (ArgumentNullException e)
             {
                 Console.WriteLine(e.StackTrace);
+            }
+        }
+
+        public void RemoveByUniqueID(string uniqueID)
+        {
+            foreach (KeyValuePair<string, List<IGameDrawable>> kvp in Drawables)
+            {
+                Drawables[kvp.Key].RemoveAll(delegate(IGameDrawable d) { return d.UniqueID.Equals(uniqueID); });
             }
         }
 

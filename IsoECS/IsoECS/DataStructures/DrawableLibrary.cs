@@ -5,6 +5,7 @@ using IsoECS.DataStructures.Json;
 using IsoECS.DataStructures.Json.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using IsoECS.Util;
 
 namespace IsoECS.DataStructures
 {
@@ -27,7 +28,7 @@ namespace IsoECS.DataStructures
 
         public IGameDrawable Get(string uniqueID)
         {
-            return _drawables[uniqueID];
+            return Serialization.DeepCopy<IGameDrawable>(_drawables[uniqueID]);
         }
 
         public void Add(JObject o)

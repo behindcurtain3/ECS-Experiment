@@ -5,6 +5,7 @@ using IsoECS.DataStructures;
 using IsoECS.DataStructures.GamePlay;
 using IsoECS.Entities;
 using IsoECS.GamePlay;
+using IsoECS.Components;
 
 namespace IsoECS.Systems
 {
@@ -61,6 +62,23 @@ namespace IsoECS.Systems
 
                     // reset the work done
                     p.WorkDone = 0;
+
+                    // update the drawables
+                    DrawableComponent drawable = e.Get<DrawableComponent>();
+
+                    // remove
+                    foreach (string str in stage.RemoveFromDrawableComponent)
+                    {
+                        drawable.RemoveByUniqueID(str);
+                    }
+                    
+                    // add
+                    foreach (string str in stage.AddToDrawableComponent)
+                    {
+                        IGameDrawable igd = DrawableLibrary.Instance.Get(str);
+
+                        drawable.Add(igd.Layer, igd);
+                    }
                 }
             }
         }
