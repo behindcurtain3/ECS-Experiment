@@ -8,10 +8,10 @@ namespace IsoECS.Util
 {
     public class Pathfinder
     {
-        private static Dictionary<Point, PathWaypoint> _openList = new Dictionary<Point, PathWaypoint>();
-        private static Dictionary<Point, PathWaypoint> _closedList = new Dictionary<Point, PathWaypoint>();
+        private Dictionary<Point, PathWaypoint> _openList = new Dictionary<Point, PathWaypoint>();
+        private Dictionary<Point, PathWaypoint> _closedList = new Dictionary<Point, PathWaypoint>();
 
-        public static Path Generate(CollisionMapComponent collisionMap, IsometricMapComponent map, Point start, Point end)
+        public Path Generate(CollisionMapComponent collisionMap, IsometricMapComponent map, Point start, Point end)
         {
             // reset the lists
             _openList.Clear();
@@ -91,7 +91,7 @@ namespace IsoECS.Util
             return new Path();
         }
 
-        public static Path Generate(CollisionMapComponent collisionMap, IsometricMapComponent map, Point start, List<Point> end)
+        public Path Generate(CollisionMapComponent collisionMap, IsometricMapComponent map, Point start, List<Point> end)
         {
             // reset the lists
             _openList.Clear();

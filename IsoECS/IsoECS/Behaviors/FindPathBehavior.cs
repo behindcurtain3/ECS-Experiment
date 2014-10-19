@@ -41,7 +41,11 @@ namespace IsoECS.Behaviors
                 Path p = PathfinderSystem.GetPath(PathRequest.ID);
 
                 if (p == null)
+                {
+                    // idle for a short bit
+                    state.Push(new IdleBehavior() { IdleTime = 100 });
                     return;
+                }
                 else
                 {
                     GeneratedPath = p;

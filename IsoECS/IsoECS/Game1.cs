@@ -37,6 +37,7 @@ namespace IsoECS
         List<ISystem> systems;
         List<IRenderSystem> renderers;
         Thread pathThread;
+        Thread pathThread2;
 
         RenderSystem renderSystem;
         DiagnosticInfo diagnostics;
@@ -127,6 +128,14 @@ namespace IsoECS
             pathThread = new Thread(new ThreadStart(pfs.Run));
             pathThread.Start();
 
+            pfs = new PathfinderSystem()
+            {
+                Map = em.Map,
+                Collisions = em.Collisions
+            };
+            pathThread2 = new Thread(new ThreadStart(pfs.Run));
+            pathThread2.Start();
+
             // add some test entities to the map
             for (int j = 0; j < 3; j++)
             {
@@ -156,12 +165,12 @@ namespace IsoECS
             {
                 Text = "",
                 Color = Color.White,
-                Visible = false,
+                Visible = true,
                 Layer = "Text",
                 Static = true
             });
             diagnosticEntity = new Entity();
-            diagnosticEntity.AddComponent(new PositionComponent());
+            diagnosticEntity.AddComponent(new PositionComponent() { X = 0, Y = 50f });
             diagnosticEntity.AddComponent(diagDrawable);
             em.AddEntity(diagnosticEntity);
 
@@ -186,6 +195,7 @@ namespace IsoECS
             base.UnloadContent();
 
             pathThread.Abort();
+            pathThread2.Abort();
         }
         
         /// <summary>

@@ -4,6 +4,7 @@ using IsoECS.Components.GamePlay;
 using IsoECS.Entities;
 using Microsoft.Xna.Framework;
 using TomShane.Neoforce.Controls;
+using IsoECS.Systems.Threaded;
 
 namespace IsoECS.Systems.UI
 {
@@ -14,12 +15,12 @@ namespace IsoECS.Systems.UI
         private Label _moneyLabel;
         private Label _moneyValueLabel;
 
-        private int _updateRate = 1000;
+        private int _updateRate = 100;
         private int _updateCountdown;
 
         public void Init(EntityManager em)
         {
-            int columnWidth = 100;
+            int columnWidth = 175;
 
             // Add the appropraite UI elements to scene
             _populationLabel = new Label(em.UI)
@@ -70,7 +71,10 @@ namespace IsoECS.Systems.UI
                 // update the city information ui elements
                 em.CityInformation.Population = GetPopulation(em.Entities);
 
-                _populationValueLabel.Text = em.CityInformation.Population.ToString("G");
+                lock (PathfinderSystem.PathsRequested)
+                {
+                    _populationValueLabel.Text = em.CityInformation.Population.ToString("G") + string.Format(" ({0})", PathfinderSystem.PathsRequested.Count);
+                }
                 _moneyValueLabel.Text = em.CityInformation.Money.ToString("C0");
             }
         }

@@ -8,11 +8,17 @@ namespace IsoECS.Behaviors
         public int IdleTime { get; set; }
         public int IdleCountdown { get; set; }
 
+        public IdleBehavior()
+        {
+            IdleTime = -1;
+        }
+
         public override void Init(EntityManager em, Entity self)
         {
             base.Init(em, self);
 
-            IdleTime = Game1.Random.Next(2, 11) * 1000;
+            if(IdleTime == -1)
+                IdleTime = Game1.Random.Next(5, 25) * 1000;
             IdleCountdown = IdleTime;
         }
 

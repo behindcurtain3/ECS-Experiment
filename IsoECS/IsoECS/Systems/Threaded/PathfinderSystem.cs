@@ -25,11 +25,13 @@ namespace IsoECS.Systems.Threaded
         public static Dictionary<int, Path> PathsCreated { get; set; }
         public IsometricMapComponent Map { get; set; }
         public CollisionMapComponent Collisions { get; set; }
+        public Pathfinder Pathfinder { get; set; }
 
         public PathfinderSystem()
         {
             PathsCreated = new Dictionary<int, Path>();
             PathsRequested = new Queue<PathRequest>();
+            Pathfinder = new Pathfinder();
         }
 
         public static int RequestPath(PathRequest pr)

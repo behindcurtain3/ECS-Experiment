@@ -67,7 +67,7 @@ namespace IsoECS.Systems.GamePlay
 
         private void ResetCountdown()
         {
-            _spawnCountdown = Game1.Random.Next(2, 6) * 1000;
+            _spawnCountdown = Game1.Random.Next(2, 6) * 100;
         }
 
         private int CountVacanies(List<Entity> entities)
