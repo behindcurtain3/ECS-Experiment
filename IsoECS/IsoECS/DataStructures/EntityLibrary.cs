@@ -149,6 +149,11 @@ namespace IsoECS.DataStructures
                         c = housing;
                         break;
 
+                    case "Inventory":
+                        Inventory inventory = JsonConvert.DeserializeObject<Inventory>(o.ToString());
+                        c = inventory;
+                        break;
+
                     case "IsometricMapComponent":
                         IsometricMapComponent map = JsonConvert.DeserializeObject<IsometricMapComponent>(o.ToString());
                         c = map;

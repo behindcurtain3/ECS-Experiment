@@ -28,6 +28,16 @@ namespace IsoECS.DataStructures
             _items = new Dictionary<string, Item>();
         }
 
+        public Recipe GetRecipe(string name)
+        {
+            return _recipes[name];
+        }
+
+        public Item GetItem(string name)
+        {
+            return _items[name];
+        }
+
         public void LoadRecipesFromJson(string path, bool config = false)
         {
             string json = File.ReadAllText(path);

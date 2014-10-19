@@ -19,6 +19,7 @@ namespace IsoECS.Entities
         public FoundationPlannerComponent Foundations { get; private set; }
         public CollisionMapComponent Collisions { get; private set; }
         public CityInformationComponent CityInformation { get; private set; }
+        public GameDateComponent Date { get; set; }
 
         public EntityManager()
         {
@@ -111,6 +112,10 @@ namespace IsoECS.Entities
 
                     case "FoundationPlannerComponent":
                         Foundations = (FoundationPlannerComponent)c;
+                        break;
+
+                    case "GameDateComponent":
+                        Date = (GameDateComponent)c;
                         break;
 
                     case "IsometricMapComponent":

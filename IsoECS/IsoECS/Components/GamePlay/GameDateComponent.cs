@@ -55,5 +55,9 @@ namespace IsoECS.Components.GamePlay
             get { return (int)(Time / MinutesPerYear) + 1; }
         }
 
+        public long MinutesElapsed(long timeStamp)
+        {
+            return Time - timeStamp;
+        }
     }
 }

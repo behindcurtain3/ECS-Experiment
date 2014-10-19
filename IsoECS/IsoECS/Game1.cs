@@ -134,7 +134,7 @@ namespace IsoECS
                 Collisions = em.Collisions
             };
             pathThread2 = new Thread(new ThreadStart(pfs.Run));
-            pathThread2.Start();
+            //pathThread2.Start();
 
             // add some test entities to the map
             for (int j = 0; j < 3; j++)

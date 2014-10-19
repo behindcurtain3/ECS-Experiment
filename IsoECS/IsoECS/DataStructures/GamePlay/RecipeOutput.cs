@@ -12,7 +12,7 @@ namespace IsoECS.DataStructures.GamePlay
         // block: think of it as a abstract way to track the production of output. A block could
         // represent a worker gathering the needed materials, performing some work on them and then
         // producing a good from the work.
-        public double AmountProduced { get; set; }
+        public int AmountProduced { get; set; }
 
         // how hard each "block" of work is to accomplish
         public double EffortRequired { get; set; }
