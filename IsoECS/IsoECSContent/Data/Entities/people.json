@@ -26,9 +26,6 @@
 				},
 				{
 					"Type": "PositionComponent"
-				},
-				{
-					"Type": "MoveToTargetComponent"
 				}
 			]
 		}

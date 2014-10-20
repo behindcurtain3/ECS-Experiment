@@ -9,9 +9,6 @@ namespace IsoECS.Components.GamePlay
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public string ConstructSpriteSheetName { get; set; }
-        public string ConstructSourceID { get; set; }
-
         public bool DragBuildEnabled { get; set; }
         public bool Destructable { get; set; }
 

@@ -42,6 +42,7 @@ namespace IsoECS.Components.GamePlay
             MotherID = -1;
             HousingID = -1;
             JobID = -1;
+            InsideID = -1;
             Gender = GamePlay.Gender.BOTH;
 
             Behaviors = new Stack<Behavior>();

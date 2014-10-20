@@ -6,6 +6,7 @@ using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TomShane.Neoforce.Controls;
+using System.Reflection;
 
 namespace IsoECS.Systems.UI
 {
@@ -122,6 +123,15 @@ namespace IsoECS.Systems.UI
             _entityTabs.Init();
 
             TabPage page;
+
+            foreach (IsoECS.Components.Component component in e.Components.Values)
+            {
+                page = _entityTabs.AddPage(component.GetType().Name);
+
+                LabelAllProperties(component, page);
+            }
+
+            /*
             if (e.HasComponent<CitizenComponent>())
             {
                 CitizenComponent citizen = e.Get<CitizenComponent>();
@@ -139,38 +149,13 @@ namespace IsoECS.Systems.UI
 
                 page = _entityTabs.AddPage("Building");
 
-                Label nameLabel = new Label(_entityWindow.Manager)
-                {
-                    Text = buildable.Name,
-                    Left = 2,
-                    Top = 2,
-                    Width = page.ClientWidth - 4
-                };
-                page.Add(nameLabel);
-
-                Label descHeader = new Label(_entityWindow.Manager)
-                {
-                    Text = "Description",
-                    Top = 25,
-                    Left = 2,
-                    Width = page.ClientWidth - 4
-                };
-                page.Add(descHeader);
-
-                Label description = new Label(_entityWindow.Manager)
-                {
-                    Text = buildable.Description,
-                    Top = 40,
-                    Left = 2,
-                    Width = page.ClientWidth - 4
-                };
-                page.Add(description);
+                LabelAllProperties(buildable, page);
             }
             if (e.HasComponent<Inventory>())
             {
                 // Add in the citizen component
                 page = _entityTabs.AddPage("Inventory");
-            }
+            }*/
 
             _entityWindow.Add(_entityTabs);
             _entityWindow.Show();
@@ -240,6 +225,37 @@ namespace IsoECS.Systems.UI
                 (e.HasComponent<CitizenComponent>()
                 || e.HasComponent<BuildableComponent>()
                 || e.HasComponent<Inventory>());
+        }
+
+        private void LabelAllProperties(object obj, TabPage page)
+        {
+            int y = 2;
+            Label lbl;
+            foreach (PropertyInfo info in obj.GetType().GetProperties())
+            {
+                lbl = new Label(_entityWindow.Manager)
+                {
+                    Text = info.Name,
+                    Left = 2,
+                    Top = y,
+                    Width = page.ClientWidth - 4
+                };
+                page.Add(lbl);
+
+                object value = info.GetValue(obj, null);
+                string txt = (value == null) ? "null" : value.ToString();
+                lbl = new Label(_entityWindow.Manager)
+                {
+                    Text = txt,
+                    Alignment = Alignment.MiddleRight,
+                    Left = 2,
+                    Top = y,
+                    Width = page.ClientWidth - 4
+                };
+                page.Add(lbl);
+
+                y += 18;
+            }
         }
     }
 }
