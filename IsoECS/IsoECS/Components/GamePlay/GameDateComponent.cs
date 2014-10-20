@@ -14,6 +14,7 @@ namespace IsoECS.Components.GamePlay
         public int HoursPerDay { get; set; }
         public int DaysPerMonth { get; set; }
         public int MonthsPerYear { get; set; }
+        public string[] MonthNames { get; set; }
 
         public int MinutesPerDay
         {
@@ -53,6 +54,11 @@ namespace IsoECS.Components.GamePlay
         public long Year
         {
             get { return (int)(Time / MinutesPerYear) + 1; }
+        }
+
+        public string MonthName
+        {
+            get { return MonthNames[Month]; }
         }
 
         public long MinutesElapsed(long timeStamp)

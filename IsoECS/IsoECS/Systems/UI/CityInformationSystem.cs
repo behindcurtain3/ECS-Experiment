@@ -2,20 +2,25 @@
 using System.Linq;
 using IsoECS.Components.GamePlay;
 using IsoECS.Entities;
-using Microsoft.Xna.Framework;
-using TomShane.Neoforce.Controls;
 using IsoECS.Systems.Threaded;
+using IsoECS.Util;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using TomShane.Neoforce.Controls;
 
 namespace IsoECS.Systems.UI
 {
     public class CityInformationSystem : ISystem
     {
+        public GraphicsDevice Graphics { get; set; }
+
         private Label _populationLabel;
         private Label _populationValueLabel;
         private Label _moneyLabel;
         private Label _moneyValueLabel;
+        private Label _dateLabel;
 
-        private int _updateRate = 100;
+        private int _updateRate = 250;
         private int _updateCountdown;
 
         public void Init(EntityManager em)
@@ -56,6 +61,14 @@ namespace IsoECS.Systems.UI
             em.UI.Add(_moneyLabel);
             em.UI.Add(_moneyValueLabel);
 
+            _dateLabel = new Label(em.UI)
+            {
+                Width = Graphics.Viewport.Width,
+                Alignment = Alignment.MiddleCenter
+            };
+
+            em.UI.Add(_dateLabel);
+
             // set to zero so it updates on the first update call
             _updateCountdown = 0;
         }
@@ -76,6 +89,8 @@ namespace IsoECS.Systems.UI
                     _populationValueLabel.Text = em.CityInformation.Population.ToString("G") + string.Format(" ({0})", PathfinderSystem.PathsRequested.Count);
                 }
                 _moneyValueLabel.Text = em.CityInformation.Money.ToString("C0");
+
+                _dateLabel.Text = string.Format("{0} of {1}, {2} C.E.", StringHelper.Ordinal(em.Date.Day), em.Date.MonthName, em.Date.Year);
             }
         }
 
@@ -86,6 +101,7 @@ namespace IsoECS.Systems.UI
             em.UI.Remove(_populationValueLabel);
             em.UI.Remove(_moneyLabel);
             em.UI.Remove(_moneyValueLabel);
+            em.UI.Remove(_dateLabel);
         }
 
         private int GetPopulation(List<Entity> entities)

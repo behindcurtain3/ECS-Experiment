@@ -7,8 +7,6 @@
 				"Category": "Residential",
 				"Name": "Small Insula",
 				"Description": "Small Apartment",
-				"ConstructSpriteSheetName": "small-insula",
-				"ConstructSourceID": "default",
 				"DragBuildEnabled": false
 			},
 			{

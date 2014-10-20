@@ -7,8 +7,6 @@
 					"Category": "Transportation",
 					"Name": "Dirt Road",
 					"Description": "A dirt road, provides faster travel than grass.",
-					"ConstructSpriteSheetName": "isometric_roads",
-					"ConstructSourceID": "single",
 					"DragBuildEnabled": true
 				},
 				{

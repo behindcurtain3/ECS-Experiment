@@ -28,7 +28,13 @@
 					"MinutesPerHour": 60,
 					"HoursPerDay": 24,
 					"DaysPerMonth": 10,
-					"MonthsPerYear": 4
+					"MonthsPerYear": 4,
+					"MonthNames": [
+						"Spring",
+						"Summer",
+						"Fall",
+						"Winter"
+					]
 				},
 				{
 					"Type": "CityInformationComponent",

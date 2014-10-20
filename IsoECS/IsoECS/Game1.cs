@@ -76,7 +76,8 @@ namespace IsoECS
             systems.Add(new DebugSystem());
             systems.Add(new ProductionSystem());
             systems.Add(new ImmigrationSystem());
-            systems.Add(new CityInformationSystem());
+            systems.Add(new CityInformationSystem() { Graphics = GraphicsDevice });
+            systems.Add(new InspectionSystem());
 
             renderers = new List<IRenderSystem>();
             renderers.Add(new IsometricMapSystem()
@@ -92,9 +93,11 @@ namespace IsoECS
             renderers.Add(renderSystem);
 
             em = new EntityManager();
-            em.UI = new Manager(this, "Default");
-            em.UI.AutoCreateRenderTarget = false;
-            em.UI.TargetFrames = 60;
+            em.UI = new Manager(this, "Default")
+            {
+                AutoCreateRenderTarget = false,
+                TargetFrames = 60
+            };
             em.UI.Initialize();
             em.UI.RenderTarget = em.UI.CreateRenderTarget();
 
@@ -208,6 +211,9 @@ namespace IsoECS
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            // update the UI
+            em.UI.Update(gameTime);
+
             // update the game systems
             foreach (ISystem system in systems)
             {
@@ -217,9 +223,6 @@ namespace IsoECS
             }
 
             ((DrawableText)diagnosticEntity.Get<DrawableComponent>().Drawables["Text"][0]).Text = diagnostics.ShowTop(8, true);
-
-            // update the UI
-            em.UI.Update(gameTime);
 
             base.Update(gameTime);
         }

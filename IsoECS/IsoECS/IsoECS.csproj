@@ -190,12 +190,14 @@
     <Compile Include="Systems\RenderSystem.cs" />
     <Compile Include="Systems\Threaded\PathfinderSystem.cs" />
     <Compile Include="Systems\UI\CityInformationSystem.cs" />
+    <Compile Include="Systems\UI\InspectionSystem.cs" />
     <Compile Include="Util\DiagnosticInfo.cs" />
     <Compile Include="Util\Isometric.cs" />
     <Compile Include="Util\MathHelper.cs" />
     <Compile Include="Util\Pathfinder.cs" />
     <Compile Include="Util\RoadsHelper.cs" />
     <Compile Include="Util\Serialization.cs" />
+    <Compile Include="Util\StringHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
