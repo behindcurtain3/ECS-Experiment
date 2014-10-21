@@ -52,7 +52,6 @@ namespace IsoECS.Systems
                     foreach (RecipeOutput output in stage.Outputs)
                     {
                         inventory.Add(output.Item, output.AmountProduced);
-                        Console.WriteLine(string.Format("#{0} has produced: {1} -> {2} +{3}", e.ID, output.Item, inventory.Items[output.Item], output.AmountProduced));
                     }
 
                     // go to next stage in the recipe

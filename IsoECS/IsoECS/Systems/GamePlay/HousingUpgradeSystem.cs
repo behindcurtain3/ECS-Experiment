@@ -36,6 +36,7 @@ namespace IsoECS.Systems.GamePlay
                 // swap out the HousingComponent with the upgraded version and the DrawableComponent
                 e.RemoveComponent(e.Get<HousingComponent>());
                 e.RemoveComponent(e.Get<DrawableComponent>());
+                e.RemoveComponent(e.Get<BuildableComponent>());
 
                 // copy out the entity to upgrade to from the library
                 Entity upgradedEntity = Serialization.DeepCopy<Entity>(EntityLibrary.Instance.Get(housing.UpgradesTo));
@@ -43,6 +44,7 @@ namespace IsoECS.Systems.GamePlay
                 // copy in the new components
                 e.AddComponent(Serialization.DeepCopy<DrawableComponent>(upgradedEntity.Get<DrawableComponent>()));
                 e.AddComponent(Serialization.DeepCopy<HousingComponent>(upgradedEntity.Get<HousingComponent>()));
+                e.AddComponent(Serialization.DeepCopy<BuildableComponent>(upgradedEntity.Get<BuildableComponent>()));
 
                 // make sure the housing tennant data is copied over
                 HousingComponent replacement = e.Get<HousingComponent>();
