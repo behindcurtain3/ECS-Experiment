@@ -13,7 +13,8 @@ namespace IsoECS.GamePlay
 
         public string Textures { get; set; }
         public string Drawables { get; set; }
-        public string Library { get; set; }
+        public string Entities { get; set; }
+        public string Items { get; set; }
         public string Recipes { get; set; }
 
         public IEnumerable<JObject> DefaultEntities { get; set; }

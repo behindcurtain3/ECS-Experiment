@@ -49,7 +49,7 @@
 					],
 					"Outputs": [
 						{
-							"Item": "alpha-grain",
+							"Item": "grain",
 							"AmountProduced": 50
 						}
 					]

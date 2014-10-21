@@ -1,7 +1,7 @@
 {
 	"Items": [
 		{
-			"UniqueID": "alpha-grain",
+			"UniqueID": "grain",
 			"Name": "Grain",
 			"Description": "",
 			"Value": 1.0

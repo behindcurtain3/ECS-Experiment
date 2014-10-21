@@ -38,6 +38,11 @@ namespace IsoECS.DataStructures
             return _items[name];
         }
 
+        public List<Item> GetAllItems()
+        {
+            return _items.Values.ToList();
+        }
+
         public void LoadRecipesFromJson(string path, bool config = false)
         {
             string json = File.ReadAllText(path);

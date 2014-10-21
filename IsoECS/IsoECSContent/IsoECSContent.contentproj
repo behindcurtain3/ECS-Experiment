@@ -84,6 +84,10 @@
       <Name>roads</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\items.json">
+      <Name>items</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Recipes\farm_recipes.json">
       <Name>farm_recipes</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -146,6 +150,10 @@
     </None>
     <None Include="Skins\Default.skin">
       <Name>Default</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Skins\Pixel.skin">
+      <Name>Pixel</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -3,8 +3,9 @@
 	"Description": "Testing 1, 2 ... uh 3",
 
 	"Textures": "Content/Data/textures.json",
-	"Library": "Content/Data/entities.json",
+	"Entities": "Content/Data/entities.json",
 	"Drawables": "Content/Data/drawables.json",
+	"Items": "Content/Data/items.json",
 	"Recipes": "Content/Data/recipes.json",
 
 	"DefaultEntities" : [

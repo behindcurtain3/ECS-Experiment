@@ -43,10 +43,14 @@ namespace IsoECS
         DiagnosticInfo diagnostics;
         Entity diagnosticEntity;
         Entity inputControlEntity;
+        int _updateDiagnosticsRate = 500;
+        int _updateDiagnosticsCountdown;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 680;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             Random = new Random();
@@ -77,7 +81,6 @@ namespace IsoECS
             systems.Add(new ProductionSystem());
             systems.Add(new ImmigrationSystem());
             systems.Add(new CityInformationSystem() { Graphics = GraphicsDevice });
-            systems.Add(new InspectionSystem());
 
             renderers = new List<IRenderSystem>();
             renderers.Add(new IsometricMapSystem()
@@ -93,9 +96,10 @@ namespace IsoECS
             renderers.Add(renderSystem);
 
             em = new EntityManager();
-            em.UI = new Manager(this, "Default")
+            em.UI = new Manager(this, "Pixel")
             {
                 AutoCreateRenderTarget = false,
+                AutoUnfocus = true,
                 TargetFrames = 60
             };
             em.UI.Initialize();
@@ -113,9 +117,10 @@ namespace IsoECS
             DrawableLibrary.Instance.LoadFromJson(scenario.Drawables, true);
 
             // Load in entities
-            EntityLibrary.Instance.LoadFromJson(scenario.Library, true);
+            EntityLibrary.Instance.LoadFromJson(scenario.Entities, true);
 
             // load scenario data
+            GameData.Instance.LoadItemsFromJson(scenario.Items, true);
             GameData.Instance.LoadRecipesFromJson(scenario.Recipes, true);
 
             foreach (JObject o in scenario.DefaultEntities)
@@ -217,12 +222,17 @@ namespace IsoECS
             // update the game systems
             foreach (ISystem system in systems)
             {
-                diagnostics.RestartTiming(system.GetType().ToString());
+                diagnostics.RestartTiming(system.GetType().Name);
                 system.Update(em, gameTime.ElapsedGameTime.Milliseconds);
-                diagnostics.StopTiming(system.GetType().ToString());
+                diagnostics.StopTiming(system.GetType().Name);
             }
 
-            ((DrawableText)diagnosticEntity.Get<DrawableComponent>().Drawables["Text"][0]).Text = diagnostics.ShowTop(8, true);
+            _updateDiagnosticsCountdown -= gameTime.ElapsedGameTime.Milliseconds;
+            if (_updateDiagnosticsCountdown <= 0)
+            {
+                _updateDiagnosticsCountdown += _updateDiagnosticsRate;
+                ((DrawableText)diagnosticEntity.Get<DrawableComponent>().Drawables["Text"][0]).Text = diagnostics.ShowTop(8, true);
+            }
 
             base.Update(gameTime);
         }
@@ -237,9 +247,9 @@ namespace IsoECS
 
             foreach (IRenderSystem render in renderers)
             {
-                diagnostics.RestartTiming(render.GetType().ToString());
+                diagnostics.RestartTiming(render.GetType().Name);
                 render.Draw(em, spriteBatch, spriteFont);
-                diagnostics.StopTiming(render.GetType().ToString());
+                diagnostics.StopTiming(render.GetType().Name);
             }
 
             em.UI.EndDraw();

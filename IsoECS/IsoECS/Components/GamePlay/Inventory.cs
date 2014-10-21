@@ -26,5 +26,13 @@ namespace IsoECS.Components.GamePlay
             // in future check for restrictions like a max amount of inventory space
             return true;
         }
+
+        public int Get(string name)
+        {
+            if (!Items.ContainsKey(name))
+                return 0;
+
+            return Items[name];
+        }
     }
 }

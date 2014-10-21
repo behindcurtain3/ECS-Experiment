@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TomShane.Neoforce.Controls;
 using System.Reflection;
+using IsoECS.GamePlay;
+using IsoECS.DataStructures;
 
 namespace IsoECS.Systems.UI
 {
@@ -19,6 +21,9 @@ namespace IsoECS.Systems.UI
 
         private InputController _input;
         private PositionComponent _camera;
+
+        private int _updateRate = 250;
+        private int _updateCountdown;
 
 
         public void Update(EntityManager em, int dt)
@@ -60,6 +65,17 @@ namespace IsoECS.Systems.UI
                 {
                     _selectionWindow.Hide();
                     _entityWindow.Hide();
+                }
+            }
+
+            if (_entityWindow.Visible)
+            {
+                _updateCountdown -= dt;
+
+                if (_updateCountdown <= 0)
+                {
+                    _updateCountdown += _updateRate;
+                    // TODO: update the displayed tab
                 }
             }
         }
@@ -126,9 +142,20 @@ namespace IsoECS.Systems.UI
 
             foreach (IsoECS.Components.Component component in e.Components.Values)
             {
+                if (component is DrawableComponent || component is CollisionComponent || component is FoundationComponent)
+                    continue;
+
                 page = _entityTabs.AddPage(component.GetType().Name);
 
-                LabelAllProperties(component, page);
+                if (component is Inventory)
+                    DisplayInventory((Inventory)component, page);
+                else
+                    LabelAllProperties(component, page);
+
+                if (component is CitizenComponent)
+                    _entityWindow.Text = ((CitizenComponent)component).Name;
+                else if(component is BuildableComponent)
+                    _entityWindow.Text = ((BuildableComponent)component).Name;
             }
 
             /*
@@ -159,6 +186,7 @@ namespace IsoECS.Systems.UI
 
             _entityWindow.Add(_entityTabs);
             _entityWindow.Show();
+            _entityWindow.Tag = e;
 
             if (_entityWindow.Left + _entityWindow.Width < 0)
             {
@@ -181,10 +209,10 @@ namespace IsoECS.Systems.UI
             {
                 btn = new Button(_selectionWindow.Manager)
                 {
-                    Height = 15,
+                    Height = 20,
                     Width = _selectionWindow.ClientWidth - 4,
                     Left = 2,
-                    Top = _selectionButtons.Count * 15 + _selectionButtons.Count * 3
+                    Top = _selectionButtons.Count * 20 + _selectionButtons.Count * 3
                 };
                 btn.Init();
                 btn.Tag = e;
@@ -238,7 +266,8 @@ namespace IsoECS.Systems.UI
                     Text = info.Name,
                     Left = 2,
                     Top = y,
-                    Width = page.ClientWidth - 4
+                    Width = page.ClientWidth - 4,
+                    Anchor = Anchors.Horizontal
                 };
                 page.Add(lbl);
 
@@ -250,7 +279,42 @@ namespace IsoECS.Systems.UI
                     Alignment = Alignment.MiddleRight,
                     Left = 2,
                     Top = y,
-                    Width = page.ClientWidth - 4
+                    Width = page.ClientWidth - 4,
+                    Anchor = Anchors.Horizontal
+                };
+                page.Add(lbl);
+
+                y += 18;
+            }
+        }
+
+        private void DisplayInventory(Inventory inventory, TabPage page)
+        {
+            Label lbl;
+            int y = 2;
+
+            foreach (string i in inventory.Items.Keys)
+            {
+                Item item = GameData.Instance.GetItem(i);
+
+                // name label
+                lbl = new Label(page.Manager)
+                {
+                    Text = item.Name,
+                    Left = 2,
+                    Top = y,
+                    Width = page.ClientWidth - 4,
+                    Anchor = Anchors.Horizontal
+                };
+                page.Add(lbl);
+
+                lbl = new Label(page.Manager)
+                {
+                    Text = inventory.Get(i).ToString(),
+                    Left = 2,
+                    Top = y,
+                    Width = 150,
+                    Alignment = Alignment.MiddleRight,
                 };
                 page.Add(lbl);
 
