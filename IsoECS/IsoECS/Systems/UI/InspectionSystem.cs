@@ -103,7 +103,7 @@ namespace IsoECS.Systems.UI
             {
                 Visible = false,
                 AutoScroll = true,
-                IconVisible = false,
+                IconVisible = true,
                 CloseButtonVisible = false,
                 Text = "",
                 Height = 300,
