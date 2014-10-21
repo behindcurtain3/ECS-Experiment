@@ -28,8 +28,19 @@ namespace IsoECS.Systems.UI
 
         public void Update(EntityManager em, int dt)
         {
-            if (em.UI.FocusedControl == null && _input.CurrentMouse.LeftButton == ButtonState.Pressed && _input.PrevMouse.LeftButton != ButtonState.Pressed)
+            if (_input.CurrentMouse.RightButton == ButtonState.Pressed && _input.PrevMouse.RightButton != ButtonState.Pressed)
             {
+                foreach (Control c in em.UI.Controls)
+                {
+                    if (c.Passive || !c.Visible)
+                        continue;
+
+                    if (c.ControlRect.Contains((int)_input.CurrentMouse.X, (int)_input.CurrentMouse.Y))
+                    {
+                        return;
+                    }
+                }
+
                 // find any entities at the index the mouse was clicked on
                 // set the starting coords
                 int x = _input.CurrentMouse.X + (int)_camera.X;

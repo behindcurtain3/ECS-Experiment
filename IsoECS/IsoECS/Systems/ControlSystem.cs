@@ -20,10 +20,10 @@ namespace IsoECS.Systems
             KeyBindings = new Dictionary<Keys, Type>();
             KeyBindings.Add(Keys.C, typeof(CameraSystem));
             KeyBindings.Add(Keys.B, typeof(ConstructionSystem));
-            KeyBindings.Add(Keys.Space, typeof(InspectionSystem));
 
             ControlSystems = new Dictionary<Type, ISystem>();
             ControlSystems.Add(typeof(CameraSystem), new CameraSystem());
+            ControlSystems.Add(typeof(InspectionSystem), new InspectionSystem());
         }
 
         public void Init(EntityManager em)

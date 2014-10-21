@@ -81,8 +81,8 @@ namespace IsoECS.Systems.GamePlay
 
                 HousingComponent house = e.Get<HousingComponent>();
 
-                if (house.Tennants.Count < house.MaxOccupants)
-                    count += (house.MaxOccupants - house.Tennants.Count);
+                if (house.NumOccupantsAndProspectives < house.MaxOccupants)
+                    count += (house.MaxOccupants - (house.NumOccupantsAndProspectives));
             }
 
             return count;

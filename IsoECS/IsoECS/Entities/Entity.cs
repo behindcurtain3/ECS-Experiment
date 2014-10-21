@@ -46,6 +46,17 @@ namespace IsoECS.Entities
             return (T)(object)Components[typeof(T)];
         }
 
+        public Component Get(string name)
+        {
+            foreach (KeyValuePair<Type, Component> kvp in Components)
+            {
+                if (kvp.Key.Name.Equals(name))
+                    return kvp.Value;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Checks if the entity has a specific component
         /// </summary>
@@ -64,6 +75,11 @@ namespace IsoECS.Entities
         public void ResetID()
         {
             ID = (int)++ID_COUNTER;
+        }
+
+        public void OverrideID(int id)
+        {
+            ID = id;
         }
     }
 }

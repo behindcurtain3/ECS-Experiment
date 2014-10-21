@@ -52,6 +52,9 @@ namespace IsoECS.Systems.GamePlay
             {
                 BuildableComponent bc = e.Get<BuildableComponent>();
 
+                if (!bc.AllowConstruction)
+                    continue;
+
                 if (!_db.ContainsKey(bc.Category))
                     _db.Add(bc.Category, new List<Entity>());
 

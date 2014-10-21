@@ -1,0 +1,6 @@
+{
+  "Name" : "Items",
+  "List" : [
+    "Content/Data/Items/farm_items.json"
+  ]
+}

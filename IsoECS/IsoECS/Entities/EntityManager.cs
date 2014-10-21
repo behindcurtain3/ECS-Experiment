@@ -26,9 +26,28 @@ namespace IsoECS.Entities
             Entities = new List<Entity>();
         }
 
-        public void RemoveEntity(Entity e)
+        public void RemoveEntity(Entity entity)
         {
-            Entities.Remove(e);
+            Entities.Remove(entity);
+
+            Point index = entity.Get<PositionComponent>().Index;
+            foreach (IsoECS.Components.Component c in entity.Components.Values.ToList())
+            {
+                switch (c.GetType().Name)
+                {
+                    case "FoundationComponent":
+                        FoundationComponent foundation = (FoundationComponent)c;
+
+                        // remove any foundations from the planner
+                        foreach (LocationValue lv in foundation.Plan)
+                        {
+                            Point update = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
+                            if (Foundations.SpaceTaken.ContainsKey(update))
+                                Foundations.SpaceTaken.Remove(update);
+                        }
+                        break;
+                }
+            }
         }
 
         public void AddEntity(Entity entity)

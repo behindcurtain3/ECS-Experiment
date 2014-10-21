@@ -9,6 +9,7 @@ namespace IsoECS.Components.GamePlay
         public string Name { get; set; }
         public string Description { get; set; }
 
+        public bool AllowConstruction { get; set; }
         public bool DragBuildEnabled { get; set; }
         public bool Destructable { get; set; }
 

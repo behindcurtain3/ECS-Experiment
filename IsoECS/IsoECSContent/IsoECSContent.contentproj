@@ -60,6 +60,10 @@
       <Name>drawables</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Drawables\house-drawables.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>house-drawables</Name>
+    </None>
     <None Include="Data\Drawables\road-drawables.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>road-drawables</Name>
@@ -107,6 +111,10 @@
     <None Include="Data\Scenarios\alpha.json">
       <Name>alpha</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Sprites\house-pleb-plot.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>house-pleb-plot</Name>
     </None>
     <None Include="Data\Sprites\wheat-farm-foreground.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -225,6 +233,13 @@
     </Compile>
     <Compile Include="Data\Sprites\wheat-farm-foundation.png">
       <Name>wheat-farm-foundation</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Sprites\house-pleb-plot.png">
+      <Name>house-pleb-plot</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

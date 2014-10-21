@@ -108,8 +108,9 @@
     <Reference Include="System.Net">
       <Private>False</Private>
     </Reference>
-    <Reference Include="TomShane.Neoforce.Controls">
-      <HintPath>..\..\..\..\..\Libraries\Neoforce Binary\TomShane.Neoforce.Controls.dll</HintPath>
+    <Reference Include="TomShane.Neoforce.Controls, Version=0.7.2407.1915, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Neoforce-XNA\Central\bin\x86\Release\TomShane.Neoforce.Controls.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +140,7 @@
     <Compile Include="Components\Controls\InputController.cs" />
     <Compile Include="Components\GamePlay\IsometricMapComponent.cs" />
     <Compile Include="Components\GamePlay\MoveToTargetComponent.cs" />
+    <Compile Include="Components\GamePlay\PromotionComponent.cs" />
     <Compile Include="Components\GamePlay\RoadComponent.cs" />
     <Compile Include="Components\GamePlay\RoadPlannerComponent.cs" />
     <Compile Include="Components\GamePlay\SpawnerComponent.cs" />
@@ -149,8 +151,11 @@
     <Compile Include="DataStructures\EntityLibrary.cs" />
     <Compile Include="DataStructures\GameData.cs" />
     <Compile Include="Behaviors\Behavior.cs" />
+    <Compile Include="DataStructures\GamePlay\Promotion.cs" />
+    <Compile Include="DataStructures\GamePlay\PromotionData.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeInput.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeOutput.cs" />
+    <Compile Include="DataStructures\GamePlay\UpgradeRequirements.cs" />
     <Compile Include="DataStructures\IGameDrawable.cs" />
     <Compile Include="DataStructures\Json\Converters\DrawableConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\JsonCreationConverter.cs" />
@@ -181,7 +186,9 @@
     <Compile Include="Systems\GamePlay\BehaviorSystem.cs" />
     <Compile Include="Systems\GamePlay\ConstructionSystem.cs" />
     <Compile Include="Systems\GamePlay\DateTimeSystem.cs" />
+    <Compile Include="Systems\GamePlay\HousingUpgradeSystem.cs" />
     <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
+    <Compile Include="Systems\GamePlay\PromotionSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />
     <Compile Include="Systems\IRenderSystem.cs" />
     <Compile Include="Systems\IsometricMapSystem.cs" />

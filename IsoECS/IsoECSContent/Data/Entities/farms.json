@@ -7,7 +7,8 @@
 				"Category": "Farming",
 				"Name": "Wheat Farm",
 				"Description": "A countryside farm that produces wheat.",
-				"DragBuildEnabled": false
+				"DragBuildEnabled": false,
+				"AllowConstruction": true
 			},
 			{
 				"Type": "DrawableComponent",

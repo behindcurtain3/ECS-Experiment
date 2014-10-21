@@ -1,0 +1,11 @@
+{
+    "Texture": "Data/Sprites/house-pleb-plot",
+	"Name": "house-pleb-plot",
+    "Sources": [
+        {
+            "ID": "default",
+			"Source": {"x":0,"y":0,"width":64,"height":32},
+			"Origin": {"x":16,"y":0}
+        }
+	]
+}
