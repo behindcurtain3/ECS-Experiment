@@ -31,11 +31,16 @@ namespace IsoECS.Util
                 {
                     if (road.Updateable)
                     {
-                        road.RoadType = planner.Built[road.BuiltAt];
-                        foreach (IGameDrawable sprite in drawable.Drawables["Foundation"])
+                        foreach (IGameDrawable sprite in drawable.Drawables["Foundation"].ToList())
                         {
-                            ((DrawableSprite)sprite).ID = road.RoadType;
+                            if (sprite.UniqueID.Contains("road"))
+                            {
+                                // remove old road drawables
+                                drawable.Drawables["Foundation"].Remove(sprite);
+                            }
                         }
+                        road.RoadType = planner.Built[road.BuiltAt];
+                        drawable.Add("Foundation", Serialization.DeepCopy<IGameDrawable>(DrawableLibrary.Instance.Get(road.RoadType)));
                     }
                 }
             }
@@ -43,7 +48,7 @@ namespace IsoECS.Util
 
         public static void AddOrUpdateRoad(RoadPlannerComponent planner, IsometricMapComponent map, Point location, bool recursion = false)
         {
-            string value = GetRoadValue(planner, map, location);
+            string value = "dirt-road-" + GetRoadValue(planner, map, location);
 
             // set the value of built into the roadPlanner
             if (!planner.Built.ContainsKey(location))
@@ -103,41 +108,41 @@ namespace IsoECS.Util
 
             // 1 combo of 4
             if (NW && NE && SE && SW)
-                return "four_way";
+                return "fourway";
 
             // four different combos of 3
             else if (NW && NE && SE)
-                return "ne_threeway";
+                return "ne-threeway";
             else if (NW && NE && SW)
-                return "nw_threeway";
+                return "nw-threeway";
             else if (NW && SE && SW)
-                return "sw_threeway";
+                return "sw-threeway";
             else if (NE && SE && SW)
-                return "se_threeway";
+                return "se-threeway";
 
             // 6 combos of 2
             else if (SW && SE)
-                return "sw_se_corner";
+                return "bottom-corner";
             else if (NW && SW)
-                return "nw_sw_corner";
+                return "left-corner";
             else if (NW && NE)
-                return "nw_ne_corner";
+                return "top-corner";
             else if (NE && SE)
-                return "ne_se_corner";
+                return "right-corner";
             else if (SW && NE)
-                return "sw_ne_connection";
+                return "diagonal-up";
             else if (NW && SE)
-                return "nw_se_connection";
+                return "diagonal-down";
 
             // 4 combos of 1
             else if (SW)
-                return "sw_endpoint";
+                return "sw-endpoint";
             else if (NW)
-                return "nw_endpoint";
+                return "nw-endpoint";
             else if (NE)
-                return "ne_endpoint";
+                return "ne-endpoint";
             else if (SE)
-                return "se_endpoint";
+                return "se-endpoint";
 
             // 1 cobmo of 0
             else

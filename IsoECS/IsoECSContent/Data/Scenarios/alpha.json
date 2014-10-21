@@ -101,13 +101,10 @@
 			"Components": [
 				{
 					"Type": "DrawableComponent",
+					"Sources": [
+						"dirt-road-fourway"
+					],
 					"Drawables": {
-						"Foundation": [
-							{
-								"SpriteSheet": "isometric_roads",
-								"ID": "four_way",
-							}
-						],
 						"Foreground": [
 							{
 								"SpriteSheet": "spawner",

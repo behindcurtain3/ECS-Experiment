@@ -11,16 +11,9 @@
 				},
 				{
 					"Type": "DrawableComponent",
-					"Drawables": {
-						"Foundation": [
-							{
-								"SpriteSheet": "isometric_roads",
-								"ID": "single",
-								"Visible": true,
-								"Color": "255, 255, 255, 255"
-							}
-						]
-					}
+					"Sources": [
+						"dirt-road-single"
+					]
 				},
 				{
 					"Type": "RoadComponent"

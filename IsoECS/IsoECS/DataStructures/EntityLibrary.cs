@@ -118,7 +118,7 @@ namespace IsoECS.DataStructures
                             }
 
                         }
-                        else
+                        if (o["Drawables"] != null)
                         {
                             DrawableComponent dd = JsonConvert.DeserializeObject<DrawableComponent>(o.ToString(), new DrawableConverter());
 

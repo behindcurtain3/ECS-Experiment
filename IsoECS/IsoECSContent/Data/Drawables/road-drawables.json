@@ -1,0 +1,90 @@
+{
+	"DrawableComponents": [
+		{
+			"Drawables": {
+				"Foundation": [
+					{
+						"UniqueID": "dirt-road-fourway",
+						"SpriteSheet": "dirt-roads",
+						"ID": "fourway"
+					},
+					{
+						"UniqueID": "dirt-road-single",
+						"SpriteSheet": "dirt-roads",
+						"ID": "single"
+					},
+					{
+						"UniqueID": "dirt-road-diagonal-up",
+						"SpriteSheet": "dirt-roads",
+						"ID": "diagonal-up"
+					},
+					{
+						"UniqueID": "dirt-road-diagonal-down",
+						"SpriteSheet": "dirt-roads",
+						"ID": "diagonal-down"
+					},
+					{
+						"UniqueID": "dirt-road-sw-endpoint",
+						"SpriteSheet": "dirt-roads",
+						"ID": "sw-endpoint"
+					},
+					{
+						"UniqueID": "dirt-road-nw-endpoint",
+						"SpriteSheet": "dirt-roads",
+						"ID": "nw-endpoint"
+					},
+					{
+						"UniqueID": "dirt-road-ne-endpoint",
+						"SpriteSheet": "dirt-roads",
+						"ID": "ne-endpoint"
+					},
+					{
+						"UniqueID": "dirt-road-se-endpoint",
+						"SpriteSheet": "dirt-roads",
+						"ID": "se-endpoint"
+					},
+					{
+						"UniqueID": "dirt-road-bottom-corner",
+						"SpriteSheet": "dirt-roads",
+						"ID": "sw-se-corner"
+					},
+					{
+						"UniqueID": "dirt-road-left-corner",
+						"SpriteSheet": "dirt-roads",
+						"ID": "nw-sw-corner"
+					},
+					{
+						"UniqueID": "dirt-road-top-corner",
+						"SpriteSheet": "dirt-roads",
+						"ID": "nw-ne-corner"
+					},
+					{
+						"UniqueID": "dirt-road-right-corner",
+						"SpriteSheet": "dirt-roads",
+						"ID": "ne-se-corner"
+					},
+					{
+						"UniqueID": "dirt-road-sw-threeway",
+						"SpriteSheet": "dirt-roads",
+						"ID": "sw-threeway"
+					},
+					{
+						"UniqueID": "dirt-road-nw-threeway",
+						"SpriteSheet": "dirt-roads",
+						"ID": "nw-threeway"
+					},
+					{
+						"UniqueID": "dirt-road-ne-threeway",
+						"SpriteSheet": "dirt-roads",
+						"ID": "ne-threeway"
+					},
+					{
+						"UniqueID": "dirt-road-se-threeway",
+						"SpriteSheet": "dirt-roads",
+						"ID": "se-threeway"
+					}
+				]
+			}
+		}
+	]
+}

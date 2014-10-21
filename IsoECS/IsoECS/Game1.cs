@@ -105,6 +105,14 @@ namespace IsoECS
             em.UI.Initialize();
             em.UI.RenderTarget = em.UI.CreateRenderTarget();
 
+            Window w = new TomShane.Neoforce.Controls.Window(em.UI)
+            {
+                Text = "My Quick Test Window"
+            };
+            w.Init();
+            w.Center();
+            em.UI.Add(w);
+
             // Load the scenario
             // TODO: put this in a method somewhere
             string s = File.ReadAllText("Content/Data/Scenarios/alpha.json");
@@ -217,7 +225,9 @@ namespace IsoECS
         protected override void Update(GameTime gameTime)
         {
             // update the UI
+            diagnostics.RestartTiming("UI");
             em.UI.Update(gameTime);
+            diagnostics.StopTiming("UI");
 
             // update the game systems
             foreach (ISystem system in systems)

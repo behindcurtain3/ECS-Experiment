@@ -104,7 +104,7 @@ namespace IsoECS.Systems.UI
                 Visible = false,
                 AutoScroll = true,
                 IconVisible = true,
-                CloseButtonVisible = false,
+                CloseButtonVisible = true,
                 Text = "",
                 Height = 300,
                 Width = 350,

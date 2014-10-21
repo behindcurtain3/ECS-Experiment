@@ -1,9 +1,9 @@
 {
     "Texture": "Data/Sprites/isometric_roads",
-	"Name": "isometric_roads",
+	"Name": "dirt-roads",
     "Sources": [
         {
-            "ID": "four_way",
+            "ID": "fourway",
 			"Source": {"x":0,"y":0,"width":32,"height":16}
         },
         {
@@ -11,59 +11,59 @@
 			"Source": {"x":32,"y":0,"width":32,"height":16}
         },
 		{
-            "ID": "sw_ne_connection",
+            "ID": "diagonal-up",
 			"Source": {"x":64,"y":0,"width":32,"height":16}
         },
 		{
-            "ID": "nw_se_connection",
+            "ID": "diagonal-down",
 			"Source": {"x":96,"y":0,"width":32,"height":16}
         },
 		{
-            "ID": "sw_endpoint",
+            "ID": "sw-endpoint",
 			"Source": {"x":0,"y":16,"width":32,"height":16}
         },
 		{
-            "ID": "nw_endpoint",
+            "ID": "nw-endpoint",
 			"Source": {"x":32,"y":16,"width":32,"height":16}
         },
 		{
-            "ID": "ne_endpoint",
+            "ID": "ne-endpoint",
 			"Source": {"x":64,"y":16,"width":32,"height":16}
         },
 		{
-            "ID": "se_endpoint",
+            "ID": "se-endpoint",
 			"Source": {"x":96,"y":16,"width":32,"height":16}
         },
 		{
-            "ID": "sw_se_corner",
+            "ID": "sw-se-corner",
 			"Source": {"x":0,"y":32,"width":32,"height":16}
         },
 		{
-            "ID": "nw_sw_corner",
+            "ID": "nw-sw-corner",
 			"Source": {"x":32,"y":32,"width":32,"height":16}
         },
 		{
-            "ID": "nw_ne_corner",
+            "ID": "nw-ne-corner",
 			"Source": {"x":64,"y":32,"width":32,"height":16}
         },
 		{
-            "ID": "ne_se_corner",
+            "ID": "ne-se-corner",
 			"Source": {"x":96,"y":32,"width":32,"height":16}
         },
 		{
-            "ID": "sw_threeway",
+            "ID": "sw-threeway",
 			"Source": {"x":0,"y":48,"width":32,"height":16}
         },
 		{
-            "ID": "nw_threeway",
+            "ID": "nw-threeway",
 			"Source": {"x":32,"y":48,"width":32,"height":16}
         },
 		{
-            "ID": "ne_threeway",
+            "ID": "ne-threeway",
 			"Source": {"x":64,"y":48,"width":32,"height":16}
         },
 		{
-            "ID": "se_threeway",
+            "ID": "se-threeway",
 			"Source": {"x":96,"y":48,"width":32,"height":16}
         }
 	]
