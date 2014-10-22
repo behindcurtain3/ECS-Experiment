@@ -57,25 +57,19 @@ namespace IsoECS.Components.GamePlay
 
         public void ToggleAccepting(string item)
         {
-            if (!StockPile.ContainsKey(item))
-                StockPile.Add(item, new StockPileData() { Item = item });
-
+            ValidateItem(item);
             StockPile[item].IsAccepting = !StockPile[item].IsAccepting;
         }
 
         public void SetMinimum(string item, int value)
         {
-            if (!StockPile.ContainsKey(item))
-                StockPile.Add(item, new StockPileData() { Item = item });
-
+            ValidateItem(item);
             StockPile[item].Minimum = value;
         }
 
         public void SetMaximum(string item, int value)
         {
-            if (!StockPile.ContainsKey(item))
-                StockPile.Add(item, new StockPileData() { Item = item });
-
+            ValidateItem(item);
             StockPile[item].Maximum = value;
         }
 
@@ -94,17 +88,16 @@ namespace IsoECS.Components.GamePlay
                 int leftover = amount - added;
             }
 
-            if (!StockPile.ContainsKey(item))
-            {
-                StockPile.Add(item, new StockPileData()
-                {
-                    Item = item,
-                    Amount = 0,
-                });
-            }
+            ValidateItem(item);
 
             StockPile[item].Amount += added;
             return added;
+        }
+        
+        private void ValidateItem(string item)
+        {
+            if (!StockPile.ContainsKey(item))
+                StockPile.Add(item, new StockPileData() { Item = item });
         }
     }
 }
