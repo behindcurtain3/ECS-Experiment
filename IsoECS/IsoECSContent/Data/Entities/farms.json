@@ -16,6 +16,9 @@
 					"wheat-farm-foundation",
 					"wheat-farm-foreground-stage1"
 				]
+			},			
+			{
+				"Type": "Inventory"
 			},
 			{
 				"Type": "ProductionComponent",
@@ -23,9 +26,6 @@
 				"MaxEmployees": 12,
 				"EmployeeGender": "BOTH",
 				"MaxHaulers": 3
-			},
-			{
-				"Type": "Inventory"
 			},
 			{
 				"Type": "FoundationComponent",

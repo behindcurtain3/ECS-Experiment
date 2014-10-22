@@ -266,7 +266,7 @@ namespace IsoECS.Entities
             return validLandings;
         }
 
-        public List<Entity> GetBuildingsWithinWalkableDistance(int startID, int distance)
+        public List<Entity> GetBuildingsWithinWalkableDistance<T>(int startID, int distance)
         {
             List<Entity> entitiesWithinRange = new List<Entity>();
             Entity startEntity = GetEntity(startID);
@@ -296,7 +296,7 @@ namespace IsoECS.Entities
                             if (Foundations.SpaceTaken.ContainsKey(p))
                             {
                                 Entity e = GetEntity(Foundations.SpaceTaken[p]);
-                                if (e != null && e.HasComponent<ProductionComponent>() && !entitiesWithinRange.Contains(e))
+                                if (e != null && e.HasComponent<T>() && !entitiesWithinRange.Contains(e))
                                     entitiesWithinRange.Add(e);
                             }
                         }

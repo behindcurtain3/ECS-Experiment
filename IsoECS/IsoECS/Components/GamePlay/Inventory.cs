@@ -7,21 +7,37 @@ using IsoECS.GamePlay;
 namespace IsoECS.Components.GamePlay
 {
     [Serializable]
+    public class InventoryData
+    {
+        public string Item { get; set; }
+        public int Amount { get; set; }
+        public bool Output { get; set; }
+        public bool Input { get; set; }
+
+        public InventoryData()
+        {
+            Amount = 0;
+            Output = false;
+            Input = false;
+        }
+    }
+
+    [Serializable]
     public class Inventory : Component
     {
-        public Dictionary<string, int> Items { get; set; }
+        public Dictionary<string, InventoryData> Items { get; set; }
 
         public Inventory()
         {
-            Items = new Dictionary<string, int>();
+            Items = new Dictionary<string, InventoryData>();
         }
 
         public bool Add(string name, int amount)
         {
             if (!Items.ContainsKey(name))
-                Items.Add(name, 0);
+                Items.Add(name, new InventoryData() { Item = name });
 
-            Items[name] += amount;
+            Items[name].Amount += amount;
 
             // in future check for restrictions like a max amount of inventory space
             return true;
@@ -32,7 +48,7 @@ namespace IsoECS.Components.GamePlay
             if (!Items.ContainsKey(name))
                 return 0;
 
-            return Items[name];
+            return Items[name].Amount;
         }
     }
 }

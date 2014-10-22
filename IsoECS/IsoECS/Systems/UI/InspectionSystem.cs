@@ -60,8 +60,18 @@ namespace IsoECS.Systems.UI
                     PositionComponent position = potential.Get<PositionComponent>();
 
                     if (position.Index == index)
+                    {
                         selectedEntities.Add(potential);
+                        continue;
+                    }
                 }
+
+                Entity foundationEntity = null;
+                if(em.Foundations.SpaceTaken.ContainsKey(index))
+                    foundationEntity = em.GetEntity(em.Foundations.SpaceTaken[index]);
+
+                if (foundationEntity != null && !selectedEntities.Contains(foundationEntity))
+                    selectedEntities.Add(foundationEntity);
 
                 if (selectedEntities.Count > 0)
                 {
@@ -153,26 +163,38 @@ namespace IsoECS.Systems.UI
             };
             _entityTabs.Init();
 
+            _entityWindow.Text = "";
             TabPage page;
 
             foreach (IsoECS.Components.Component component in e.Components.Values)
             {
-                if (component is DrawableComponent || component is CollisionComponent || component is FoundationComponent)
+
+                if (component is CitizenComponent)
+                    _entityWindow.Text = ((CitizenComponent)component).Name;
+                else if (component is BuildableComponent)
+                    _entityWindow.Text = ((BuildableComponent)component).Name;
+
+                if (component is DrawableComponent 
+                    || component is CollisionComponent 
+                    || component is FoundationComponent
+                    || component is BuildableComponent
+                    || component is PositionComponent)
                     continue;
 
                 page = _entityTabs.AddPage(component.GetType().Name);
 
                 if (component is Inventory)
+                {
+                    page.Text = "Inventory";
                     DisplayInventory((Inventory)component, page);
+                }
                 else if (component is StockpileComponent)
+                {
+                    page.Text = "Stockpile";
                     DisplayStockpile((StockpileComponent)component, page);
+                }
                 else
                     LabelAllProperties(component, page);
-
-                if (component is CitizenComponent)
-                    _entityWindow.Text = ((CitizenComponent)component).Name;
-                else if(component is BuildableComponent)
-                    _entityWindow.Text = ((BuildableComponent)component).Name;
             }
 
             /*
@@ -201,6 +223,8 @@ namespace IsoECS.Systems.UI
                 page = _entityTabs.AddPage("Inventory");
             }*/
 
+            if(string.IsNullOrWhiteSpace(_entityWindow.Text))
+                _entityWindow.Text = string.Format("#{0}", e.ID);
             _entityWindow.Add(_entityTabs);
             _entityWindow.Show();
             _entityWindow.Tag = e;

@@ -10,7 +10,7 @@ namespace IsoECS.Behaviors
         public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
         {
             CitizenComponent citizen = self.Get<CitizenComponent>();
-            List<Entity> potentialJobs = em.GetBuildingsWithinWalkableDistance(citizen.HousingID, 20);
+            List<Entity> potentialJobs = em.GetBuildingsWithinWalkableDistance<ProductionComponent>(citizen.HousingID, 20);
             
             foreach (Entity e in potentialJobs)
             {
@@ -30,8 +30,11 @@ namespace IsoECS.Behaviors
                 if (production.MaxHaulers > 0)
                 {
                     citizen.IsHauler = production.NumHaulers < production.MaxHaulers;
-                    if(citizen.IsHauler)
+                    if (citizen.IsHauler)
+                    {
                         production.Haulers.Add(self.ID);
+                        self.AddComponent(new Inventory()); // add an inventory to the hauler
+                    }
                 }
                 else
                     citizen.IsHauler = false;

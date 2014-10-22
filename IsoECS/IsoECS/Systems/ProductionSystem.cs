@@ -52,6 +52,8 @@ namespace IsoECS.Systems
                     foreach (RecipeOutput output in stage.Outputs)
                     {
                         inventory.Add(output.Item, output.AmountProduced);
+                        // make sure the newly produced item is marked as output
+                        inventory.Items[output.Item].Output = true;
                     }
 
                     // go to next stage in the recipe
