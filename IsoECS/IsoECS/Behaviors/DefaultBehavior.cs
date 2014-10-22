@@ -37,12 +37,17 @@ namespace IsoECS.Behaviors
             }
             else
             {
-                // go to work
-                if (citizen.JobID != -1 && PreviousBehavior.GetType() == typeof(IdleBehavior) && citizen.InsideID != citizen.JobID)
+                // do the hauling job
+                if (citizen.IsHauler && citizen.JobID != -1)
                 {
-                    state.Push(new ExitBuildingBehavior() { ExitID = citizen.InsideID, TargetID = citizen.JobID });
-                    PreviousBehavior = state.Peek();
+                    state.Push(new HaulerBehavior());
                 }
+                // go to work
+                //else if (citizen.JobID != -1 && PreviousBehavior.GetType() == typeof(IdleBehavior) && citizen.InsideID != citizen.JobID)
+                //{
+                //    state.Push(new ExitBuildingBehavior() { ExitID = citizen.InsideID, TargetID = citizen.JobID });
+                //    PreviousBehavior = state.Peek();
+                //}
                 // go home
                 else if (citizen.HousingID != -1 && PreviousBehavior.GetType() == typeof(IdleBehavior) && citizen.InsideID != citizen.HousingID)
                 {

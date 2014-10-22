@@ -123,6 +123,7 @@
     <Compile Include="Behaviors\FindPathBehavior.cs" />
     <Compile Include="Behaviors\FollowPathBehavior.cs" />
     <Compile Include="Behaviors\GoToBehavior.cs" />
+    <Compile Include="Behaviors\HaulerBehavior.cs" />
     <Compile Include="Behaviors\IdleBehavior.cs" />
     <Compile Include="Components\Controls\CameraController.cs" />
     <Compile Include="Components\Component.cs" />

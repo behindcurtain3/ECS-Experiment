@@ -36,6 +36,8 @@ namespace IsoECS.Components.GamePlay
         // TODO: switch to a different component + use a behavior manager/brain
         public Stack<Behavior> Behaviors { get; set; }
 
+        public bool IsHauler { get; set; }
+
         public CitizenComponent()
         {
             FatherID = -1;
@@ -44,6 +46,7 @@ namespace IsoECS.Components.GamePlay
             JobID = -1;
             InsideID = -1;
             Gender = GamePlay.Gender.BOTH;
+            IsHauler = false;
 
             Behaviors = new Stack<Behavior>();
         }

@@ -17,7 +17,7 @@ namespace IsoECS.Behaviors
                 ProductionComponent production = e.Get<ProductionComponent>();
 
                 // make sure there are jobs available here
-                if (production.Employees.Count >= production.MaxEmployees)
+                if (production.NumEmployees >= production.MaxEmployees)
                     continue;
 
                 // see if the job hires the appropriate gender
@@ -27,6 +27,15 @@ namespace IsoECS.Behaviors
                 // take the job
                 // TODO: make sure the employee can path to the job
                 citizen.JobID = e.ID;
+                if (production.MaxHaulers > 0)
+                {
+                    citizen.IsHauler = production.NumHaulers < production.MaxHaulers;
+                    if(citizen.IsHauler)
+                        production.Haulers.Add(self.ID);
+                }
+                else
+                    citizen.IsHauler = false;
+
                 production.Employees.Add(self.ID);
                 Status = BehaviorStatus.SUCCESS;
                 return;
