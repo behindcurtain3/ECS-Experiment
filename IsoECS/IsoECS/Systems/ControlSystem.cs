@@ -14,11 +14,11 @@ namespace IsoECS.Systems
         public Dictionary<Keys, Type> KeyBindings { get; private set; }
 
         public Dictionary<Type, ISystem> ControlSystems { get; private set; }
+        public ISystem ExclusiveSystem { get; private set; }
 
         public ControlSystem()
         {
             KeyBindings = new Dictionary<Keys, Type>();
-            KeyBindings.Add(Keys.C, typeof(CameraSystem));
             KeyBindings.Add(Keys.B, typeof(ConstructionSystem));
 
             ControlSystems = new Dictionary<Type, ISystem>();
@@ -50,17 +50,21 @@ namespace IsoECS.Systems
                 // if the key is pressed
                 if (keyboard.IsKeyDown(binding.Key) && !prevKeyboard.IsKeyDown(binding.Key))
                 {
-                    // either add or remove the system bound to the key
-                    if (ControlSystems.ContainsKey(binding.Value))
+                    if (ExclusiveSystem != null)
                     {
-                        ControlSystems[binding.Value].Shutdown(em);
-                        ControlSystems.Remove(binding.Value);
+                        // turn it off
+                        ExclusiveSystem.Shutdown(em);
                     }
-                    else
+
+                    if (ExclusiveSystem == null || ExclusiveSystem.GetType() != binding.Value)
                     {
                         ISystem instance = (ISystem)Activator.CreateInstance(binding.Value);
                         instance.Init(em);
-                        ControlSystems.Add(instance.GetType(), instance);
+                        ExclusiveSystem = instance;
+                    }
+                    else
+                    {
+                        ExclusiveSystem = null;
                     }
                 }
             }
@@ -68,6 +72,9 @@ namespace IsoECS.Systems
             // Update the subsystems
             foreach (ISystem system in ControlSystems.Values)
                 system.Update(em, dt);
+
+            if (ExclusiveSystem != null)
+                ExclusiveSystem.Update(em, dt);
         }
     }
 }
