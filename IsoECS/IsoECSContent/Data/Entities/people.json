@@ -28,6 +28,31 @@
 					"Type": "PositionComponent"
 				}
 			]
+		},
+		{
+			"UniqueID": "hauler",
+			"Components": [
+				{
+					"Type": "DrawableComponent",
+					"Drawables": {
+						"Foreground": [
+							{
+								"SpriteSheet": "isometric_person",
+								"ID": "male"
+							}
+						]
+					}
+				},
+				{
+					"Type": "CitizenComponent"
+				},
+				{
+					"Type": "Inventory"
+				},
+				{
+					"Type": "PositionComponent"
+				}
+			]
 		}
 	]
 }

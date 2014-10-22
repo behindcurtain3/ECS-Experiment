@@ -7,11 +7,11 @@ namespace IsoECS.Components.GamePlay
     [Serializable]
     public class FoundationPlannerComponent : Component
     {
-        public Dictionary<Point, bool> SpaceTaken { get; set; }
+        public Dictionary<Point, int> SpaceTaken { get; set; }
 
         public FoundationPlannerComponent()
         {
-            SpaceTaken = new Dictionary<Point, bool>();
+            SpaceTaken = new Dictionary<Point, int>();
         }
     }
 }

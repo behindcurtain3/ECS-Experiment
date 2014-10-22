@@ -42,29 +42,7 @@ namespace IsoECS.Behaviors
                     return;
                 }
 
-                PositionComponent ePosition = exit.Get<PositionComponent>();
-                FoundationComponent foundation = exit.Get<FoundationComponent>();
-                
-                foreach (LocationValue plot in foundation.Plan)
-                {
-                    // check the ortho points around the plot position
-                    for (int x = -1; x < 2; x++)
-                    {
-                        for (int y = -1; y < 2; y++)
-                        {
-                            if (Math.Abs(x) == Math.Abs(y))
-                                continue;
-
-                            Point p = new Point(ePosition.Index.X + plot.Offset.X + x, ePosition.Index.Y + plot.Offset.Y + y);
-
-                            if (!Isometric.ValidIndex(em.Map, p.X, p.Y))
-                                continue;
-
-                            if ((!em.Collisions.Map.ContainsKey(p) || em.Collisions.Map[p] != -1) && !_validExits.Contains(p))
-                                _validExits.Add(p);
-                        }
-                    }
-                }
+                _validExits = em.GetValidExitsFromFoundation(exit);
 
                 if (_validExits.Count == 0)
                 {

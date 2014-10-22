@@ -98,28 +98,7 @@ namespace IsoECS.Behaviors
                     FoundationComponent foundation = target.Get<FoundationComponent>();
 
                     // list to hold valid road tiles to move to
-                    List<Point> validLandings = new List<Point>();
-
-                    foreach (LocationValue plot in foundation.Plan)
-                    {
-                        // check the ortho points around the plot position
-                        for (int x = -1; x < 2; x++)
-                        {
-                            for (int y = -1; y < 2; y++)
-                            {
-                                if (Math.Abs(x) == Math.Abs(y))
-                                    continue;
-
-                                Point p = new Point(tPosition.Index.X + plot.Offset.X + x, tPosition.Index.Y + plot.Offset.Y + y);
-
-                                if (!Isometric.ValidIndex(em.Map, p.X, p.Y))
-                                    continue;
-
-                                if ((!em.Collisions.Map.ContainsKey(p) || em.Collisions.Map[p] != -1) && !validLandings.Contains(p))
-                                    validLandings.Add(p);
-                            }
-                        }
-                    }
+                    List<Point> validLandings = em.GetValidExitsFromFoundation(target);
 
                     if (validLandings.Count == 0)
                     {

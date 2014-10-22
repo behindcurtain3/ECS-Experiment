@@ -125,7 +125,7 @@ namespace IsoECS.Entities
                         foreach (LocationValue lv in floor.Plan)
                         {
                             Point update = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
-                            Foundations.SpaceTaken.Add(update, true);
+                            Foundations.SpaceTaken.Add(update, entity.ID);
                         }
                         break;
 
@@ -229,6 +229,37 @@ namespace IsoECS.Entities
                         break;
                 }
             }
+        }
+
+        public List<Point> GetValidExitsFromFoundation(Entity entity)
+        {
+            // list to hold valid road tiles to move to
+            List<Point> validLandings = new List<Point>();
+            FoundationComponent foundation = entity.Get<FoundationComponent>();
+            PositionComponent position = entity.Get<PositionComponent>();
+
+            foreach (LocationValue plot in foundation.Plan)
+            {
+                // check the ortho points around the plot position
+                for (int x = -1; x < 2; x++)
+                {
+                    for (int y = -1; y < 2; y++)
+                    {
+                        if (Math.Abs(x) == Math.Abs(y))
+                            continue;
+
+                        Point p = new Point(position.Index.X + plot.Offset.X + x, position.Index.Y + plot.Offset.Y + y);
+
+                        if (!Isometric.ValidIndex(Map, p.X, p.Y))
+                            continue;
+
+                        if ((!Collisions.Map.ContainsKey(p) || Collisions.Map[p] != -1) && !validLandings.Contains(p))
+                            validLandings.Add(p);
+                    }
+                }
+            }
+
+            return validLandings;
         }
     }
 }

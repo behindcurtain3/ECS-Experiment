@@ -85,7 +85,6 @@ namespace IsoECS.Components.GamePlay
             {
                 int spaceLeft = (max - already);
                 added = Math.Min(amount, spaceLeft);
-                int leftover = amount - added;
             }
 
             ValidateItem(item);
