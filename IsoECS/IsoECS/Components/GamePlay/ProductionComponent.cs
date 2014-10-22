@@ -12,6 +12,7 @@ namespace IsoECS.Components.GamePlay
         public List<int> Employees { get; set; }
         public int MaxEmployees { get; set; }
         public Gender EmployeeGender { get; set; }
+        public int NumEmployees { get { return Employees.Count; } }
 
         public int CurrentStage { get; set; }
         public double WorkDone { get; set; }

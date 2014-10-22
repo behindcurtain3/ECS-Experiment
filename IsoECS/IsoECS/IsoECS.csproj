@@ -204,6 +204,7 @@
     <Compile Include="Util\Isometric.cs" />
     <Compile Include="Util\MathHelper.cs" />
     <Compile Include="Util\Pathfinder.cs" />
+    <Compile Include="Util\Pathwalker.cs" />
     <Compile Include="Util\RoadsHelper.cs" />
     <Compile Include="Util\Serialization.cs" />
     <Compile Include="Util\StringHelper.cs" />

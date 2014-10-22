@@ -13,5 +13,10 @@ namespace IsoECS.Components.GamePlay
         {
             Built = new Dictionary<Point, string>();
         }
+
+        public bool IsRoadAt(Point p)
+        {
+            return Built.ContainsKey(p);
+        }
     }
 }

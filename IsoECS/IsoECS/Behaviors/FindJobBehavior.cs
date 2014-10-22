@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using IsoECS.Components.GamePlay;
 using IsoECS.Entities;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.Behaviors
 {
@@ -8,9 +9,9 @@ namespace IsoECS.Behaviors
     {
         public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
         {
-            List<Entity> potentialJobs = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<ProductionComponent>(); });
             CitizenComponent citizen = self.Get<CitizenComponent>();
-
+            List<Entity> potentialJobs = em.GetBuildingsWithinWalkableDistance(citizen.HousingID, 20);
+            
             foreach (Entity e in potentialJobs)
             {
                 ProductionComponent production = e.Get<ProductionComponent>();
@@ -30,7 +31,7 @@ namespace IsoECS.Behaviors
                 Status = BehaviorStatus.SUCCESS;
                 return;
             }
-
+            
             Status = BehaviorStatus.FAILURE;
         }
     }

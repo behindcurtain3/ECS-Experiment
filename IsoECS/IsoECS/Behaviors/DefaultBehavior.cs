@@ -30,7 +30,7 @@ namespace IsoECS.Behaviors
                 state.Push(new FindHomeBehavior());
                 PreviousBehavior = state.Peek();
             }
-            else if (citizen.JobID == -1 && PreviousBehavior.GetType() != typeof(FindJobBehavior))
+            else if (citizen.JobID == -1 && citizen.HousingID != -1 && PreviousBehavior.GetType() != typeof(FindJobBehavior))
             {
                 state.Push(new FindJobBehavior());
                 PreviousBehavior = state.Peek();

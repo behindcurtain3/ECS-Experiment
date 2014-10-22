@@ -253,6 +253,10 @@ namespace IsoECS.Entities
                         if (!Isometric.ValidIndex(Map, p.X, p.Y))
                             continue;
 
+                        // can only exit onto roads
+                        //if (Roads.IsRoadAt(p) && !validLandings.Contains(p))
+                        //    validLandings.Add(p);
+
                         if ((!Collisions.Map.ContainsKey(p) || Collisions.Map[p] != -1) && !validLandings.Contains(p))
                             validLandings.Add(p);
                     }
@@ -260,6 +264,52 @@ namespace IsoECS.Entities
             }
 
             return validLandings;
+        }
+
+        public List<Entity> GetBuildingsWithinWalkableDistance(int startID, int distance)
+        {
+            List<Entity> entitiesWithinRange = new List<Entity>();
+            Entity startEntity = GetEntity(startID);
+
+            if (startEntity == null)
+                return entitiesWithinRange;
+
+            List<Point> exits = GetValidExitsFromFoundation(startEntity);
+
+            foreach (Point exit in exits)
+            {
+                // walk the "road path" until distance is reached
+                List<Point> roads = Pathwalker.GetRoadsWithinDistance(Roads, exit, distance);
+
+                foreach(Point road in roads)
+                {
+                    for (int x = -1; x < 2; x++)
+                    {
+                        for (int y = -1; y < 2; y++)
+                        {
+                            if (Math.Abs(x) == Math.Abs(y))
+                                continue;
+
+                            // check ortho for foundations
+                            Point p = new Point(road.X + x, road.Y + y);
+
+                            if (Foundations.SpaceTaken.ContainsKey(p))
+                            {
+                                Entity e = GetEntity(Foundations.SpaceTaken[p]);
+                                if (e != null && e.HasComponent<ProductionComponent>() && !entitiesWithinRange.Contains(e))
+                                    entitiesWithinRange.Add(e);
+                            }
+                        }
+                    }
+                }
+            }            
+
+            return entitiesWithinRange;
+        }
+
+        public Entity GetEntity(int id)
+        {
+            return Entities.Find(delegate(Entity e) { return e.ID == id; });
         }
     }
 }
