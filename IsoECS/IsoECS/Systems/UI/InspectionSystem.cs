@@ -132,8 +132,10 @@ namespace IsoECS.Systems.UI
                 CloseButtonVisible = true,
                 Text = "",
                 Height = 300,
-                Width = 350,
-                Left = -1000
+                Width = 450,
+                Left = -1000,
+                MinimumWidth = 350,
+                MinimumHeight = 200
             };
             _entityWindow.Init();
             em.UI.Add(_entityWindow);
@@ -197,32 +199,6 @@ namespace IsoECS.Systems.UI
                     LabelAllProperties(component, page);
             }
 
-            /*
-            if (e.HasComponent<CitizenComponent>())
-            {
-                CitizenComponent citizen = e.Get<CitizenComponent>();
-
-                _entityWindow.Text = string.Format("{0} {1}", citizen.Name, citizen.FamilyName);
-
-                // Add in the citizen component
-                page = _entityTabs.AddPage("Biography");
-            }
-            if (e.HasComponent<BuildableComponent>())
-            {
-                BuildableComponent buildable = e.Get<BuildableComponent>();
-
-                _entityWindow.Text = buildable.Name;
-
-                page = _entityTabs.AddPage("Building");
-
-                LabelAllProperties(buildable, page);
-            }
-            if (e.HasComponent<Inventory>())
-            {
-                // Add in the citizen component
-                page = _entityTabs.AddPage("Inventory");
-            }*/
-
             if(string.IsNullOrWhiteSpace(_entityWindow.Text))
                 _entityWindow.Text = string.Format("#{0}", e.ID);
             _entityWindow.Add(_entityTabs);
@@ -231,8 +207,8 @@ namespace IsoECS.Systems.UI
 
             if (_entityWindow.Left + _entityWindow.Width < 0)
             {
-                _entityWindow.Center();
                 _entityWindow.Left = _entityWindow.Manager.GraphicsDevice.Viewport.Width - _entityWindow.Width;
+                _entityWindow.Top = _entityWindow.Manager.GraphicsDevice.Viewport.Height - _entityWindow.Height;
             }
         }
 
@@ -371,18 +347,20 @@ namespace IsoECS.Systems.UI
             int y = 2;
             int ySpacer = 24;
             int col1 = 2;
-            int col2 = 130;
-            int col3 = 210;
-            int col4 = 290;
+            int col4 = page.ClientWidth - 82;
+            int col3 = col4 - 80;
+            int col2 = col3 - 80;
+            int col1Width = col2 - col1 - 5;
 
             lbl = new Label(page.Manager)
             {
                 Text = "Item",
                 Left = col1,
-                Width = 125,
+                Width = col1Width,
                 Top = y,
                 Height = 20,
-                Alignment = Alignment.MiddleCenter
+                Alignment = Alignment.MiddleCenter,
+                Anchor = Anchors.Horizontal | Anchors.Top
             };
             page.Add(lbl);
 
@@ -393,7 +371,8 @@ namespace IsoECS.Systems.UI
                 Width = 75,
                 Top = y,
                 Height = 20,
-                Alignment = Alignment.MiddleCenter
+                Alignment = Alignment.MiddleCenter,
+                Anchor = Anchors.Right | Anchors.Top
             };
             page.Add(lbl);
 
@@ -404,7 +383,8 @@ namespace IsoECS.Systems.UI
                 Width = 75,
                 Top = y,
                 Height = 20,
-                Alignment = Alignment.MiddleCenter
+                Alignment = Alignment.MiddleCenter,
+                Anchor = Anchors.Right | Anchors.Top
             };
             page.Add(lbl);
 
@@ -415,7 +395,8 @@ namespace IsoECS.Systems.UI
                 Width = 75,
                 Top = y,
                 Height = 20,
-                Alignment = Alignment.MiddleCenter
+                Alignment = Alignment.MiddleCenter,
+                Anchor = Anchors.Right | Anchors.Top
             };
             page.Add(lbl);
 
@@ -429,10 +410,11 @@ namespace IsoECS.Systems.UI
                     Text = item.Name,
                     Left = col1,
                     Top = y,
-                    Width = 125,
+                    Width = col1Width,
                     Height = 20,
                     CanFocus = false,
-                    Tag = item
+                    Tag = item,
+                    Anchor = Anchors.Horizontal | Anchors.Top
                 };
                 btn.Init();
                 btn.Click += new EventHandler(ToggleStockPileItem);
@@ -446,7 +428,8 @@ namespace IsoECS.Systems.UI
                     Width = 75,
                     Top = y,
                     Height = 20,
-                    Alignment = Alignment.MiddleCenter
+                    Alignment = Alignment.MiddleCenter,
+                    Anchor = Anchors.Right | Anchors.Top
                 };
                 page.Add(lbl);
 
@@ -464,6 +447,7 @@ namespace IsoECS.Systems.UI
                         Maximum = 5000,
                         Step = 1,
                         DisplayFormat = "f",
+                        Anchor = Anchors.Right | Anchors.Top,
                         Tag = item
                     };
                     spinner.Init();
@@ -484,6 +468,7 @@ namespace IsoECS.Systems.UI
                         Maximum = 5000,
                         Step = 1,
                         DisplayFormat = "f",
+                        Anchor = Anchors.Right | Anchors.Top,
                         Tag = item
                     };
                     spinner.Init();
@@ -501,7 +486,8 @@ namespace IsoECS.Systems.UI
                         Width = 155,
                         Top = y,
                         Height = 20,
-                        Alignment = Alignment.MiddleCenter
+                        Alignment = Alignment.MiddleCenter,
+                        Anchor = Anchors.Right | Anchors.Top
                     };
                     page.Add(lbl);
                 }
