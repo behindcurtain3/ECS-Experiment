@@ -226,6 +226,11 @@ namespace IsoECS.DataStructures
                         SpawnerComponent spawner = JsonConvert.DeserializeObject<SpawnerComponent>(o.ToString());
                         c = spawner;
                         break;
+
+                    case "StockpileComponent":
+                        StockpileComponent stockpile = JsonConvert.DeserializeObject<StockpileComponent>(o.ToString());
+                        c = stockpile;
+                        break;
                 }
 
                 // add the component to the entity

@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\DefaultBehavior.cs" />
+    <Compile Include="Behaviors\DeliverItemBehavior.cs" />
     <Compile Include="Behaviors\ExitBuildingBehavior.cs" />
     <Compile Include="Behaviors\FadeBehavior.cs" />
     <Compile Include="Behaviors\FindHomeBehavior.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Components\GamePlay\RoadComponent.cs" />
     <Compile Include="Components\GamePlay\RoadPlannerComponent.cs" />
     <Compile Include="Components\GamePlay\SpawnerComponent.cs" />
+    <Compile Include="Components\GamePlay\StockpileComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
     <Compile Include="DataStructures\DrawableLibrary.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />

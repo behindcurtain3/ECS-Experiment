@@ -108,7 +108,8 @@ namespace IsoECS
 
             Window w = new TomShane.Neoforce.Controls.Window(em.UI)
             {
-                Text = "My Quick Test Window"
+                Text = "My Quick Test Window",
+                Visible = false
             };
             w.Init();
             w.Center();

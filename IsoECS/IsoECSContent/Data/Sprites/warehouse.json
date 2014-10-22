@@ -1,0 +1,16 @@
+{
+    "Texture": "Data/Sprites/warehouse",
+	"Name": "warehouse",
+    "Sources": [
+        {
+            "ID": "foundation",
+			"Source": {"x":0,"y":49,"width":96,"height":46},
+			"Origin": {"x":32,"y":14}
+        },
+		{
+            "ID": "foreground",
+			"Source": {"x":96,"y":0,"width":96,"height":96},
+			"Origin": {"x":32,"y":64}
+        }
+	]
+}

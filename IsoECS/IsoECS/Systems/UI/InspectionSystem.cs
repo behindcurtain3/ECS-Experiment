@@ -7,8 +7,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TomShane.Neoforce.Controls;
 using System.Reflection;
+using System.Linq;
 using IsoECS.GamePlay;
 using IsoECS.DataStructures;
+using System;
+using EventArgs = TomShane.Neoforce.Controls.EventArgs;
+using EventHandler = TomShane.Neoforce.Controls.EventHandler;
 
 namespace IsoECS.Systems.UI
 {
@@ -160,6 +164,8 @@ namespace IsoECS.Systems.UI
 
                 if (component is Inventory)
                     DisplayInventory((Inventory)component, page);
+                else if (component is StockpileComponent)
+                    DisplayStockpile((StockpileComponent)component, page);
                 else
                     LabelAllProperties(component, page);
 
@@ -331,6 +337,195 @@ namespace IsoECS.Systems.UI
 
                 y += 18;
             }
+        }
+
+        private void DisplayStockpile(StockpileComponent stockpile, TabPage page)
+        {
+            List<Item> items = GameData.Instance.GetAllItems();
+            Label lbl;
+            SpinBox spinner;
+            int y = 2;
+            int ySpacer = 24;
+            int col1 = 2;
+            int col2 = 130;
+            int col3 = 210;
+            int col4 = 290;
+
+            lbl = new Label(page.Manager)
+            {
+                Text = "Item",
+                Left = col1,
+                Width = 125,
+                Top = y,
+                Height = 20,
+                Alignment = Alignment.MiddleCenter
+            };
+            page.Add(lbl);
+
+            lbl = new Label(page.Manager)
+            {
+                Text = "Amount",
+                Left = col2,
+                Width = 75,
+                Top = y,
+                Height = 20,
+                Alignment = Alignment.MiddleCenter
+            };
+            page.Add(lbl);
+
+            lbl = new Label(page.Manager)
+            {
+                Text = "Minimum",
+                Left = col3,
+                Width = 75,
+                Top = y,
+                Height = 20,
+                Alignment = Alignment.MiddleCenter
+            };
+            page.Add(lbl);
+
+            lbl = new Label(page.Manager)
+            {
+                Text = "Maximum",
+                Left = col4,
+                Width = 75,
+                Top = y,
+                Height = 20,
+                Alignment = Alignment.MiddleCenter
+            };
+            page.Add(lbl);
+
+            y += ySpacer;
+
+            foreach (Item item in items)
+            {
+                Button btn = new Button(page.Manager)
+                {
+                    Name = string.Format("{0}-toggle", item.UniqueID),
+                    Text = item.Name,
+                    Left = col1,
+                    Top = y,
+                    Width = 125,
+                    Height = 20,
+                    CanFocus = false,
+                    Tag = item
+                };
+                btn.Init();
+                btn.Click += new EventHandler(ToggleStockPileItem);
+                page.Add(btn);
+
+                lbl = new Label(page.Manager)
+                {
+                    Name = string.Format("{0}-amount", item.UniqueID),
+                    Text = stockpile.Amount(item.UniqueID).ToString(),
+                    Left = col2,
+                    Width = 75,
+                    Top = y,
+                    Height = 20,
+                    Alignment = Alignment.MiddleCenter
+                };
+                page.Add(lbl);
+
+                if(stockpile.IsAccepting(item.UniqueID))
+                {
+                    spinner = new SpinBox(page.Manager, SpinBoxMode.Range)
+                    {
+                        Name = string.Format("{0}-minimum", item.UniqueID),
+                        Value = stockpile.Minimum(item.UniqueID),
+                        Left = col3,
+                        Width = 75,
+                        Top = y,
+                        Rounding = 0,
+                        Minimum = 0,
+                        Maximum = 5000,
+                        Step = 1,
+                        DisplayFormat = "f",
+                        Tag = item
+                    };
+                    spinner.Init();
+                    // spinner is bugged if Text is set above so do it here
+                    spinner.Text = stockpile.Minimum(item.UniqueID).ToString();
+                    spinner.TextChanged += new EventHandler(spinner_MinimumTextChanged);
+                    page.Add(spinner);
+
+                    spinner = new SpinBox(page.Manager, SpinBoxMode.Range)
+                    {
+                        Name = string.Format("{0}-maximum", item.UniqueID),
+                        Value = stockpile.Maximum(item.UniqueID),
+                        Left = col4,
+                        Width = 75,
+                        Top = y,
+                        Rounding = 0,
+                        Minimum = 0,
+                        Maximum = 5000,
+                        Step = 1,
+                        DisplayFormat = "f",
+                        Tag = item
+                    };
+                    spinner.Init();
+                    // spinner is bugged if Text is set above so do it here
+                    spinner.Text = stockpile.Maximum(item.UniqueID).ToString();
+                    spinner.TextChanged += new EventHandler(spinner_MaximumTextChanged);
+                    page.Add(spinner);
+                }
+                else
+                {
+                    lbl = new Label(page.Manager)
+                    {
+                        Text = "--- Not Accepting --- ",
+                        Left = col3,
+                        Width = 155,
+                        Top = y,
+                        Height = 20,
+                        Alignment = Alignment.MiddleCenter
+                    };
+                    page.Add(lbl);
+                }
+
+                y += ySpacer;
+            }
+        }
+
+        private void spinner_MinimumTextChanged(object sender, EventArgs e)
+        {
+            SpinBox spinner = (SpinBox)sender;
+            Item item = (Item)spinner.Tag;
+            Entity entity = (Entity)_entityWindow.Tag;
+
+            if (entity.HasComponent<StockpileComponent>())
+            {
+                StockpileComponent stockpile = entity.Get<StockpileComponent>();
+
+                stockpile.SetMinimum(item.UniqueID, (int)spinner.Value);
+            }
+        }
+
+        private void spinner_MaximumTextChanged(object sender, EventArgs e)
+        {
+            SpinBox spinner = (SpinBox)sender;
+            Item item = (Item)spinner.Tag;
+            Entity entity = (Entity)_entityWindow.Tag;
+
+            if (entity.HasComponent<StockpileComponent>())
+            {
+                StockpileComponent stockpile = entity.Get<StockpileComponent>();
+
+                stockpile.SetMaximum(item.UniqueID, (int)spinner.Value);
+            }
+        }
+
+        private void ToggleStockPileItem(object sender, EventArgs e)
+        {
+            Item item = (Item)((Button)sender).Tag;
+            Entity entity = (Entity)_entityWindow.Tag;
+
+            StockpileComponent stockpile = entity.Get<StockpileComponent>();
+            stockpile.ToggleAccepting(item.UniqueID);
+
+            foreach (Control c in _entityTabs.SelectedPage.Controls.ToList())
+                _entityTabs.SelectedPage.Remove(c);
+
+            DisplayStockpile(stockpile, _entityTabs.SelectedPage);
         }
     }
 }

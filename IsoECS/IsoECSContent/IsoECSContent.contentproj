@@ -49,16 +49,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Sprites\Nodes.png">
-      <Name>Nodes</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Data\drawables.json">
       <Name>drawables</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Drawables\warehouse-drawables.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>warehouse-drawables</Name>
     </None>
     <None Include="Data\Drawables\house-drawables.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -75,6 +72,10 @@
     <None Include="Data\entities.json">
       <Name>entities</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Entities\warehouse.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>warehouse</Name>
     </None>
     <None Include="Data\Entities\farms.json">
       <Name>farms</Name>
@@ -111,6 +112,10 @@
     <None Include="Data\Scenarios\alpha.json">
       <Name>alpha</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Sprites\warehouse.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>warehouse</Name>
     </None>
     <None Include="Data\Sprites\house-pleb-plot.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -240,6 +245,13 @@
   <ItemGroup>
     <Compile Include="Data\Sprites\house-pleb-plot.png">
       <Name>house-pleb-plot</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Sprites\warehouse.png">
+      <Name>warehouse</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

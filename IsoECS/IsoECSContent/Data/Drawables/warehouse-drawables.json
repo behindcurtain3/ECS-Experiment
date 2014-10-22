@@ -1,0 +1,22 @@
+{
+	"DrawableComponents": [
+		{
+			"Drawables": {
+				"Foundation": [
+					{
+						"UniqueID": "warehouse-foundation",
+						"SpriteSheet": "warehouse",
+						"ID": "foundation"
+					}
+				],
+				"Foreground": [
+					{
+						"UniqueID": "warehouse-foreground",
+						"SpriteSheet": "warehouse",
+						"ID": "foreground"
+					}
+				]
+			}
+		}
+	]
+}
