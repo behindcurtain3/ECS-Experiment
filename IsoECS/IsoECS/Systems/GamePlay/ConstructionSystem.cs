@@ -277,7 +277,8 @@ namespace IsoECS.Systems.GamePlay
                 Text = string.Format("{0}. {1}", (_buttons.Count + 1), text),
                 Width = 125,
                 Height = 20,
-                Left = 5
+                Left = 5,
+                CanFocus = false
             };
             btn.Init();
 

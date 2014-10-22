@@ -8,6 +8,9 @@ namespace IsoECS.Components.GamePlay
     [Serializable]
     public class StockPileData
     {
+        public const int DefaultMax = 500;
+        public const int DefaultMin = 0;
+
         public string Item { get; set; }
         public bool IsAccepting { get; set; }
         public int Maximum { get; set; }
@@ -16,8 +19,8 @@ namespace IsoECS.Components.GamePlay
 
         public StockPileData()
         {
-            Maximum = 5000;
-            Minimum = 0;
+            Maximum = DefaultMax;
+            Minimum = DefaultMin;
             IsAccepting = true;
         }
     }
@@ -44,12 +47,12 @@ namespace IsoECS.Components.GamePlay
 
         public int Minimum(string item)
         {
-            return StockPile.ContainsKey(item) ? StockPile[item].Minimum : 0;
+            return StockPile.ContainsKey(item) ? StockPile[item].Minimum : StockPileData.DefaultMin;
         }
 
         public int Maximum(string item)
         {
-            return StockPile.ContainsKey(item) ? StockPile[item].Maximum : 5000;
+            return StockPile.ContainsKey(item) ? StockPile[item].Maximum : StockPileData.DefaultMax;
         }
 
         public void ToggleAccepting(string item)
