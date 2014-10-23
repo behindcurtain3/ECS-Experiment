@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
+using IsoECS.DataStructures;
 using IsoECS.Entities;
+using IsoECS.GamePlay;
 using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TomShane.Neoforce.Controls;
-using System.Reflection;
-using System.Linq;
-using IsoECS.GamePlay;
-using IsoECS.DataStructures;
-using System;
 using EventArgs = TomShane.Neoforce.Controls.EventArgs;
 using EventHandler = TomShane.Neoforce.Controls.EventHandler;
 
@@ -28,7 +27,6 @@ namespace IsoECS.Systems.UI
 
         private int _updateRate = 250;
         private int _updateCountdown;
-
 
         public void Update(EntityManager em, int dt)
         {
@@ -153,8 +151,13 @@ namespace IsoECS.Systems.UI
         {
             _selectionWindow.Hide();
 
-            if(_entityTabs != null)
+            if (_entityTabs != null)
+            {
+                for (int i = 0; i < _entityTabs.TabPages.Length; i++)
+                    ClearTabPageAndEvents(_entityTabs.TabPages[i]);
+
                 _entityWindow.Remove(_entityTabs);
+            }
 
             _entityTabs = new TabControl(_entityWindow.Manager)
             {   Anchor = Anchors.All,
@@ -184,6 +187,7 @@ namespace IsoECS.Systems.UI
                     continue;
 
                 page = _entityTabs.AddPage(component.GetType().Name);
+                page.Tag = component;
 
                 if (component is Inventory)
                 {
@@ -199,8 +203,7 @@ namespace IsoECS.Systems.UI
                     LabelAllProperties(component, page);
             }
 
-            if(string.IsNullOrWhiteSpace(_entityWindow.Text))
-                _entityWindow.Text = string.Format("#{0}", e.ID);
+            _entityWindow.Text = string.Format("{0} (#{1})", _entityWindow.Text, e.ID);
             _entityWindow.Add(_entityTabs);
             _entityWindow.Show();
             _entityWindow.Tag = e;
@@ -233,7 +236,7 @@ namespace IsoECS.Systems.UI
                 };
                 btn.Init();
                 btn.Tag = e;
-                btn.Click += new EventHandler(btn_Click);
+                btn.Click += new EventHandler(SelectEntity_Click);
 
                 if (e.HasComponent<CitizenComponent>())
                 {
@@ -259,7 +262,7 @@ namespace IsoECS.Systems.UI
             }
         }
 
-        private void btn_Click(object sender, EventArgs e)
+        private void SelectEntity_Click(object sender, EventArgs e)
         {
             ShowEntity((Entity)((Button)sender).Tag);
         }
@@ -269,9 +272,16 @@ namespace IsoECS.Systems.UI
             return e.HasComponent<PositionComponent>() &&
                 (e.HasComponent<CitizenComponent>()
                 || e.HasComponent<BuildableComponent>()
-                || e.HasComponent<Inventory>());
+                || e.HasComponent<Inventory>()
+                || e.HasComponent<StockpileComponent>());
         }
 
+        /// <summary>
+        /// Uses reflection to display all properties of an object.
+        /// Useful for debugging.
+        /// </summary>
+        /// <param name="obj">Object to display</param>
+        /// <param name="page">TabPage to display the object on</param>
         private void LabelAllProperties(object obj, TabPage page)
         {
             int y = 2;
@@ -305,43 +315,66 @@ namespace IsoECS.Systems.UI
             }
         }
 
+        /// <summary>
+        /// Display an inventory component
+        /// </summary>
+        /// <param name="inventory">Inventory to display</param>
+        /// <param name="page">TabPage to display on</param>
         private void DisplayInventory(Inventory inventory, TabPage page)
         {
             Label lbl;
             int y = 2;
+            int ySpacer = 24;
+            int col1 = 2;
+            int col2 = page.ClientWidth - 77;
 
+            // Loop through each item in the inventory and display it
             foreach (string i in inventory.Items.Keys)
             {
                 Item item = GameData.Instance.GetItem(i);
+
+                if (item == null)
+                    continue;
 
                 // name label
                 lbl = new Label(page.Manager)
                 {
                     Text = item.Name,
-                    Left = 2,
+                    Left = col1,
                     Top = y,
                     Width = page.ClientWidth - 4,
-                    Anchor = Anchors.Horizontal
+                    Anchor = Anchors.Horizontal | Anchors.Top
                 };
                 page.Add(lbl);
 
                 lbl = new Label(page.Manager)
                 {
                     Text = inventory.Get(i).ToString(),
-                    Left = 2,
+                    Left = col2,
                     Top = y,
-                    Width = 150,
+                    Width = 75,
                     Alignment = Alignment.MiddleRight,
+                    Anchor = Anchors.Right | Anchors.Top
                 };
                 page.Add(lbl);
 
-                y += 18;
+                y += ySpacer;
             }
         }
 
+        /// <summary>
+        /// Displays a stockpile component on the given tab page
+        /// </summary>
+        /// <param name="stockpile">The stockpile to display</param>
+        /// <param name="page">The tabpage to display on</param>
         private void DisplayStockpile(StockpileComponent stockpile, TabPage page)
         {
             List<Item> items = GameData.Instance.GetAllItems();
+
+            // if there are no items just return
+            if (items.Count == 0)
+                return;
+
             Label lbl;
             SpinBox spinner;
             int y = 2;
@@ -352,6 +385,8 @@ namespace IsoECS.Systems.UI
             int col2 = col3 - 80;
             int col1Width = col2 - col1 - 5;
 
+            // TODO: create a custom control for this??
+            // setup the column headers
             lbl = new Label(page.Manager)
             {
                 Text = "Item",
@@ -402,6 +437,7 @@ namespace IsoECS.Systems.UI
 
             y += ySpacer;
 
+            // Loop through and display each item
             foreach (Item item in items)
             {
                 Button btn = new Button(page.Manager)
@@ -417,22 +453,28 @@ namespace IsoECS.Systems.UI
                     Anchor = Anchors.Horizontal | Anchors.Top
                 };
                 btn.Init();
+                // Add event handler to listen for toggles on the button
                 btn.Click += new EventHandler(ToggleStockPileItem);
                 page.Add(btn);
 
                 lbl = new Label(page.Manager)
                 {
-                    Name = string.Format("{0}-amount", item.UniqueID),
+                    Name = string.Format("stockpile-amount-{0}", item.UniqueID),
                     Text = stockpile.Amount(item.UniqueID).ToString(),
                     Left = col2,
                     Width = 75,
                     Top = y,
                     Height = 20,
                     Alignment = Alignment.MiddleCenter,
-                    Anchor = Anchors.Right | Anchors.Top
+                    Anchor = Anchors.Right | Anchors.Top,
+                    Tag = stockpile.Get(item.UniqueID)
                 };
                 page.Add(lbl);
 
+                // add listener for when the displayed amount changes
+                stockpile.Get(item.UniqueID).OnAmountChanged += new StockPileData.StockpileEventHandler(InspectionSystem_OnAmountChanged);
+
+                // only display the minimum and maximum spinboxes if the item is accepted at this stockpile
                 if(stockpile.IsAccepting(item.UniqueID))
                 {
                     spinner = new SpinBox(page.Manager, SpinBoxMode.Range)
@@ -477,6 +519,7 @@ namespace IsoECS.Systems.UI
                     spinner.TextChanged += new EventHandler(spinner_MaximumTextChanged);
                     page.Add(spinner);
                 }
+                // otherwise just display a message
                 else
                 {
                     lbl = new Label(page.Manager)
@@ -494,6 +537,17 @@ namespace IsoECS.Systems.UI
 
                 y += ySpacer;
             }
+        }
+
+        private void InspectionSystem_OnAmountChanged(StockPileData sender)
+        {
+            // update the UI element
+            Label amountLabel = (Label)_entityTabs.SelectedPage.GetControl("stockpile-amount-" + sender.Item);
+
+            if (amountLabel == null)
+                return;
+
+            amountLabel.Text = sender.Amount.ToString();
         }
 
         private void spinner_MinimumTextChanged(object sender, EventArgs e)
@@ -532,10 +586,26 @@ namespace IsoECS.Systems.UI
             StockpileComponent stockpile = entity.Get<StockpileComponent>();
             stockpile.ToggleAccepting(item.UniqueID);
 
-            foreach (Control c in _entityTabs.SelectedPage.Controls.ToList())
-                _entityTabs.SelectedPage.Remove(c);
-
+            ClearTabPageAndEvents(_entityTabs.SelectedPage);
             DisplayStockpile(stockpile, _entityTabs.SelectedPage);
+        }
+
+        /// <summary>
+        /// Clears a TabPage of all its controls and events
+        /// </summary>
+        /// <param name="page"></param>
+        private void ClearTabPageAndEvents(TabPage page)
+        {
+            foreach (Control c in page.Controls.ToList())
+            {
+                // remove the event listener
+                if (c.Name.Contains("stockpile-amount-"))
+                {
+                    StockPileData data = (StockPileData)c.Tag;
+                    data.OnAmountChanged -= InspectionSystem_OnAmountChanged;
+                }
+                page.Remove(c);
+            }
         }
     }
 }

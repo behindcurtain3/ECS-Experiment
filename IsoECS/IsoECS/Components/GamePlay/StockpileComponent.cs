@@ -8,6 +8,11 @@ namespace IsoECS.Components.GamePlay
     [Serializable]
     public class StockPileData
     {
+        public delegate void StockpileEventHandler(StockPileData sender);
+        public event StockpileEventHandler OnAmountChanged;
+
+        private int _amount;
+
         public const int DefaultMax = 500;
         public const int DefaultMin = 0;
 
@@ -15,7 +20,20 @@ namespace IsoECS.Components.GamePlay
         public bool IsAccepting { get; set; }
         public int Maximum { get; set; }
         public int Minimum { get; set; }
-        public int Amount { get; set; }
+        public int Amount 
+        {
+            get { return _amount; }
+            set
+            {
+                if (_amount != value)
+                {
+                    _amount = value;
+
+                    if (OnAmountChanged != null)
+                        OnAmountChanged(this);
+                }
+            }
+        }
 
         public StockPileData()
         {
@@ -33,6 +51,13 @@ namespace IsoECS.Components.GamePlay
         public StockpileComponent()
         {
             StockPile = new Dictionary<string, StockPileData>();
+        }
+
+        public StockPileData Get(string item)
+        {
+            ValidateItem(item);
+
+            return StockPile[item];
         }
 
         public bool IsAccepting(string item)

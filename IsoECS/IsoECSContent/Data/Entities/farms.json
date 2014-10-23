@@ -25,7 +25,7 @@
 				"Recipe": "alpha-wheat",
 				"MaxEmployees": 12,
 				"EmployeeGender": "BOTH",
-				"MaxHaulers": 3
+				"MaxHaulers": 1
 			},
 			{
 				"Type": "FoundationComponent",

@@ -32,34 +32,38 @@ namespace IsoECS.Behaviors
             }
             else if (State == HaulerState.DELIVERING)
             {
-                List<Entity> stockpiles = em.GetBuildingsWithinWalkableDistance<StockpileComponent>(citizen.JobID, 30);
                 Inventory jobInventory = em.GetEntity(citizen.JobID).Get<Inventory>();
                 Inventory haulerInventory = self.Get<Inventory>();
 
-                foreach (Entity se in stockpiles)
+                if (jobInventory.Items.Values.ToList().Find(delegate(InventoryData d) { return (d.Output && d.Amount > 0); }) != null)
                 {
-                    StockpileComponent stockpile = se.Get<StockpileComponent>();
-
-                    foreach (InventoryData invItem in jobInventory.Items.Values)
+                    List<Entity> stockpiles = em.GetBuildingsWithinWalkableDistance<StockpileComponent>(citizen.JobID, 30);
+                
+                    foreach (Entity se in stockpiles)
                     {
-                        if(!invItem.Output)
-                            continue;
+                        StockpileComponent stockpile = se.Get<StockpileComponent>();
 
-                        // do the delivery
-                        if (stockpile.IsAccepting(invItem.Item) && stockpile.Amount(invItem.Item) < stockpile.Maximum(invItem.Item) && invItem.Amount > 0)
+                        foreach (InventoryData invItem in jobInventory.Items.Values)
                         {
-                            int amount = Math.Min(invItem.Amount, HaulerCapacity);
-                            haulerInventory.Add(invItem.Item, amount);
-                            jobInventory.Items[invItem.Item].Amount -= amount;
-                            CurrentItem = invItem.Item;
-                            state.Push(new ExitBuildingBehavior() { ExitID = citizen.InsideID, TargetID = se.ID });
-                            return;
+                            if(!invItem.Output)
+                                continue;
+
+                            // do the delivery
+                            if (stockpile.IsAccepting(invItem.Item) && stockpile.Amount(invItem.Item) < stockpile.Maximum(invItem.Item) && invItem.Amount > 0)
+                            {
+                                int amount = Math.Min(invItem.Amount, HaulerCapacity);
+                                haulerInventory.Add(invItem.Item, amount);
+                                jobInventory.Items[invItem.Item].Amount -= amount;
+                                CurrentItem = invItem.Item;
+                                state.Push(new ExitBuildingBehavior() { ExitID = citizen.InsideID, TargetID = se.ID });
+                                return;
+                            }
                         }
                     }
                 }
-
+                
                 // if no delivery sleep for a bit
-                state.Push(new IdleBehavior() { IdleTime = 500 });
+                state.Push(new IdleBehavior() { IdleTime = (int)(Game1.Random.NextDouble() * 5000) });
             }
         }
 
