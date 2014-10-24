@@ -149,6 +149,9 @@
     <Compile Include="Controls\Table.cs" />
     <Compile Include="Controls\TableColumnHeader.cs" />
     <Compile Include="Controls\TableRow.cs" />
+    <Compile Include="DataRenderers\ComponentRenderer.cs" />
+    <Compile Include="DataRenderers\DataRenderer.cs" />
+    <Compile Include="DataRenderers\StockpileRenderer.cs" />
     <Compile Include="DataStructures\DrawableLibrary.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />
     <Compile Include="DataStructures\DrawableText.cs" />

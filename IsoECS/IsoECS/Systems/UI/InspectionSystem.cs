@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using TomShane.Neoforce.Controls;
 using EventArgs = TomShane.Neoforce.Controls.EventArgs;
 using EventHandler = TomShane.Neoforce.Controls.EventHandler;
+using IsoECS.DataRenderers;
 
 namespace IsoECS.Systems.UI
 {
@@ -22,8 +23,11 @@ namespace IsoECS.Systems.UI
         private Window _entityWindow;
         private TabControl _entityTabs;
 
+        private ComponentRenderer _renderer;
+
         private InputController _input;
         private PositionComponent _camera;
+        private EntityManager _em;
 
         private int _updateRate = 250;
         private int _updateCountdown;
@@ -76,7 +80,7 @@ namespace IsoECS.Systems.UI
                     if (selectedEntities.Count == 1)
                     {
                         // show the entity!
-                        ShowEntity(selectedEntities[0]);
+                        ShowEntity(em, selectedEntities[0]);
                     }
                     else
                     {
@@ -105,6 +109,7 @@ namespace IsoECS.Systems.UI
 
         public void Init(EntityManager em)
         {
+            _em = em;
             _input = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); }).Get<InputController>();
             _camera = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); }).Get<PositionComponent>();
 
@@ -143,14 +148,26 @@ namespace IsoECS.Systems.UI
 
         public void Shutdown(EntityManager em)
         {
+            if (_renderer != null)
+                _renderer.Shutdown(em.UI);
+
             em.UI.Remove(_selectionWindow);
             em.UI.Remove(_entityWindow);
         }
 
-        private void ShowEntity(Entity e)
+        private void ShowEntity(EntityManager em, Entity e)
         {
             _selectionWindow.Hide();
 
+            if (e.HasComponent<StockpileComponent>())
+            {
+                if (_renderer != null)
+                    _renderer.Shutdown(em.UI);
+
+                _renderer = new StockpileRenderer(e.Get<StockpileComponent>());
+                _renderer.Show(em.UI);
+                return;
+            }
             if (_entityTabs != null)
             {
                 for (int i = 0; i < _entityTabs.TabPages.Length; i++)
@@ -193,11 +210,6 @@ namespace IsoECS.Systems.UI
                 {
                     page.Text = "Inventory";
                     DisplayInventory((Inventory)component, page);
-                }
-                else if (component is StockpileComponent)
-                {
-                    page.Text = "Stockpile";
-                    DisplayStockpile((StockpileComponent)component, page);
                 }
                 else
                     LabelAllProperties(component, page);
@@ -264,7 +276,7 @@ namespace IsoECS.Systems.UI
 
         private void SelectEntity_Click(object sender, EventArgs e)
         {
-            ShowEntity((Entity)((Button)sender).Tag);
+            ShowEntity(_em, (Entity)((Button)sender).Tag);
         }
 
         private bool ValidEntity(Entity e)
@@ -362,233 +374,6 @@ namespace IsoECS.Systems.UI
             }
         }
 
-        /// <summary>
-        /// Displays a stockpile component on the given tab page
-        /// </summary>
-        /// <param name="stockpile">The stockpile to display</param>
-        /// <param name="page">The tabpage to display on</param>
-        private void DisplayStockpile(StockpileComponent stockpile, TabPage page)
-        {
-            List<Item> items = GameData.Instance.GetAllItems();
-
-            // if there are no items just return
-            if (items.Count == 0)
-                return;
-
-            Label lbl;
-            SpinBox spinner;
-            int y = 2;
-            int ySpacer = 24;
-            int col1 = 2;
-            int col4 = page.ClientWidth - 82;
-            int col3 = col4 - 80;
-            int col2 = col3 - 80;
-            int col1Width = col2 - col1 - 5;
-
-            // TODO: create a custom control for this??
-            // setup the column headers
-            lbl = new Label(page.Manager)
-            {
-                Text = "Item",
-                Left = col1,
-                Width = col1Width,
-                Top = y,
-                Height = 20,
-                Alignment = Alignment.MiddleCenter,
-                Anchor = Anchors.Horizontal | Anchors.Top
-            };
-            page.Add(lbl);
-
-            lbl = new Label(page.Manager)
-            {
-                Text = "Amount",
-                Left = col2,
-                Width = 75,
-                Top = y,
-                Height = 20,
-                Alignment = Alignment.MiddleCenter,
-                Anchor = Anchors.Right | Anchors.Top
-            };
-            page.Add(lbl);
-
-            lbl = new Label(page.Manager)
-            {
-                Text = "Minimum",
-                Left = col3,
-                Width = 75,
-                Top = y,
-                Height = 20,
-                Alignment = Alignment.MiddleCenter,
-                Anchor = Anchors.Right | Anchors.Top
-            };
-            page.Add(lbl);
-
-            lbl = new Label(page.Manager)
-            {
-                Text = "Maximum",
-                Left = col4,
-                Width = 75,
-                Top = y,
-                Height = 20,
-                Alignment = Alignment.MiddleCenter,
-                Anchor = Anchors.Right | Anchors.Top
-            };
-            page.Add(lbl);
-
-            y += ySpacer;
-
-            // Loop through and display each item
-            foreach (Item item in items)
-            {
-                Button btn = new Button(page.Manager)
-                {
-                    Name = string.Format("{0}-toggle", item.UniqueID),
-                    Text = item.Name,
-                    Left = col1,
-                    Top = y,
-                    Width = col1Width,
-                    Height = 20,
-                    CanFocus = false,
-                    Tag = item,
-                    Anchor = Anchors.Horizontal | Anchors.Top
-                };
-                btn.Init();
-                // Add event handler to listen for toggles on the button
-                btn.Click += new EventHandler(ToggleStockPileItem);
-                page.Add(btn);
-
-                lbl = new Label(page.Manager)
-                {
-                    Name = string.Format("stockpile-amount-{0}", item.UniqueID),
-                    Text = stockpile.Amount(item.UniqueID).ToString(),
-                    Left = col2,
-                    Width = 75,
-                    Top = y,
-                    Height = 20,
-                    Alignment = Alignment.MiddleCenter,
-                    Anchor = Anchors.Right | Anchors.Top,
-                    Tag = stockpile.Get(item.UniqueID)
-                };
-                page.Add(lbl);
-
-                // add listener for when the displayed amount changes
-                stockpile.Get(item.UniqueID).OnAmountChanged += new StockPileData.StockpileEventHandler(InspectionSystem_OnAmountChanged);
-
-                // only display the minimum and maximum spinboxes if the item is accepted at this stockpile
-                if(stockpile.IsAccepting(item.UniqueID))
-                {
-                    spinner = new SpinBox(page.Manager, SpinBoxMode.Range)
-                    {
-                        Name = string.Format("{0}-minimum", item.UniqueID),
-                        Value = stockpile.Minimum(item.UniqueID),
-                        Left = col3,
-                        Width = 75,
-                        Top = y,
-                        Rounding = 0,
-                        Minimum = 0,
-                        Maximum = 5000,
-                        Step = 1,
-                        DisplayFormat = "f",
-                        Anchor = Anchors.Right | Anchors.Top,
-                        Tag = item
-                    };
-                    spinner.Init();
-                    // spinner is bugged if Text is set above so do it here
-                    spinner.Text = stockpile.Minimum(item.UniqueID).ToString();
-                    spinner.TextChanged += new EventHandler(spinner_MinimumTextChanged);
-                    page.Add(spinner);
-
-                    spinner = new SpinBox(page.Manager, SpinBoxMode.Range)
-                    {
-                        Name = string.Format("{0}-maximum", item.UniqueID),
-                        Value = stockpile.Maximum(item.UniqueID),
-                        Left = col4,
-                        Width = 75,
-                        Top = y,
-                        Rounding = 0,
-                        Minimum = 0,
-                        Maximum = 5000,
-                        Step = 1,
-                        DisplayFormat = "f",
-                        Anchor = Anchors.Right | Anchors.Top,
-                        Tag = item
-                    };
-                    spinner.Init();
-                    // spinner is bugged if Text is set above so do it here
-                    spinner.Text = stockpile.Maximum(item.UniqueID).ToString();
-                    spinner.TextChanged += new EventHandler(spinner_MaximumTextChanged);
-                    page.Add(spinner);
-                }
-                // otherwise just display a message
-                else
-                {
-                    lbl = new Label(page.Manager)
-                    {
-                        Text = "--- Not Accepting --- ",
-                        Left = col3,
-                        Width = 155,
-                        Top = y,
-                        Height = 20,
-                        Alignment = Alignment.MiddleCenter,
-                        Anchor = Anchors.Right | Anchors.Top
-                    };
-                    page.Add(lbl);
-                }
-
-                y += ySpacer;
-            }
-        }
-
-        private void InspectionSystem_OnAmountChanged(StockPileData sender)
-        {
-            // update the UI element
-            Label amountLabel = (Label)_entityTabs.SelectedPage.GetControl("stockpile-amount-" + sender.Item);
-
-            if (amountLabel == null)
-                return;
-
-            amountLabel.Text = sender.Amount.ToString();
-        }
-
-        private void spinner_MinimumTextChanged(object sender, EventArgs e)
-        {
-            SpinBox spinner = (SpinBox)sender;
-            Item item = (Item)spinner.Tag;
-            Entity entity = (Entity)_entityWindow.Tag;
-
-            if (entity.HasComponent<StockpileComponent>())
-            {
-                StockpileComponent stockpile = entity.Get<StockpileComponent>();
-
-                stockpile.SetMinimum(item.UniqueID, (int)spinner.Value);
-            }
-        }
-
-        private void spinner_MaximumTextChanged(object sender, EventArgs e)
-        {
-            SpinBox spinner = (SpinBox)sender;
-            Item item = (Item)spinner.Tag;
-            Entity entity = (Entity)_entityWindow.Tag;
-
-            if (entity.HasComponent<StockpileComponent>())
-            {
-                StockpileComponent stockpile = entity.Get<StockpileComponent>();
-
-                stockpile.SetMaximum(item.UniqueID, (int)spinner.Value);
-            }
-        }
-
-        private void ToggleStockPileItem(object sender, EventArgs e)
-        {
-            Item item = (Item)((Button)sender).Tag;
-            Entity entity = (Entity)_entityWindow.Tag;
-
-            StockpileComponent stockpile = entity.Get<StockpileComponent>();
-            stockpile.ToggleAccepting(item.UniqueID);
-
-            ClearTabPageAndEvents(_entityTabs.SelectedPage);
-            DisplayStockpile(stockpile, _entityTabs.SelectedPage);
-        }
 
         /// <summary>
         /// Clears a TabPage of all its controls and events
@@ -598,12 +383,6 @@ namespace IsoECS.Systems.UI
         {
             foreach (Control c in page.Controls.ToList())
             {
-                // remove the event listener
-                if (c.Name.Contains("stockpile-amount-"))
-                {
-                    StockPileData data = (StockPileData)c.Tag;
-                    data.OnAmountChanged -= InspectionSystem_OnAmountChanged;
-                }
                 page.Remove(c);
             }
         }

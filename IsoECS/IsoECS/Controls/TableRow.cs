@@ -13,10 +13,12 @@ namespace TomShane.Neoforce.Controls
         public event TableEventHandler ItemRemoved;
 
         private Control[] cells;
+        private bool[] fitToCell;
 
         public bool Alternate { get; set; }
         public bool Header { get; set; }
         public Control this[int index] { get { return cells[index]; } }
+        public bool[] Fitted { get { return fitToCell; } }
 
         public TableRow(Manager manager, int columns)
             : base(manager)
@@ -49,22 +51,22 @@ namespace TomShane.Neoforce.Controls
             renderer.DrawLayer(l1, rect, cl, index);
         }
 
-        public void AddToRow(Control c)
+        public void AddToRow(Control c, bool fitted = false)
         {
             int index = 0;
             while (cells[index] == null && index <= cells.Length)
                 index++;
 
             if(index < cells.Length)
-                AddToRowAt(index, c);
+                AddToRowAt(index, c, fitted);
         }
 
-        public void AddToRowAt(int index, Control c)
+        public void AddToRowAt(int index, Control c, bool fitted = false)
         {
-            OverwriteAt(index, c);
+            OverwriteAt(index, c, fitted);
         }
 
-        public void OverwriteAt(int index, Control c)
+        public void OverwriteAt(int index, Control c, bool fitted = false)
         {
             if (!ValidIndex(index))
                 return;
@@ -78,6 +80,7 @@ namespace TomShane.Neoforce.Controls
             }
 
             cells[index] = c;
+            fitToCell[index] = fitted;
             Add(c);
 
             if (ItemAdded != null)
@@ -90,13 +93,16 @@ namespace TomShane.Neoforce.Controls
                 return;
 
             Control[] currentCells = cells;
+            bool[] currentFits = fitToCell;
             cells = new Control[columns];
+            fitToCell = new bool[columns];
 
             for (int i = 0; i < cells.Length; i++)
             {
                 if (currentCells != null && i < currentCells.Length)
                 {
                     cells[i] = currentCells[i];
+                    fitToCell[i] = currentFits[i];
                 }
             }
 
@@ -113,7 +119,7 @@ namespace TomShane.Neoforce.Controls
 
         private bool ValidIndex(int index)
         {
-            return index > 0 && index < cells.Length;
+            return index >= 0 && index < cells.Length;
         }
     }
 }

@@ -125,7 +125,7 @@ namespace IsoECS
             testTable.Init();
             testTable.SetTableSize(4, 5, new string[]{ "My Column" });
             testTable.AddAt(3, 3, "Hello Data!");
-            testTable.AddAt(1, 0, "What?");
+            testTable.AddAt(0, 0, "What?");
             w.Add(testTable);
 
             // Load the scenario

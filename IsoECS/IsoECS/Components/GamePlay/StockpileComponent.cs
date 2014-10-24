@@ -116,6 +116,11 @@ namespace IsoECS.Components.GamePlay
             StockPile[item].Amount += added;
             return added;
         }
+
+        public int Count
+        {
+            get { return StockPile.Count; }
+        }
         
         private void ValidateItem(string item)
         {

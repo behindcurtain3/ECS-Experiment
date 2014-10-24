@@ -27,7 +27,11 @@ namespace TomShane.Neoforce.Controls
         }
 
         public int Columns { get { return columnHeaders.Count; } }
-        public int Rows { get { return rows.Count; } }
+        public int RowsCount { get { return rows.Count; } }
+        public TableRow[] Rows
+        {
+            get { return rows.ToArray(); }
+        }
 
         public Table(Manager manager)
             : base(manager)
@@ -112,6 +116,7 @@ namespace TomShane.Neoforce.Controls
                 Alternate = (rows.Count % 2 != 0)
             };
             row.Init();
+            row.ItemAdded += new TableRow.TableEventHandler(Row_ItemAdded);
             rows.Add(row);
             Add(row);
 
@@ -144,15 +149,15 @@ namespace TomShane.Neoforce.Controls
                 Remove(row);
         }
 
-        public void AddAt(int column, int row, Control c)
+        public void AddAt(int column, int row, Control c, bool fitted = false)
         {
-            if (row >= rows.Count || row < 0)
+            if (row >= RowsCount || row < 0)
                 throw new IndexOutOfRangeException("The requested row is out of range");
 
-            if (column >= columnHeaders.Count || column < 0)
+            if (column >= Columns || column < 0)
                 throw new IndexOutOfRangeException("The requested column is out of range");
 
-            rows[row].AddToRowAt(column, c);
+            rows[row].AddToRowAt(column, c, fitted);
 
             PositionColumns();
         }
@@ -165,7 +170,7 @@ namespace TomShane.Neoforce.Controls
                 Alignment = Alignment.MiddleCenter
             };
 
-            AddAt(column, row, lbl);
+            AddAt(column, row, lbl, true);
         }
 
         private void Column_Resized(object sender, ResizeEventArgs e)
@@ -211,7 +216,7 @@ namespace TomShane.Neoforce.Controls
                 columnHeaders[columnHeaders.Count - 1].Width = remainingWidth;
             }
 
-            for (int i = 0; i < Rows; i++)
+            for (int i = 0; i < RowsCount; i++)
             {
                 rows[i].Left = ClientMargins.Left;
                 rows[i].Width = ClientWidth - ClientMargins.Horizontal;
@@ -227,7 +232,15 @@ namespace TomShane.Neoforce.Controls
                     if (rows[i][j] != null)
                     {
                         rows[i][j].Top = (rows[i].ClientHeight / 2) - (rows[i][j].Height / 2);
-                        rows[i][j].Left = left + (width / 2) - (rows[i][j].Width / 2);
+                        if (rows[i].Fitted[j])
+                        {
+                            rows[i][j].Left = left;
+                            rows[i][j].Width = width;
+                        }
+                        else
+                        {
+                            rows[i][j].Left = left + (width / 2) - (rows[i][j].Width / 2);
+                        }
                     }
                 }
             }
@@ -262,6 +275,11 @@ namespace TomShane.Neoforce.Controls
         }
 
         private void Table_Resize(object sender, ResizeEventArgs e)
+        {
+            PositionColumns();
+        }
+
+        private void Row_ItemAdded(object sender, EventArgs e)
         {
             PositionColumns();
         }
