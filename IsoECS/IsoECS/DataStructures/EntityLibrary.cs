@@ -207,11 +207,6 @@ namespace IsoECS.DataStructures
                         c = position;
                         break;
 
-                    case "PromotionComponent":
-                        PromotionComponent promotion = JsonConvert.DeserializeObject<PromotionComponent>(o.ToString());
-                        c = promotion;
-                        break;
-
                     case "RoadComponent":
                         RoadComponent road = JsonConvert.DeserializeObject<RoadComponent>(o.ToString());
                         c = road;

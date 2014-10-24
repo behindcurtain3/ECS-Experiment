@@ -28,9 +28,8 @@ namespace IsoECS.Components.GamePlay
                 if (_amount != value)
                 {
                     _amount = value;
-
-                    if (OnAmountChanged != null)
-                        OnAmountChanged(this);
+                    if(OnAmountChanged != null)
+                        OnAmountChanged.Invoke(this);
                 }
             }
         }

@@ -108,12 +108,25 @@ namespace IsoECS
 
             Window w = new TomShane.Neoforce.Controls.Window(em.UI)
             {
-                Text = "My Quick Test Window",
-                Visible = false
+                Text = "My Quick Test Window"
             };
             w.Init();
             w.Center();
             em.UI.Add(w);
+
+            Table testTable = new Table(em.UI)
+            {
+                Top = 2,
+                Left = 2,
+                Width = w.ClientWidth - 4,
+                Height = w.ClientHeight - 4,
+                Anchor = Anchors.All
+            };
+            testTable.Init();
+            testTable.SetTableSize(4, 5, new string[]{ "My Column" });
+            testTable.AddAt(3, 3, "Hello Data!");
+            testTable.AddAt(1, 0, "What?");
+            w.Add(testTable);
 
             // Load the scenario
             // TODO: put this in a method somewhere
@@ -128,7 +141,7 @@ namespace IsoECS
 
             // Load in entities
             EntityLibrary.Instance.LoadFromJson(scenario.Entities, true);
-
+                
             // load scenario data
             GameData.Instance.LoadItemsFromJson(scenario.Items, true);
             GameData.Instance.LoadRecipesFromJson(scenario.Recipes, true);

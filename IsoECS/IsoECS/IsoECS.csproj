@@ -115,7 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\DefaultBehavior.cs" />
-    <Compile Include="Behaviors\DeliverItemBehavior.cs" />
     <Compile Include="Behaviors\ExitBuildingBehavior.cs" />
     <Compile Include="Behaviors\FadeBehavior.cs" />
     <Compile Include="Behaviors\FindHomeBehavior.cs" />
@@ -142,20 +141,20 @@
     <Compile Include="Components\Controls\InputController.cs" />
     <Compile Include="Components\GamePlay\IsometricMapComponent.cs" />
     <Compile Include="Components\GamePlay\MoveToTargetComponent.cs" />
-    <Compile Include="Components\GamePlay\PromotionComponent.cs" />
     <Compile Include="Components\GamePlay\RoadComponent.cs" />
     <Compile Include="Components\GamePlay\RoadPlannerComponent.cs" />
     <Compile Include="Components\GamePlay\SpawnerComponent.cs" />
     <Compile Include="Components\GamePlay\StockpileComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
+    <Compile Include="Controls\Table.cs" />
+    <Compile Include="Controls\TableColumnHeader.cs" />
+    <Compile Include="Controls\TableRow.cs" />
     <Compile Include="DataStructures\DrawableLibrary.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />
     <Compile Include="DataStructures\DrawableText.cs" />
     <Compile Include="DataStructures\EntityLibrary.cs" />
     <Compile Include="DataStructures\GameData.cs" />
     <Compile Include="Behaviors\Behavior.cs" />
-    <Compile Include="DataStructures\GamePlay\Promotion.cs" />
-    <Compile Include="DataStructures\GamePlay\PromotionData.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeInput.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeOutput.cs" />
     <Compile Include="DataStructures\GamePlay\UpgradeRequirements.cs" />
@@ -191,7 +190,6 @@
     <Compile Include="Systems\GamePlay\DateTimeSystem.cs" />
     <Compile Include="Systems\GamePlay\HousingUpgradeSystem.cs" />
     <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
-    <Compile Include="Systems\GamePlay\PromotionSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />
     <Compile Include="Systems\IRenderSystem.cs" />
     <Compile Include="Systems\IsometricMapSystem.cs" />
