@@ -53,7 +53,7 @@ namespace IsoECS.Systems.UI
                 int y = _input.CurrentMouse.Y + (int)_camera.Y;
 
                 // pick out the tile index that the screen coords intersect
-                Point index = Isometric.GetPointAtScreenCoords(em.Map, x, y);
+                Point index = em.Map.GetIndexFromPosition(x, y);
                 List<Entity> potentialEntities = em.Entities.FindAll(ValidEntity);
                 List<Entity> selectedEntities = new List<Entity>();
 

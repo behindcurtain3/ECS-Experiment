@@ -46,7 +46,7 @@ namespace IsoECS.Systems
             // loop through the map and render each tile
             // TODO: implement z-levels?
 
-            Point Center = Isometric.GetPointAtScreenCoords(map, map.Graphics.Viewport.Width / 2 + (int)camera.X, map.Graphics.Viewport.Height / 2 + (int)camera.Y);
+            Point Center = map.GetIndexFromPosition(map.Graphics.Viewport.Width / 2 + (int)camera.X, map.Graphics.Viewport.Height / 2 + (int)camera.Y);
 
             int goFirstA = (Center.X + Center.Y) - (map.Graphics.Viewport.Height / map.PxTileHeight) - 2;
             int goLastA = (Center.X + Center.Y) + (map.Graphics.Viewport.Height / map.PxTileHeight) + 3;
@@ -63,11 +63,11 @@ namespace IsoECS.Systems
                         x = (a + b) / 2;
                         y = (a - b) / 2;
 
-                        if (!Isometric.ValidIndex(map, x, y))
+                        if (!map.IsValidIndex(x, y))
                             continue;
 
                         // get the position of this tile
-                        position = Isometric.GetIsometricPosition(map, z, y, x);
+                        position = map.GetPositionFromIndex(x, y);
 
                         // update the position by the camera offsets
                         position.X -= camera.X;

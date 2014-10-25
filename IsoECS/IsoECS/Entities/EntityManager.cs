@@ -142,7 +142,7 @@ namespace IsoECS.Entities
 
                         if (Map.Terrain == null)
                         {
-                            Map = Isometric.CreateMap(Map.SpriteSheetName, Map.TxWidth, Map.TxHeight, Map.PxTileWidth, Map.PxTileHeight);
+                            Map.CreateMap(Map.SpriteSheetName, Map.TxWidth, Map.TxHeight, Map.PxTileWidth, Map.PxTileHeight);
 
                             // replace the map
                             entity.RemoveComponent(entity.Get<IsometricMapComponent>());
@@ -198,7 +198,7 @@ namespace IsoECS.Entities
                                     break;
                             }
 
-                            Vector2 pos = Isometric.GetIsometricPosition(Map, 0, yIndex, xIndex);
+                            Vector2 pos = Map.GetPositionFromIndex(xIndex, yIndex);
 
                             position.X = pos.X;
                             position.Y = pos.Y;
@@ -250,7 +250,7 @@ namespace IsoECS.Entities
 
                         Point p = new Point(position.Index.X + plot.Offset.X + x, position.Index.Y + plot.Offset.Y + y);
 
-                        if (!Isometric.ValidIndex(Map, p.X, p.Y))
+                        if (!Map.IsValidIndex(p.X, p.Y))
                             continue;
 
                         // can only exit onto roads

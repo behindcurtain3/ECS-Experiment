@@ -61,7 +61,7 @@ namespace IsoECS.Util
                         if (x == y || x == -y || -x == y)
                             continue;
 
-                        if (!Isometric.ValidIndex(map, selectedNode.Location.X + x, selectedNode.Location.Y + y))
+                        if (!map.IsValidIndex(selectedNode.Location.X + x, selectedNode.Location.Y + y))
                             continue;
 
                         Point p = new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y);
@@ -147,7 +147,7 @@ namespace IsoECS.Util
                         if (x == y || x == -y || -x == y)
                             continue;
 
-                        if (!Isometric.ValidIndex(map, selectedNode.Location.X + x, selectedNode.Location.Y + y))
+                        if (!map.IsValidIndex(selectedNode.Location.X + x, selectedNode.Location.Y + y))
                             continue;
 
                         Point p = new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y);

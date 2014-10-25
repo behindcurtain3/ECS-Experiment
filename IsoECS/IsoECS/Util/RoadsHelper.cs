@@ -73,16 +73,16 @@ namespace IsoECS.Util
         private static void UpdateNeighbors(RoadPlannerComponent planner, IsometricMapComponent map, Point location)
         {
             // update the neighbors to account for this one
-            if (Isometric.ValidIndex(map, location.X - 1, location.Y) && planner.Built.ContainsKey(new Point(location.X - 1, location.Y)))
+            if (map.IsValidIndex(location.X - 1, location.Y) && planner.Built.ContainsKey(new Point(location.X - 1, location.Y)))
                 AddOrUpdateRoad(planner, map, new Point(location.X - 1, location.Y));
 
-            if (Isometric.ValidIndex(map, location.X, location.Y - 1) && planner.Built.ContainsKey(new Point(location.X, location.Y - 1)))
+            if (map.IsValidIndex(location.X, location.Y - 1) && planner.Built.ContainsKey(new Point(location.X, location.Y - 1)))
                 AddOrUpdateRoad(planner, map, new Point(location.X, location.Y - 1));
 
-            if (Isometric.ValidIndex(map, location.X + 1, location.Y) && planner.Built.ContainsKey(new Point(location.X + 1, location.Y)))
+            if (map.IsValidIndex(location.X + 1, location.Y) && planner.Built.ContainsKey(new Point(location.X + 1, location.Y)))
                 AddOrUpdateRoad(planner, map, new Point(location.X + 1, location.Y));
 
-            if (Isometric.ValidIndex(map, location.X, location.Y + 1) && planner.Built.ContainsKey(new Point(location.X, location.Y + 1)))
+            if (map.IsValidIndex(location.X, location.Y + 1) && planner.Built.ContainsKey(new Point(location.X, location.Y + 1)))
                 AddOrUpdateRoad(planner, map, new Point(location.X, location.Y + 1));
         }
 
@@ -94,16 +94,16 @@ namespace IsoECS.Util
             bool SE = false;
             bool SW = false;
 
-            if (Isometric.ValidIndex(map, location.X - 1, location.Y))
+            if (map.IsValidIndex(location.X - 1, location.Y))
                 NW = planner.Built.ContainsKey(new Point(location.X - 1, location.Y));
 
-            if (Isometric.ValidIndex(map, location.X, location.Y - 1))
+            if (map.IsValidIndex(location.X, location.Y - 1))
                 NE = planner.Built.ContainsKey(new Point(location.X, location.Y - 1));
 
-            if (Isometric.ValidIndex(map, location.X + 1, location.Y))
+            if (map.IsValidIndex(location.X + 1, location.Y))
                 SE = planner.Built.ContainsKey(new Point(location.X + 1, location.Y));
 
-            if (Isometric.ValidIndex(map, location.X, location.Y + 1))
+            if (map.IsValidIndex(location.X, location.Y + 1))
                 SW = planner.Built.ContainsKey(new Point(location.X, location.Y + 1));
 
             // 1 combo of 4

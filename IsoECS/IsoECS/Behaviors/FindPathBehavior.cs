@@ -76,7 +76,7 @@ namespace IsoECS.Behaviors
                     PositionComponent sPosition = self.Get<PositionComponent>();
 
                     if (tPosition.Index == null || tPosition.Index == Point.Zero)
-                        tPosition.Index = Isometric.GetPointAtScreenCoords(em.Map, (int)tPosition.X, (int)tPosition.Y);
+                        tPosition.Index = em.Map.GetIndexFromPosition((int)tPosition.X, (int)tPosition.Y);
 
                     PathRequest = new PathRequest()
                     {

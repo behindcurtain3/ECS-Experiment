@@ -24,8 +24,8 @@ namespace IsoECS.Behaviors
             else
             {
                 // move to the target
-                Vector2 targetPos = Isometric.GetIsometricPosition(em.Map, 0, PathToFollow.Waypoints[0].Y, PathToFollow.Waypoints[0].X);
-                Vector2 arrivedAt = Isometric.MoveTowards(position.Position, Speed, targetPos);
+                Vector2 targetPos = em.Map.GetPositionFromIndex(PathToFollow.Waypoints[0].X, PathToFollow.Waypoints[0].Y);
+                Vector2 arrivedAt = em.Map.MoveTowards(position.Position, Speed, targetPos);
                 position.X = arrivedAt.X;
                 position.Y = arrivedAt.Y;
                 

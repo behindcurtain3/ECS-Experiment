@@ -151,6 +151,7 @@
     <Compile Include="Controls\TableRow.cs" />
     <Compile Include="DataRenderers\DataRenderer.cs" />
     <Compile Include="DataRenderers\EntityRenderer.cs" />
+    <Compile Include="DataRenderers\HousingRenderer.cs" />
     <Compile Include="DataRenderers\StockpileRenderer.cs" />
     <Compile Include="DataStructures\DrawableLibrary.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />
@@ -203,7 +204,6 @@
     <Compile Include="Systems\UI\CityInformationSystem.cs" />
     <Compile Include="Systems\UI\InspectionSystem.cs" />
     <Compile Include="Util\DiagnosticInfo.cs" />
-    <Compile Include="Util\Isometric.cs" />
     <Compile Include="Util\MathHelper.cs" />
     <Compile Include="Util\Pathfinder.cs" />
     <Compile Include="Util\Pathwalker.cs" />

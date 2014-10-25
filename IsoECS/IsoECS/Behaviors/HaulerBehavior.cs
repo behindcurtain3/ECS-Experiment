@@ -87,7 +87,7 @@ namespace IsoECS.Behaviors
                 {
                     // make sure the citizen starts at the right position
                     PositionComponent position = self.Get<PositionComponent>();
-                    Vector2 startAt = Isometric.GetIsometricPosition(em.Map, 0, exit.SelectedPath.Start.Y, exit.SelectedPath.Start.X);
+                    Vector2 startAt = em.Map.GetPositionFromIndex(exit.SelectedPath.Start.X, exit.SelectedPath.Start.Y);
                     position.X = startAt.X;
                     position.Y = startAt.Y;
                     position.Index = exit.SelectedPath.Start;

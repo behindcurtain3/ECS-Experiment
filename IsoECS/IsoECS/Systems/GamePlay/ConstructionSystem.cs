@@ -135,10 +135,10 @@ namespace IsoECS.Systems.GamePlay
             int y = _input.CurrentMouse.Y + (int)_camera.Y;
 
             // pick out the tile index that the screen coords intersect
-            Point index = Isometric.GetPointAtScreenCoords(_map, x, y);
+            Point index = em.Map.GetIndexFromPosition(x, y);
 
             // translate the index into a screen position and up the position component
-            Vector2 dPositiion = Isometric.GetIsometricPosition(_map, 0, index.Y, index.X);
+            Vector2 dPositiion = em.Map.GetPositionFromIndex(index.X, index.Y);
             drawablePosition.X = dPositiion.X;
             drawablePosition.Y = dPositiion.Y;
 
@@ -152,7 +152,7 @@ namespace IsoECS.Systems.GamePlay
                 }
             }
 
-            bool visible = Isometric.ValidIndex(_map, index.X, index.Y);
+            bool visible = em.Map.IsValidIndex(index.X, index.Y);
 
             foreach (List<IGameDrawable> d in drawable.Drawables.Values)
             {
