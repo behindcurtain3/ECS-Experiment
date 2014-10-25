@@ -20,11 +20,8 @@ namespace IsoECS.Systems.GamePlay
         private Dictionary<string, List<Entity>> _db;
 
         private Entity _dataTracker;
-
-        private IsometricMapComponent _map;
         private PositionComponent _camera;
         private InputController _input;
-        private FoundationPlannerComponent _foundationPlanner;
 
         private List<Button> _buttons = new List<Button>();
         private Manager _mgr;
@@ -37,12 +34,9 @@ namespace IsoECS.Systems.GamePlay
 
             Entity inputEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
             Entity cameraEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
-            Entity mapEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
 
             _camera = cameraEntity.Get<PositionComponent>();
-            _map = mapEntity.Get<IsometricMapComponent>();
             _input = inputEntity.Get<InputController>();
-            _foundationPlanner = _dataTracker.Get<FoundationPlannerComponent>();
 
             _db = new Dictionary<string, List<Entity>>();
 
@@ -145,7 +139,7 @@ namespace IsoECS.Systems.GamePlay
             bool spaceTaken = false;
             foreach (LocationValue lv in foundation.Plan)
             {
-                if (_foundationPlanner.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
+                if (em.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
                 {
                     spaceTaken = true;
                     break;
