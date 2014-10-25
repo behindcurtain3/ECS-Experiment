@@ -213,12 +213,12 @@ namespace IsoECS.Entities
                         RoadComponent road = (RoadComponent)c;
                         road.BuiltAt = index;
 
-                        // update the roads
-                        RoadsHelper.AddOrUpdateRoad(Roads, Map, index, true);
+                        // update the planner
+                        Roads.AddOrUpdate(Map, road.BuiltAt, true);
 
                         // update the other roads
                         List<Entity> roadEntities = Entities.FindAll(delegate(Entity e) { return e.HasComponent<RoadComponent>(); });
-                        RoadsHelper.UpdateRoadsGfx(roadEntities, Roads);
+                        Roads.UpdateGfx(roadEntities);
                         break;
 
                     case "RoadPlannerComponent":
