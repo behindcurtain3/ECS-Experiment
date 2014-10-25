@@ -291,9 +291,9 @@ namespace IsoECS
                 for (int y = 0; y < map.TxHeight; y++)
                 {
                     if (map.Terrain[0, y, x] == (int)Tiles.Grass)
-                        collisions.Map.Add(new Point(x, y), 64);
+                        collisions.Map.Add(new Point(x, y), PathTypes.UNDEFINED);
                     else
-                        collisions.Map.Add(new Point(x, y), -1);
+                        collisions.Map.Add(new Point(x, y), PathTypes.BLOCKED);
                 }
             }
 

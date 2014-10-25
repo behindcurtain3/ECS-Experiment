@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using IsoECS.Util;
 
 namespace IsoECS.Components.GamePlay
 {
@@ -7,11 +8,11 @@ namespace IsoECS.Components.GamePlay
     {
         // holds the value of the collision at each map index (point)
         // -1 impassable
-        public Dictionary<Point, int> Map { get; set; }
+        public Dictionary<Point, PathTypes> Map { get; set; }
 
         public CollisionMapComponent()
         {
-            Map = new Dictionary<Point, int>();
+            Map = new Dictionary<Point, PathTypes>();
         }
 
     }

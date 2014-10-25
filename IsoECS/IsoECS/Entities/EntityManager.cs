@@ -108,9 +108,9 @@ namespace IsoECS.Entities
                             Point p = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
 
                             if (Collisions.Map.ContainsKey(p))
-                                Collisions.Map[p] = lv.Value;
+                                Collisions.Map[p] = (PathTypes)lv.Value;
                             else
-                                Collisions.Map.Add(p, lv.Value);
+                                Collisions.Map.Add(p, (PathTypes)lv.Value);
                         }
                         break;
 
@@ -254,10 +254,7 @@ namespace IsoECS.Entities
                             continue;
 
                         // can only exit onto roads
-                        //if (Roads.IsRoadAt(p) && !validLandings.Contains(p))
-                        //    validLandings.Add(p);
-
-                        if ((!Collisions.Map.ContainsKey(p) || Collisions.Map[p] != -1) && !validLandings.Contains(p))
+                        if ((!Collisions.Map.ContainsKey(p) || Collisions.Map[p] == PathTypes.ROAD) && !validLandings.Contains(p))
                             validLandings.Add(p);
                     }
                 }

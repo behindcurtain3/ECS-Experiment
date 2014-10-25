@@ -40,7 +40,7 @@ namespace IsoECS.Behaviors
                         Point nextWaypoint = PathToFollow.Waypoints[0];
 
                         // if the next waypoint is blocked, clear the path
-                        if (em.Collisions.Map[nextWaypoint] == -1)
+                        if (em.Collisions.Map[nextWaypoint] == PathTypes.BLOCKED)
                         {
                             // TODO: alert some failure state? Recalculate the path?
                             Status = BehaviorStatus.FAILURE;

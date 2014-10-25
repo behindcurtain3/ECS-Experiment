@@ -6,6 +6,13 @@ using Microsoft.Xna.Framework;
 
 namespace IsoECS.Util
 {
+    public enum PathTypes
+    {
+        BLOCKED = -1,
+        ROAD = 8,
+        UNDEFINED = 64
+    }
+
     public class Pathfinder
     {
         private Dictionary<Point, PathWaypoint> _openList = new Dictionary<Point, PathWaypoint>();
@@ -18,14 +25,14 @@ namespace IsoECS.Util
             _closedList.Clear();
 
             if (!collisionMap.Map.ContainsKey(end))
-                collisionMap.Map.Add(end, 64);
+                collisionMap.Map.Add(end, PathTypes.UNDEFINED);
             if (!collisionMap.Map.ContainsKey(start))
-                collisionMap.Map.Add(start, 64);
+                collisionMap.Map.Add(start, PathTypes.UNDEFINED);
 
-            if (start == end || collisionMap.Map[end] == -1 || collisionMap.Map[start] == -1)
+            if (start == end || collisionMap.Map[end] == PathTypes.BLOCKED || collisionMap.Map[start] == PathTypes.BLOCKED)
                 return new Path();
 
-            _openList.Add(end, new PathWaypoint(end, collisionMap.Map[end]));
+            _openList.Add(end, new PathWaypoint(end, (int)collisionMap.Map[end]));
 
             while (_openList.Count > 0)
             {
@@ -66,15 +73,15 @@ namespace IsoECS.Util
 
                         Point p = new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y);
                         if (!collisionMap.Map.ContainsKey(p))
-                            collisionMap.Map.Add(p, 64);
+                            collisionMap.Map.Add(p, PathTypes.UNDEFINED);
 
                         PathWaypoint waypoint = new PathWaypoint(
                                                             p,
-                                                            collisionMap.Map[p],
+                                                            (int)collisionMap.Map[p],
                                                             selectedNode
                                                             );
 
-                        if (collisionMap.Map[waypoint.Location] != -1 && !_closedList.ContainsKey(waypoint.Location))
+                        if (collisionMap.Map[waypoint.Location] != PathTypes.BLOCKED && !_closedList.ContainsKey(waypoint.Location))
                         {
                             if (_openList.ContainsKey(waypoint.Location))
                             {
@@ -100,12 +107,12 @@ namespace IsoECS.Util
             foreach (Point p in end)
             {
                 if (!collisionMap.Map.ContainsKey(p))
-                    collisionMap.Map.Add(p, 64);
+                    collisionMap.Map.Add(p, PathTypes.UNDEFINED);
             }
             if (!collisionMap.Map.ContainsKey(start))
-                collisionMap.Map.Add(start, 64);
+                collisionMap.Map.Add(start, PathTypes.UNDEFINED);
 
-            if (collisionMap.Map[start] == -1)
+            if (collisionMap.Map[start] == PathTypes.BLOCKED)
                 return new Path();
 
             _openList.Add(start, new PathWaypoint(start));
@@ -152,15 +159,15 @@ namespace IsoECS.Util
 
                         Point p = new Point(selectedNode.Location.X + x, selectedNode.Location.Y + y);
                         if (!collisionMap.Map.ContainsKey(p))
-                            collisionMap.Map.Add(p, 64);
+                            collisionMap.Map.Add(p, PathTypes.UNDEFINED);
 
                         PathWaypoint waypoint = new PathWaypoint(
                                                             p,
-                                                            collisionMap.Map[p],
+                                                            (int)collisionMap.Map[p],
                                                             selectedNode
                                                             );
 
-                        if (collisionMap.Map[waypoint.Location] != -1 && !_closedList.ContainsKey(waypoint.Location))
+                        if (collisionMap.Map[waypoint.Location] != PathTypes.BLOCKED && !_closedList.ContainsKey(waypoint.Location))
                         {
                             if (_openList.ContainsKey(waypoint.Location))
                             {
