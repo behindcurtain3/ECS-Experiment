@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using IsoECS.Components.GamePlay;
 using IsoECS.Entities;
-using TomShane.Neoforce.Controls;
-using IsoECS.Components.GamePlay;
 using Microsoft.Xna.Framework;
+using TomShane.Neoforce.Controls;
 
 namespace IsoECS.DataRenderers
 {
@@ -14,6 +10,9 @@ namespace IsoECS.DataRenderers
         private Button btnOkay;
         private TabControl tabs;
 
+        public Button Next { get; private set; }
+        public Button Previous { get; private set; }
+
         public EntityRenderer(Entity e, Manager manager)
             : base(e, manager)
         {
@@ -21,28 +20,52 @@ namespace IsoECS.DataRenderers
             Control = new Dialog(Manager)
             {
                 Text = "",
-                Height = 300,
-                Width = 450,
-                Left = manager.GraphicsDevice.Viewport.Width - 450,
+                Height = 350,
+                Width = 550,
                 MinimumWidth = 350,
                 MinimumHeight = 200
             };
             Control.Init();
+            Control.Center();
             Control.Caption.TextColor = Control.Description.TextColor = new Color(228, 228, 228);
             Control.Closed += new WindowClosedEventHandler(Window_Closed);
 
             btnOkay = new Button(Manager)
             {
                 Text = "Ok",
-                Left = Control.BottomPanel.ClientWidth - 85,
+                Left = Control.BottomPanel.ClientWidth - 58,
                 Top = (Control.BottomPanel.ClientHeight / 2) - 11,
                 Height = 23,
-                Width = 75,
+                Width = 48,
                 Parent = Control.BottomPanel,
                 Anchor = Anchors.Right
             };
             btnOkay.Init();
             btnOkay.Click += new TomShane.Neoforce.Controls.EventHandler(btnOkay_Click);
+
+            Previous = new Button(Manager)
+            {
+                Text = "< Previous",
+                Left = 10,
+                Height = 23,
+                Width = 96,
+                Top = btnOkay.Top,
+                Parent = Control.BottomPanel,
+                Anchor = Anchors.Left
+            };
+            Previous.Init();
+
+            Next = new Button(Manager)
+            {
+                Text = "Next >",
+                Left = (Previous.Left * 2) + Previous.Width,
+                Height = Previous.Height,
+                Width = Previous.Width,
+                Top = Previous.Top,
+                Parent = Control.BottomPanel,
+                Anchor = Anchors.Left
+            };
+            Next.Init();
 
             tabs = new TabControl(Manager)
             {
@@ -77,6 +100,17 @@ namespace IsoECS.DataRenderers
                 Control.Description.Text = buildable.Description;
             }
 
+            // Get housing control
+            if (Data.HasComponent<HousingComponent>())
+            {
+                HousingRenderer hr = new HousingRenderer(Data.Get<HousingComponent>(), Manager);
+                TabPage tab = tabs.AddPage("Housing");
+
+                Panel gp = hr.GetControl();
+                gp.Parent = tab;
+            }
+
+            // Get stockpile
             if (Data.HasComponent<StockpileComponent>())
             {
                 StockpileRenderer spr = new StockpileRenderer(Data.Get<StockpileComponent>(), Manager);
@@ -87,13 +121,17 @@ namespace IsoECS.DataRenderers
                 t.SetSize(tab.ClientWidth + tabs.ClientMargins.Horizontal, tab.ClientHeight + 2 + tabs.ClientMargins.Bottom);
                 t.Parent = tab;
             }
-            else if (Data.HasComponent<HousingComponent>())
+            
+            // Get inventory
+            if (Data.HasComponent<Inventory>())
             {
-                HousingRenderer hr = new HousingRenderer(Data.Get<HousingComponent>(), Manager);
-                TabPage tab = tabs.AddPage("Housing");
+                InventoryRenderer ir = new InventoryRenderer(Data.Get<Inventory>(), Manager);
+                TabPage tab = tabs.AddPage("Inventory");
 
-                Panel gp = hr.GetControl();
-                gp.Parent = tab;
+                Table it = ir.GetControl();
+                it.SetPosition(-tabs.ClientMargins.Left, -2);
+                it.SetSize(tab.ClientWidth + tabs.ClientMargins.Horizontal, tab.ClientHeight + 2 + tabs.ClientMargins.Bottom);
+                it.Parent = tab;
             }
 
             Control.Text = string.Format("({0}) {1}", Data.ID, Control.Text);

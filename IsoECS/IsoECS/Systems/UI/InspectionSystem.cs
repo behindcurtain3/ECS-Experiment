@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataRenderers;
 using IsoECS.DataStructures;
 using IsoECS.Entities;
 using IsoECS.GamePlay;
-using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TomShane.Neoforce.Controls;
@@ -18,18 +15,14 @@ namespace IsoECS.Systems.UI
 {
     public class InspectionSystem : ISystem
     {
+        private Manager _manager;
         private Window _selectionWindow;
         private List<Button> _selectionButtons;
-        private Window _entityWindow;
-
         private EntityRenderer _renderer;
 
         private InputController _input;
         private PositionComponent _camera;
         private EntityManager _em;
-
-        private int _updateRate = 250;
-        private int _updateCountdown;
 
         public void Update(EntityManager em, int dt)
         {
@@ -79,7 +72,7 @@ namespace IsoECS.Systems.UI
                     if (selectedEntities.Count == 1)
                     {
                         // show the entity!
-                        ShowEntity(em, selectedEntities[0]);
+                        ShowEntity(selectedEntities[0]);
                     }
                     else
                     {
@@ -91,19 +84,8 @@ namespace IsoECS.Systems.UI
                 {
                     if(_renderer != null)
                         _renderer.Shutdown();
+
                     _selectionWindow.Hide();
-                    _entityWindow.Hide();
-                }
-            }
-
-            if (_entityWindow.Visible)
-            {
-                _updateCountdown -= dt;
-
-                if (_updateCountdown <= 0)
-                {
-                    _updateCountdown += _updateRate;
-                    // TODO: update the displayed tab
                 }
             }
         }
@@ -111,6 +93,7 @@ namespace IsoECS.Systems.UI
         public void Init(EntityManager em)
         {
             _em = em;
+            _manager = em.UI;
             _input = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); }).Get<InputController>();
             _camera = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); }).Get<PositionComponent>();
 
@@ -128,22 +111,6 @@ namespace IsoECS.Systems.UI
             _selectionWindow.Init();
             em.UI.Add(_selectionWindow);
 
-            _entityWindow = new Window(em.UI)
-            {
-                Visible = false,
-                AutoScroll = true,
-                IconVisible = true,
-                CloseButtonVisible = true,
-                Text = "",
-                Height = 300,
-                Width = 450,
-                Left = -1000,
-                MinimumWidth = 350,
-                MinimumHeight = 200
-            };
-            _entityWindow.Init();
-            em.UI.Add(_entityWindow);
-
             _selectionButtons = new List<Button>();
         }
 
@@ -153,10 +120,9 @@ namespace IsoECS.Systems.UI
                 _renderer.Shutdown();
 
             em.UI.Remove(_selectionWindow);
-            em.UI.Remove(_entityWindow);
         }
 
-        private void ShowEntity(EntityManager em, Entity e)
+        private void ShowEntity(Entity e)
         {
             _selectionWindow.Hide();
 
@@ -168,86 +134,18 @@ namespace IsoECS.Systems.UI
                 }
                 else
                 {
-                    _renderer = new EntityRenderer(e, em.UI);
+                    _renderer = new EntityRenderer(e, _manager);
+                    _renderer.Next.Click += new EventHandler(Next_Click);
+                    _renderer.Previous.Click += new EventHandler(Previous_Click);
                 }
                 _renderer.Update(e);
             }
-
-            return;
-            /*
-
-            if (e.HasComponent<StockpileComponent>())
-            {
-                if (_renderer != null)
-                    _renderer.Shutdown(em.UI);
-
-                _renderer = new StockpileRenderer(e.Get<StockpileComponent>());
-                _renderer.GetControl(em.UI);
-                return;
-            }
-            if (_entityTabs != null)
-            {
-                for (int i = 0; i < _entityTabs.TabPages.Length; i++)
-                    ClearTabPageAndEvents(_entityTabs.TabPages[i]);
-
-                _entityWindow.Remove(_entityTabs);
-            }
-
-            _entityTabs = new TabControl(_entityWindow.Manager)
-            {   Anchor = Anchors.All,
-                Top = 2,
-                Left = 2,
-                Width = _entityWindow.ClientWidth - 4,
-                Height = _entityWindow.ClientHeight - 4
-            };
-            _entityTabs.Init();
-
-            _entityWindow.Text = "";
-            TabPage page;
-
-            foreach (IsoECS.Components.Component component in e.Components.Values)
-            {
-
-                if (component is CitizenComponent)
-                    _entityWindow.Text = ((CitizenComponent)component).Name;
-                else if (component is BuildableComponent)
-                    _entityWindow.Text = ((BuildableComponent)component).Name;
-
-                if (component is DrawableComponent 
-                    || component is CollisionComponent 
-                    || component is FoundationComponent
-                    || component is BuildableComponent
-                    || component is PositionComponent)
-                    continue;
-
-                page = _entityTabs.AddPage(component.GetType().Name);
-                page.Tag = component;
-
-                if (component is Inventory)
-                {
-                    page.Text = "Inventory";
-                    DisplayInventory((Inventory)component, page);
-                }
-                else
-                    LabelAllProperties(component, page);
-            }
-
-            _entityWindow.Text = string.Format("{0} (#{1})", _entityWindow.Text, e.ID);
-            _entityWindow.Add(_entityTabs);
-            _entityWindow.Show();
-            _entityWindow.Tag = e;
-
-            if (_entityWindow.Left + _entityWindow.Width < 0)
-            {
-                _entityWindow.Left = _entityWindow.Manager.GraphicsDevice.Viewport.Width - _entityWindow.Width;
-                _entityWindow.Top = _entityWindow.Manager.GraphicsDevice.Viewport.Height - _entityWindow.Height;
-            }
-             */
         }
 
         private void ShowSelection(List<Entity> entities)
         {
-            _entityWindow.Hide();
+            if (_renderer != null)
+                _renderer.Shutdown();
 
             foreach (Button b in _selectionButtons)
                 _selectionWindow.Remove(b);
@@ -294,7 +192,70 @@ namespace IsoECS.Systems.UI
 
         private void SelectEntity_Click(object sender, EventArgs e)
         {
-            ShowEntity(_em, (Entity)((Button)sender).Tag);
+            ShowEntity((Entity)((Button)sender).Tag);
+        }
+
+        private void Previous_Click(object sender, EventArgs e)
+        {
+            if (_renderer == null)
+                return;
+
+            Entity entity = _renderer.Data;
+            int index = _em.Entities.IndexOf(entity);
+            int previous = (index - 1 < 0) ? _em.Entities.Count - 1 : index - 1;
+
+            while (previous != index)
+            {
+                if (!string.IsNullOrWhiteSpace(_em.Entities[previous].UniqueID))
+                {
+                    // do the check
+                    if (_em.Entities[previous].UniqueID.Equals(entity.UniqueID))
+                    {
+                        _renderer.Update(_em.Entities[previous]);
+                        return;
+                    }
+                }
+
+                // increment the index
+                previous--;
+
+                if (previous < 0)
+                    previous = _em.Entities.Count - 1;
+            }
+        }
+
+        private void Next_Click(object sender, EventArgs e)
+        {
+            if (_renderer == null)
+                return;
+
+            // get the next of the "same" entity
+            // warehouse -> warehosue
+            // housing -> housing
+            // citizen -> citizen
+
+            Entity entity = _renderer.Data;
+            int index = _em.Entities.IndexOf(entity);
+            int next = (index + 1 >= _em.Entities.Count) ? 0 : index + 1;
+
+            while (next != index)
+            {
+                if (!string.IsNullOrWhiteSpace(_em.Entities[next].UniqueID))
+                {
+                    // do the check
+                    if (_em.Entities[next].UniqueID.Equals(entity.UniqueID))
+                    {
+                        _renderer.Update(_em.Entities[next]);
+                        return;
+                    }
+                }
+
+                // increment the index
+                next++;
+
+                if (next >= _em.Entities.Count)
+                    next = 0;
+            }
         }
 
         private bool ValidEntity(Entity e)
@@ -304,105 +265,6 @@ namespace IsoECS.Systems.UI
                 || e.HasComponent<BuildableComponent>()
                 || e.HasComponent<Inventory>()
                 || e.HasComponent<StockpileComponent>());
-        }
-
-        /// <summary>
-        /// Uses reflection to display all properties of an object.
-        /// Useful for debugging.
-        /// </summary>
-        /// <param name="obj">Object to display</param>
-        /// <param name="page">TabPage to display the object on</param>
-        private void LabelAllProperties(object obj, TabPage page)
-        {
-            int y = 2;
-            Label lbl;
-            foreach (PropertyInfo info in obj.GetType().GetProperties())
-            {
-                lbl = new Label(_entityWindow.Manager)
-                {
-                    Text = info.Name,
-                    Left = 2,
-                    Top = y,
-                    Width = page.ClientWidth - 4,
-                    Anchor = Anchors.Horizontal
-                };
-                page.Add(lbl);
-
-                object value = info.GetValue(obj, null);
-                string txt = (value == null) ? "null" : value.ToString();
-                lbl = new Label(_entityWindow.Manager)
-                {
-                    Text = txt,
-                    Alignment = Alignment.MiddleRight,
-                    Left = 2,
-                    Top = y,
-                    Width = page.ClientWidth - 4,
-                    Anchor = Anchors.Horizontal
-                };
-                page.Add(lbl);
-
-                y += 18;
-            }
-        }
-
-        /// <summary>
-        /// Display an inventory component
-        /// </summary>
-        /// <param name="inventory">Inventory to display</param>
-        /// <param name="page">TabPage to display on</param>
-        private void DisplayInventory(Inventory inventory, TabPage page)
-        {
-            Label lbl;
-            int y = 2;
-            int ySpacer = 24;
-            int col1 = 2;
-            int col2 = page.ClientWidth - 77;
-
-            // Loop through each item in the inventory and display it
-            foreach (string i in inventory.Items.Keys)
-            {
-                Item item = GameData.Instance.GetItem(i);
-
-                if (item == null)
-                    continue;
-
-                // name label
-                lbl = new Label(page.Manager)
-                {
-                    Text = item.Name,
-                    Left = col1,
-                    Top = y,
-                    Width = page.ClientWidth - 4,
-                    Anchor = Anchors.Horizontal | Anchors.Top
-                };
-                page.Add(lbl);
-
-                lbl = new Label(page.Manager)
-                {
-                    Text = inventory.Get(i).ToString(),
-                    Left = col2,
-                    Top = y,
-                    Width = 75,
-                    Alignment = Alignment.MiddleRight,
-                    Anchor = Anchors.Right | Anchors.Top
-                };
-                page.Add(lbl);
-
-                y += ySpacer;
-            }
-        }
-
-
-        /// <summary>
-        /// Clears a TabPage of all its controls and events
-        /// </summary>
-        /// <param name="page"></param>
-        private void ClearTabPageAndEvents(TabPage page)
-        {
-            foreach (Control c in page.Controls.ToList())
-            {
-                page.Remove(c);
-            }
         }
     }
 }

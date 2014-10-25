@@ -26,7 +26,11 @@ namespace TomShane.Neoforce.Controls
             }
         }
 
-        public int Columns { get { return columnHeaders.Count; } }
+        public int ColumnsCount { get { return columnHeaders.Count; } }
+        public TableColumnHeader[] Columns
+        {
+            get { return columnHeaders.ToArray(); }
+        }
         public int RowsCount { get { return rows.Count; } }
         public TableRow[] Rows
         {
@@ -166,7 +170,7 @@ namespace TomShane.Neoforce.Controls
             if (row >= RowsCount || row < 0)
                 throw new IndexOutOfRangeException("The requested row is out of range");
 
-            if (column >= Columns || column < 0)
+            if (column >= ColumnsCount || column < 0)
                 throw new IndexOutOfRangeException("The requested column is out of range");
 
             rows[row].AddToRowAt(column, c, fitted);
@@ -235,7 +239,7 @@ namespace TomShane.Neoforce.Controls
                 rows[i].Top = i * rows[i].Height + columnHeaderHeight + ClientMargins.Top;
 
                 // update the columns on each row
-                for (int j = 0; j < Columns; j++)
+                for (int j = 0; j < ColumnsCount; j++)
                 {
                     int top = rows[i].Top + rows[i].ClientMargins.Top;
                     int left = columnHeaders[j].Left;
