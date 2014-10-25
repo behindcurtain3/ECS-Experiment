@@ -6,34 +6,31 @@ using System.Collections.Generic;
 
 namespace IsoECS.DataRenderers
 {
-    public class StockpileRenderer : DataRenderer<StockpileComponent>
+    public class StockpileRenderer : DataRenderer<StockpileComponent, Table>
     {
-        public Table Table { get; set; }
-
         public StockpileRenderer(StockpileComponent stockpile, Manager manager)
             : base(stockpile, manager)
         {
         }
 
-        public override Control GetControl()
+        public override Table GetControl()
         {
             // Setup the stockpile table
-            Table = new Table(Manager)
+            Control = new Table(Manager)
             {
                 Name = "StockpileTable",
                 Anchor = Anchors.All,
                 RowHeight = 24
             };
-            Table.Init();
-            Control = Table;
+            Control.Init();
 
             // get a list of all items in the game
             List<Item> items = GameData.Instance.GetAllItems();
-            Table.AddColumns(new string[] { "Item", "Amount", "Minimum", "Maximum" });
+            Control.AddColumns(new string[] { "Item", "Amount", "Minimum", "Maximum" });
 
             foreach (Item item in items)
             {
-                TableRow currentRow = Table.AddRow();
+                TableRow currentRow = Control.AddRow();
                 currentRow.Tag = item;
 
                 Button btn = new Button(Manager)
@@ -50,7 +47,7 @@ namespace IsoECS.DataRenderers
                 btn.Click += new EventHandler(ToggleStockPileItem);
 
                 currentRow.AddToRowAt(0, btn, true);
-                Table.AddAt(1, Table.RowsCount - 1, Data.Amount(item.UniqueID).ToString());
+                Control.AddAt(1, Control.RowsCount - 1, Data.Amount(item.UniqueID).ToString());
 
                 SetupMinimumMaximum(item, currentRow);
 
@@ -62,7 +59,7 @@ namespace IsoECS.DataRenderers
 
         public override void Shutdown()
         {
-            base.Shutdown();
+            Manager.Remove(Control);
         }
 
         private void ToggleStockPileItem(object sender, EventArgs e)
@@ -153,7 +150,7 @@ namespace IsoECS.DataRenderers
         private void StockpileRenderer_OnAmountChanged(StockPileData sender)
         {
             // go through each row until the item matches, then update the text
-            foreach (TableRow row in Table.Rows)
+            foreach (TableRow row in Control.Rows)
             {
                 Item item = (Item)row.Tag;
 

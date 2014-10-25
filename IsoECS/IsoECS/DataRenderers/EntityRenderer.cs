@@ -5,10 +5,11 @@ using System.Text;
 using IsoECS.Entities;
 using TomShane.Neoforce.Controls;
 using IsoECS.Components.GamePlay;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.DataRenderers
 {
-    public class EntityRenderer : DataRenderer<Entity>
+    public class EntityRenderer : DataRenderer<Entity, Dialog>
     {
         private Control displayedControl;
 
@@ -26,12 +27,11 @@ namespace IsoECS.DataRenderers
                 MinimumHeight = 200
             };
             Control.Init();
-            ((Dialog)Control).Closed += new WindowClosedEventHandler(Window_Closed);
-            ((Dialog)Control).TopPanel.Visible = false;
-            ((Dialog)Control).BottomPanel.Visible = false;
+            Control.Caption.TextColor = Control.Description.TextColor = new Color(228, 228, 228);
+            Control.Closed += new WindowClosedEventHandler(Window_Closed);
         }
 
-        public override Control GetControl()
+        public override Dialog GetControl()
         {
             if (displayedControl != null)
             {
@@ -46,14 +46,16 @@ namespace IsoECS.DataRenderers
             {
                 BuildableComponent buildable = Data.Get<BuildableComponent>();
                 Control.Text = buildable.Name;
+                Control.Caption.Text = "Description";
+                Control.Description.Text = buildable.Description;
             }
 
             if (Data.HasComponent<StockpileComponent>())
             {
                 StockpileRenderer spr = new StockpileRenderer(Data.Get<StockpileComponent>(), Manager);
                 displayedControl = spr.GetControl();
-                displayedControl.SetPosition(0, 0);
-                displayedControl.SetSize(Control.ClientWidth, Control.ClientHeight);
+                displayedControl.SetPosition(2, Control.TopPanel.Height);
+                displayedControl.SetSize(Control.ClientWidth - 2, Control.ClientHeight - Control.TopPanel.Height - Control.BottomPanel.Height);
                 displayedControl.Parent = Control;
             }
 

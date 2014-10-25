@@ -2,10 +2,10 @@
 
 namespace IsoECS.DataRenderers
 {
-    public class DataRenderer<T>
+    public class DataRenderer<T, S>
     {
         public virtual T Data { get; set; }
-        public virtual Control Control { get; set; }
+        public virtual S Control { get; set; }
         public Manager Manager { get; private set; }
 
         public DataRenderer(T data, Manager manager)
@@ -14,18 +14,16 @@ namespace IsoECS.DataRenderers
             Manager = manager;
         }
 
-        public virtual Control GetControl()
+        public virtual S GetControl()
         {
             return Control;
         }
 
         public virtual void Shutdown()
         {
-            // remvoe the control from the scene
-            Manager.Remove(Control);
         }
 
-        public Control Update(T data)
+        public S Update(T data)
         {
             Data = data;
             return GetControl();
