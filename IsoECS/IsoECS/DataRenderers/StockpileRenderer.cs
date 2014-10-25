@@ -6,48 +6,26 @@ using System.Collections.Generic;
 
 namespace IsoECS.DataRenderers
 {
-    public class StockpileRenderer : ComponentRenderer
+    public class StockpileRenderer : DataRenderer<StockpileComponent>
     {
-        public new StockpileComponent Data { get; set; }
-        public new Window Control { get; set; }
         public Table Table { get; set; }
 
-        public StockpileRenderer(StockpileComponent stockpile)
-            : base(stockpile)
+        public StockpileRenderer(StockpileComponent stockpile, Manager manager)
+            : base(stockpile, manager)
         {
-            Data = stockpile;
         }
 
-        public override void Show(Manager manager)
+        public override Control GetControl()
         {
-            // Setup the window
-            Control = new Window(manager)
-            {
-                Visible = false,
-                AutoScroll = true,
-                IconVisible = true,
-                CloseButtonVisible = true,
-                Text = "",
-                Height = 300,
-                Width = 450,
-                Left = manager.GraphicsDevice.Viewport.Width - 450,
-                MinimumWidth = 350,
-                MinimumHeight = 200
-            };
-            Control.Init();
-            Control.Closed += new WindowClosedEventHandler(Window_Closed);
-
             // Setup the stockpile table
-            Table = new Table(manager)
+            Table = new Table(Manager)
             {
                 Name = "StockpileTable",
-                Top = 0,
-                Left = 0,
-                Width = Control.ClientWidth,
-                Height = Control.ClientHeight,
-                Anchor = Anchors.All
+                Anchor = Anchors.All,
+                RowHeight = 24
             };
             Table.Init();
+            Control = Table;
 
             // get a list of all items in the game
             List<Item> items = GameData.Instance.GetAllItems();
@@ -58,14 +36,14 @@ namespace IsoECS.DataRenderers
                 TableRow currentRow = Table.AddRow();
                 currentRow.Tag = item;
 
-                Button btn = new Button(manager)
+                Button btn = new Button(Manager)
                 {
                     Name = string.Format("{0}-toggle", item.UniqueID),
                     Text = item.Name,
                     Height = 20,
                     Width = 100,
                     CanFocus = false,
-                    Tag = item,
+                    Tag = item
                 };
                 btn.Init();
                 // Add event handler to listen for toggles on the button
@@ -78,15 +56,13 @@ namespace IsoECS.DataRenderers
 
                 Data.Get(item.UniqueID).OnAmountChanged += new StockPileData.StockpileEventHandler(StockpileRenderer_OnAmountChanged);
             }
-
-            Control.Add(Table);
-            manager.Add(Control);
-            Control.Show();
+            
+            return base.GetControl();
         }
 
-        public override void Shutdown(Manager manager)
+        public override void Shutdown()
         {
-            manager.Remove(Control);
+            base.Shutdown();
         }
 
         private void ToggleStockPileItem(object sender, EventArgs e)
@@ -156,11 +132,6 @@ namespace IsoECS.DataRenderers
                 spinner.TextChanged += new EventHandler(Spinner_MaximumTextChanged);
 
             return spinner;
-        }
-
-        private void Window_Closed(object sender, WindowClosedEventArgs e)
-        {
-            Control.Manager.Remove(Control);
         }
 
         private void Spinner_MinimumTextChanged(object sender, EventArgs e)

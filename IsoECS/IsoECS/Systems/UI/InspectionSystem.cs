@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
+using IsoECS.DataRenderers;
 using IsoECS.DataStructures;
 using IsoECS.Entities;
 using IsoECS.GamePlay;
@@ -12,7 +13,6 @@ using Microsoft.Xna.Framework.Input;
 using TomShane.Neoforce.Controls;
 using EventArgs = TomShane.Neoforce.Controls.EventArgs;
 using EventHandler = TomShane.Neoforce.Controls.EventHandler;
-using IsoECS.DataRenderers;
 
 namespace IsoECS.Systems.UI
 {
@@ -23,7 +23,7 @@ namespace IsoECS.Systems.UI
         private Window _entityWindow;
         private TabControl _entityTabs;
 
-        private ComponentRenderer _renderer;
+        private EntityRenderer _renderer;
 
         private InputController _input;
         private PositionComponent _camera;
@@ -90,6 +90,8 @@ namespace IsoECS.Systems.UI
                 }
                 else
                 {
+                    if(_renderer != null)
+                        _renderer.Shutdown();
                     _selectionWindow.Hide();
                     _entityWindow.Hide();
                 }
@@ -149,7 +151,7 @@ namespace IsoECS.Systems.UI
         public void Shutdown(EntityManager em)
         {
             if (_renderer != null)
-                _renderer.Shutdown(em.UI);
+                _renderer.Shutdown();
 
             em.UI.Remove(_selectionWindow);
             em.UI.Remove(_entityWindow);
@@ -159,13 +161,29 @@ namespace IsoECS.Systems.UI
         {
             _selectionWindow.Hide();
 
+            if (e != null)
+            {
+                if (_renderer != null)
+                {
+                    _renderer.Shutdown();
+                }
+                else
+                {
+                    _renderer = new EntityRenderer(e, em.UI);
+                }
+                _renderer.Update(e);
+            }
+
+            return;
+            /*
+
             if (e.HasComponent<StockpileComponent>())
             {
                 if (_renderer != null)
                     _renderer.Shutdown(em.UI);
 
                 _renderer = new StockpileRenderer(e.Get<StockpileComponent>());
-                _renderer.Show(em.UI);
+                _renderer.GetControl(em.UI);
                 return;
             }
             if (_entityTabs != null)
@@ -225,6 +243,7 @@ namespace IsoECS.Systems.UI
                 _entityWindow.Left = _entityWindow.Manager.GraphicsDevice.Viewport.Width - _entityWindow.Width;
                 _entityWindow.Top = _entityWindow.Manager.GraphicsDevice.Viewport.Height - _entityWindow.Height;
             }
+             */
         }
 
         private void ShowSelection(List<Entity> entities)

@@ -33,6 +33,18 @@ namespace TomShane.Neoforce.Controls
             get { return rows.ToArray(); }
         }
 
+        public int RowHeight
+        {
+            get { return rowHeight; }
+            set { rowHeight = value; }
+        }
+
+        public int HeaderHeight
+        {
+            get { return columnHeaderHeight; }
+            set { columnHeaderHeight = value; }
+        }
+
         public Table(Manager manager)
             : base(manager)
         {
@@ -281,6 +293,13 @@ namespace TomShane.Neoforce.Controls
 
         private void Row_ItemAdded(object sender, EventArgs e)
         {
+            PositionColumns();
+        }
+
+        public override void SetSize(int width, int height)
+        {
+            base.SetSize(width, height);
+
             PositionColumns();
         }
     }
