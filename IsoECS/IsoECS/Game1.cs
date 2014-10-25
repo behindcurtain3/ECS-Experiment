@@ -28,8 +28,6 @@ namespace IsoECS
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        public static Random Random { get; private set; }
-
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
@@ -53,7 +51,6 @@ namespace IsoECS
             graphics.PreferredBackBufferHeight = 680;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            Random = new Random();
         }
 
         /// <summary>
@@ -128,6 +125,10 @@ namespace IsoECS
             testTable.AddAt(0, 0, "What?");
             w.Add(testTable);
 
+            // setup random
+            // TODO: init the seed from the scenario?
+            EntityManager.Random = new Random();
+
             // Load the scenario
             // TODO: put this in a method somewhere
             string s = File.ReadAllText("Content/Data/Scenarios/alpha.json");
@@ -177,8 +178,8 @@ namespace IsoECS
 
                 test.AddComponent(new PositionComponent()
                 {
-                    X = Random.Next(GraphicsDevice.Viewport.Width),
-                    Y = Random.Next(GraphicsDevice.Viewport.Height)
+                    X = EntityManager.Random.Next(GraphicsDevice.Viewport.Width),
+                    Y = EntityManager.Random.Next(GraphicsDevice.Viewport.Height)
                 });
                 em.AddEntity(test);
             }

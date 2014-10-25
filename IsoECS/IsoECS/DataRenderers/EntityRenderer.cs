@@ -12,7 +12,6 @@ namespace IsoECS.DataRenderers
     public class EntityRenderer : DataRenderer<Entity, Dialog>
     {
         private Button btnOkay;
-        private Control displayedControl;
         private TabControl tabs;
 
         public EntityRenderer(Entity e, Manager manager)
@@ -64,11 +63,6 @@ namespace IsoECS.DataRenderers
 
         public override Dialog GetControl()
         {
-            if (displayedControl != null)
-            {
-                Control.Remove(displayedControl);
-            }
-
             Control.Text = "";
             Manager.Add(Control);
             Control.Show();
@@ -101,14 +95,6 @@ namespace IsoECS.DataRenderers
                 Panel gp = hr.GetControl();
                 gp.Parent = tab;
             }
-            /*
-            if (displayedControl != null)
-            {
-                displayedControl.SetPosition(2, Control.TopPanel.Height);
-                displayedControl.SetSize(Control.ClientWidth - 2, Control.ClientHeight - Control.TopPanel.Height - Control.BottomPanel.Height);
-                displayedControl.Parent = Control;
-            }
-            */
 
             Control.Text = string.Format("({0}) {1}", Data.ID, Control.Text);
 

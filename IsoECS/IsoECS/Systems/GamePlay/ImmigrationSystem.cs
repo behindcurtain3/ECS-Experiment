@@ -26,11 +26,11 @@ namespace IsoECS.Systems.GamePlay
                 // TODO: don't just fill vacancies, check to see if the city is "good" enough for immigrants
                 if (vacanies > 0)
                 {
-                    int spawnIndex = Game1.Random.Next(0, _spawners.Count);
+                    int spawnIndex = EntityManager.Random.Next(0, _spawners.Count);
                     SpawnerComponent spawner = _spawners[spawnIndex].Get<SpawnerComponent>();
                     PositionComponent position = _spawners[spawnIndex].Get<PositionComponent>();
 
-                    string spawnID = spawner.Spawns[Game1.Random.Next(0, spawner.Spawns.Count)];
+                    string spawnID = spawner.Spawns[EntityManager.Random.Next(0, spawner.Spawns.Count)];
 
                     Entity spawned = Serialization.DeepCopy<Entity>(EntityLibrary.Instance.Get(spawnID));
                     spawned.ResetID();
@@ -67,7 +67,7 @@ namespace IsoECS.Systems.GamePlay
 
         private void ResetCountdown()
         {
-            _spawnCountdown = Game1.Random.Next(2, 6) * 100;
+            _spawnCountdown = EntityManager.Random.Next(2, 6) * 100;
         }
 
         private int CountVacanies(List<Entity> entities)

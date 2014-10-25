@@ -12,6 +12,8 @@ namespace IsoECS.Entities
 {
     public class EntityManager
     {
+        public static Random Random { get; set; }
+
         public List<Entity> Entities { get; private set; }
         public Manager UI { get; set; }
         public IsometricMapComponent Map { get; private set; }
@@ -69,30 +71,30 @@ namespace IsoECS.Entities
                         {
                             // generate name
                             string[] names = { "Steve", "John", "Bill" };
-                            citizen.Name = names[Game1.Random.Next(0, names.Length)];
+                            citizen.Name = names[EntityManager.Random.Next(0, names.Length)];
                         }
 
                         if (String.IsNullOrWhiteSpace(citizen.FamilyName))
                         {
                             // generate family name
                             string[] names = { "Johnson", "Miller", "Smith" };
-                            citizen.FamilyName = names[Game1.Random.Next(0, names.Length)];
+                            citizen.FamilyName = names[EntityManager.Random.Next(0, names.Length)];
                         }
 
                         if (citizen.Gender == Gender.BOTH)
                         {
-                            citizen.Gender = (Gender)Game1.Random.Next(1, 3);
+                            citizen.Gender = (Gender)EntityManager.Random.Next(1, 3);
                         }
 
                         if (citizen.Age == 0)
                         {
                             // generate age
-                            citizen.Age = Game1.Random.Next(14, 46);
+                            citizen.Age = EntityManager.Random.Next(14, 46);
                         }
 
                         if (citizen.Money == 0)
                         {
-                            citizen.Money = Game1.Random.Next(20, 100);
+                            citizen.Money = EntityManager.Random.Next(20, 100);
                         }
                         break;
 
@@ -162,39 +164,39 @@ namespace IsoECS.Entities
                             {
                                 // random
                                 case "Edge":
-                                    int side = Game1.Random.Next(4);
+                                    int side = EntityManager.Random.Next(4);
 
                                     switch (side)
                                     {
                                         case 0:
                                             // northwest
                                             xIndex = 0;
-                                            yIndex = Game1.Random.Next(1, Map.TxHeight);
+                                            yIndex = EntityManager.Random.Next(1, Map.TxHeight);
                                             break;
                                         case 1:
                                             // northeast
-                                            xIndex = Game1.Random.Next(1, Map.TxWidth);
+                                            xIndex = EntityManager.Random.Next(1, Map.TxWidth);
                                             yIndex = 0;
                                             break;
                                         case 2:
                                             // southeast
                                             xIndex = Map.TxWidth - 1;
-                                            yIndex = Game1.Random.Next(1, Map.TxHeight);
+                                            yIndex = EntityManager.Random.Next(1, Map.TxHeight);
                                             break;
                                         default:
                                             // southwest
-                                            xIndex = Game1.Random.Next(1, Map.TxWidth);
+                                            xIndex = EntityManager.Random.Next(1, Map.TxWidth);
                                             yIndex = Map.TxHeight - 1;
                                             break;
                                     }
                                     break;
                                 case "NoEdge":
-                                    xIndex = Game1.Random.Next(1, Map.TxWidth - 1);
-                                    yIndex = Game1.Random.Next(1, Map.TxHeight - 1);
+                                    xIndex = EntityManager.Random.Next(1, Map.TxWidth - 1);
+                                    yIndex = EntityManager.Random.Next(1, Map.TxHeight - 1);
                                     break;
                                 default:
-                                    xIndex = Game1.Random.Next(0, Map.TxWidth);
-                                    yIndex = Game1.Random.Next(0, Map.TxHeight);
+                                    xIndex = EntityManager.Random.Next(0, Map.TxWidth);
+                                    yIndex = EntityManager.Random.Next(0, Map.TxHeight);
                                     break;
                             }
 

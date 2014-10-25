@@ -24,12 +24,12 @@ namespace IsoECS.Systems.GamePlay
         private InputController _input;
 
         private List<Button> _buttons = new List<Button>();
-        private Manager _mgr;
+        private Manager _manager;
 
         public void Init(EntityManager em)
         {
             HotKeys = new List<Keys>() { Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
-            _mgr = em.UI;
+            _manager = em.UI;
             _dataTracker = em.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
 
             Entity inputEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
@@ -223,7 +223,7 @@ namespace IsoECS.Systems.GamePlay
         private void ClearButtons()
         {
             foreach (Button btn in _buttons)
-                _mgr.Remove(btn);
+                _manager.Remove(btn);
 
             _buttons.Clear();
         }
@@ -237,7 +237,7 @@ namespace IsoECS.Systems.GamePlay
                 btn.Click += new EventHandler(CategoryBtn_Click);
                 btn.Tag = category;
 
-                _mgr.Add(btn);
+                _manager.Add(btn);
                 _buttons.Add(btn);
             }
 
@@ -257,7 +257,7 @@ namespace IsoECS.Systems.GamePlay
                 btn.Click += new EventHandler(Selection_Click);
                 btn.Tag = _buttons.Count;
 
-                _mgr.Add(btn);
+                _manager.Add(btn);
                 _buttons.Add(btn);
             }
 
@@ -266,7 +266,7 @@ namespace IsoECS.Systems.GamePlay
 
         private Button CreateButton(string text)
         {
-            Button btn = new Button(_mgr)
+            Button btn = new Button(_manager)
             {
                 Text = string.Format("{0}. {1}", (_buttons.Count + 1), text),
                 Width = 125,

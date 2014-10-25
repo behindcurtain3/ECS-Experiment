@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using IsoECS.Entities;
+using IsoECS.Util;
 
 namespace IsoECS.Behaviors
 {
@@ -18,7 +19,7 @@ namespace IsoECS.Behaviors
             base.Init(em, self);
 
             if(IdleTime == -1)
-                IdleTime = Game1.Random.Next(5, 25) * 1000;
+                IdleTime = EntityManager.Random.Next(5, 25) * 1000;
             IdleCountdown = IdleTime;
         }
 

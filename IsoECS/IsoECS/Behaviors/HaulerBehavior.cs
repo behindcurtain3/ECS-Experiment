@@ -63,7 +63,7 @@ namespace IsoECS.Behaviors
                 }
                 
                 // if no delivery sleep for a bit
-                state.Push(new IdleBehavior() { IdleTime = (int)(Game1.Random.NextDouble() * 5000) });
+                state.Push(new IdleBehavior() { IdleTime = (int)(EntityManager.Random.NextDouble() * 5000) });
             }
         }
 

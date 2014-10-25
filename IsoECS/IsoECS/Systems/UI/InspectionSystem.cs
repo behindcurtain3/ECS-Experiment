@@ -21,7 +21,6 @@ namespace IsoECS.Systems.UI
         private Window _selectionWindow;
         private List<Button> _selectionButtons;
         private Window _entityWindow;
-        private TabControl _entityTabs;
 
         private EntityRenderer _renderer;
 
