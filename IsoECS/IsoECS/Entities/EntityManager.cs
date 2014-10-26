@@ -22,6 +22,7 @@ namespace IsoECS.Entities
         public CollisionMapComponent Collisions { get; private set; }
         public CityInformationComponent CityInformation { get; private set; }
         public GameDateComponent Date { get; set; }
+        public CityServicesComponent CityServices { get; private set; }
 
         public EntityManager()
         {
@@ -100,6 +101,10 @@ namespace IsoECS.Entities
 
                     case "CityInformationComponent":
                         CityInformation = (CityInformationComponent)c;
+                        break;
+
+                    case "CityServicesComponent":
+                        CityServices = (CityServicesComponent)c;
                         break;
 
                     case "CollisionComponent":

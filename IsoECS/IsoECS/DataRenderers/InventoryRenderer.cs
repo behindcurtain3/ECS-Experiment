@@ -31,7 +31,7 @@ namespace IsoECS.DataRenderers
                 Control.AddColumns(new string[] { "Item", "Amount", "Status" });
                 Control.Columns[2].ToolTip = new ToolTip(Manager)
                 {
-                    Text = "Is the item available for use by other buildings?"
+                    Text = "Is the item available for use by other\nbuildings or reserved for this building?"
                 };
 
                 foreach (InventoryData item in Data.Items.Values)
@@ -43,7 +43,7 @@ namespace IsoECS.DataRenderers
                     Control.AddAt(0, Control.RowsCount - 1, name);
                     Control.AddAt(1, Control.RowsCount - 1, item.Amount.ToString());
 
-                    string status = (item.Output) ? "Output" : (item.Input) ? "Input" : "";
+                    string status = (item.Output) ? "Available" : (item.Input) ? "Reserved" : "";
 
                     Control.AddAt(2, Control.RowsCount - 1, status);
                 }
