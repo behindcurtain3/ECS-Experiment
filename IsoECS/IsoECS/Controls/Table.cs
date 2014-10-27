@@ -163,6 +163,9 @@ namespace TomShane.Neoforce.Controls
 
             foreach (TableRow row in rows)
                 Remove(row);
+
+            columnHeaders.Clear();
+            rows.Clear();
         }
 
         public void AddAt(int column, int row, Control c, bool fitted = false)

@@ -6,6 +6,19 @@ using IsoECS.GamePlay;
 
 namespace IsoECS.Components.GamePlay
 {
+    public class InventoryEventArgs : EventArgs
+    {
+        public InventoryData Data { get; private set; }
+        public int AmountChanged { get; private set; }
+
+        public InventoryEventArgs(InventoryData data, int amount)
+            : base()
+        {
+            Data = data;
+            AmountChanged = amount;
+        }
+    }
+
     [Serializable]
     public class InventoryData
     {
@@ -25,6 +38,10 @@ namespace IsoECS.Components.GamePlay
     [Serializable]
     public class Inventory : Component
     {
+        public delegate void InventoryEventHandler(Inventory sender, InventoryEventArgs e);
+
+        public event InventoryEventHandler ItemAdded;
+
         public Dictionary<string, InventoryData> Items { get; set; }
 
         public Inventory()
@@ -38,6 +55,9 @@ namespace IsoECS.Components.GamePlay
                 Items.Add(name, new InventoryData() { Item = name });
 
             Items[name].Amount += amount;
+
+            if (ItemAdded != null)
+                ItemAdded.Invoke(this, new InventoryEventArgs(Items[name], amount));
 
             // in future check for restrictions like a max amount of inventory space
             return true;

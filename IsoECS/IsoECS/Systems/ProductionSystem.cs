@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using IsoECS.DataStructures.GamePlay;
 using IsoECS.Entities;
 using IsoECS.GamePlay;
-using IsoECS.Components;
 
 namespace IsoECS.Systems
 {
@@ -66,6 +65,7 @@ namespace IsoECS.Systems
 
                     // update the drawables
                     DrawableComponent drawable = e.Get<DrawableComponent>();
+                    stage = r.Stages[p.CurrentStage];
 
                     // remove
                     foreach (string str in stage.RemoveFromDrawableComponent)

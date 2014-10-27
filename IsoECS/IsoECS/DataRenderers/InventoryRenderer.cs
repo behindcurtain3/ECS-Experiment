@@ -15,9 +15,30 @@ namespace IsoECS.DataRenderers
                 RowHeight = 24
             };
             Control.Init();
+
+            Data.ItemAdded += new Inventory.InventoryEventHandler(Data_ItemAdded);
         }
 
         public override Table GetControl(Control parent)
+        {
+            UpdateEntireTable();
+            
+            return base.GetControl(parent);
+        }
+
+        public override void Shutdown()
+        {
+            Data.ItemAdded -= Data_ItemAdded;
+
+            base.Shutdown();
+        }
+
+        private void Data_ItemAdded(Inventory sender, InventoryEventArgs e)
+        {
+            UpdateEntireTable();
+        }
+
+        private void UpdateEntireTable()
         {
             Control.Clear();
 
@@ -48,7 +69,6 @@ namespace IsoECS.DataRenderers
                     Control.AddAt(2, Control.RowsCount - 1, status);
                 }
             }
-            return base.GetControl(parent);
         }
     }
 }

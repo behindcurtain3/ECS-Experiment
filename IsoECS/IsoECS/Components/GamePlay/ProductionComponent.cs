@@ -91,6 +91,9 @@ namespace IsoECS.Components.GamePlay
             employees = new List<int>();
             haulers = new List<int>();
             EmployeeGender = Gender.BOTH;
+
+            workDone = 0;
+            currentStage = 0;
         }
 
         #endregion
