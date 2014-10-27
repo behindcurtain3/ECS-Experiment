@@ -154,6 +154,7 @@
     <Compile Include="DataRenderers\EntityRenderer.cs" />
     <Compile Include="DataRenderers\HousingRenderer.cs" />
     <Compile Include="DataRenderers\InventoryRenderer.cs" />
+    <Compile Include="DataRenderers\ProductionRenderer.cs" />
     <Compile Include="DataRenderers\StockpileRenderer.cs" />
     <Compile Include="DataStructures\DrawableLibrary.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />

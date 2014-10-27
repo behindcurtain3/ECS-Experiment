@@ -13,6 +13,8 @@ namespace IsoECS.DataRenderers
         public Button Next { get; private set; }
         public Button Previous { get; private set; }
 
+        private int previousSelectedTab = 0;
+
         public EntityRenderer(Entity e, Manager manager)
             : base(e, manager)
         {
@@ -38,7 +40,8 @@ namespace IsoECS.DataRenderers
                 Height = 23,
                 Width = 48,
                 Parent = Control.BottomPanel,
-                Anchor = Anchors.Right
+                Anchor = Anchors.Right,
+                CanFocus = false
             };
             btnOkay.Init();
             btnOkay.Click += new TomShane.Neoforce.Controls.EventHandler(btnOkay_Click);
@@ -51,7 +54,8 @@ namespace IsoECS.DataRenderers
                 Width = 96,
                 Top = btnOkay.Top,
                 Parent = Control.BottomPanel,
-                Anchor = Anchors.Left
+                Anchor = Anchors.Left,
+                CanFocus = false
             };
             Previous.Init();
 
@@ -63,7 +67,8 @@ namespace IsoECS.DataRenderers
                 Width = Previous.Width,
                 Top = Previous.Top,
                 Parent = Control.BottomPanel,
-                Anchor = Anchors.Left
+                Anchor = Anchors.Left,
+                CanFocus = false
             };
             Next.Init();
 
@@ -77,18 +82,18 @@ namespace IsoECS.DataRenderers
             };
             tabs.Init();
             tabs.Parent = Control;
+            tabs.PageChanged += new EventHandler(Tabs_PageChanged);
         }
 
-        private void btnOkay_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
-        {
-            Shutdown();
-        }
-
-        public override Dialog GetControl()
+        public override Dialog GetControl(Control parent)
         {
             Control.Text = "";
             Manager.Add(Control);
             Control.Show();
+
+            // stop listening while redrawing
+            tabs.PageChanged -= Tabs_PageChanged;
+
             foreach (TabPage tab in tabs.TabPages)
                 tabs.RemovePage(tab);
 
@@ -106,8 +111,18 @@ namespace IsoECS.DataRenderers
                 HousingRenderer hr = new HousingRenderer(Data.Get<HousingComponent>(), Manager);
                 TabPage tab = tabs.AddPage("Housing");
 
-                Panel gp = hr.GetControl();
+                Panel gp = hr.GetControl(tab);
+                gp.Width = tabs.ClientWidth;
+                gp.Height = tabs.ClientHeight;
                 gp.Parent = tab;
+            }
+
+            // Get production control
+            if (Data.HasComponent<ProductionComponent>())
+            {
+                ProductionRenderer pr = new ProductionRenderer(Data.Get<ProductionComponent>(), Manager);
+                TabPage tab = tabs.AddPage("Production");
+                Panel p = pr.GetControl(tab);
             }
 
             // Get stockpile
@@ -116,7 +131,7 @@ namespace IsoECS.DataRenderers
                 StockpileRenderer spr = new StockpileRenderer(Data.Get<StockpileComponent>(), Manager);
                 TabPage tab = tabs.AddPage("Stockpile");
 
-                Table t = spr.GetControl();
+                Table t = spr.GetControl(tab);
                 t.SetPosition(-tabs.ClientMargins.Left, -2);
                 t.SetSize(tab.ClientWidth + tabs.ClientMargins.Horizontal, tab.ClientHeight + 2 + tabs.ClientMargins.Bottom);
                 t.Parent = tab;
@@ -128,7 +143,7 @@ namespace IsoECS.DataRenderers
                 InventoryRenderer ir = new InventoryRenderer(Data.Get<Inventory>(), Manager);
                 TabPage tab = tabs.AddPage("Inventory");
 
-                Table it = ir.GetControl();
+                Table it = ir.GetControl(tab);
                 it.SetPosition(-tabs.ClientMargins.Left, -2);
                 it.SetSize(tab.ClientWidth + tabs.ClientMargins.Horizontal, tab.ClientHeight + 2 + tabs.ClientMargins.Bottom);
                 it.Parent = tab;
@@ -136,7 +151,12 @@ namespace IsoECS.DataRenderers
 
             Control.Text = string.Format("({0}) {1}", Data.ID, Control.Text);
 
-            return base.GetControl();
+            if (previousSelectedTab < tabs.TabPages.Length)
+                tabs.SelectedIndex = previousSelectedTab;
+
+            tabs.PageChanged += new EventHandler(Tabs_PageChanged);
+
+            return Control;
         }
 
         public override void Shutdown()
@@ -144,7 +164,23 @@ namespace IsoECS.DataRenderers
             Control.Manager.Remove(Control);
         }
 
+        public Window Update(Entity data)
+        {
+            Data = data;
+            return GetControl(null);
+        }
+
         private void Window_Closed(object sender, WindowClosedEventArgs e)
+        {
+            Shutdown();
+        }
+
+        private void Tabs_PageChanged(object sender, EventArgs e)
+        {
+            previousSelectedTab = tabs.SelectedIndex;
+        }
+
+        private void btnOkay_Click(object sender, TomShane.Neoforce.Controls.EventArgs e)
         {
             Shutdown();
         }

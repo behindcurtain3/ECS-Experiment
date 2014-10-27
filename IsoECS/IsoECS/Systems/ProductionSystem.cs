@@ -27,7 +27,7 @@ namespace IsoECS.Systems
             {
                 ProductionComponent p = e.Get<ProductionComponent>();
 
-                if (p.LastTick == em.Date.Time)
+                if (p.LastUpdateTime == em.Date.Time)
                     continue;
 
                 if (string.IsNullOrWhiteSpace(p.Recipe))
@@ -35,11 +35,11 @@ namespace IsoECS.Systems
 
                 // determines how much work is done
                 // TODO: check for divide by zero?
-                float workerPercentage = (float)p.Employees.Count / (float)p.MaxEmployees;
-                long elapsed = em.Date.MinutesElapsed(p.LastTick);
+                float workerPercentage = (float)p.Employees.Length / (float)p.MaxEmployees;
+                long elapsed = em.Date.MinutesElapsed(p.LastUpdateTime);
 
                 p.WorkDone += (elapsed * workerPercentage);
-                p.LastTick = em.Date.Time;
+                p.LastUpdateTime = em.Date.Time;
 
                 Recipe r = GameData.Instance.GetRecipe(p.Recipe);
                 if (p.WorkDone >= r.Stages[p.CurrentStage].WorkRequired)

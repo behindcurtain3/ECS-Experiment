@@ -13,7 +13,7 @@ namespace IsoECS.DataRenderers
         {
         }
 
-        public override Table GetControl()
+        public override Table GetControl(Control parent)
         {
             // Setup the stockpile table
             Control = new Table(Manager)
@@ -54,7 +54,7 @@ namespace IsoECS.DataRenderers
                 Data.Get(item.UniqueID).OnAmountChanged += new StockPileData.StockpileEventHandler(StockpileRenderer_OnAmountChanged);
             }
             
-            return base.GetControl();
+            return base.GetControl(parent);
         }
 
         public override void Shutdown()

@@ -18,10 +18,10 @@ namespace IsoECS.DataRenderers
             Control.Init();
         }
 
-        public override Panel GetControl()
+        public override Panel GetControl(Control parent)
         {
             
-            return base.GetControl();
+            return base.GetControl(parent);
         }
     }
 }

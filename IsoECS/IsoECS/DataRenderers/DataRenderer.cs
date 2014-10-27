@@ -14,19 +14,13 @@ namespace IsoECS.DataRenderers
             Manager = manager;
         }
 
-        public virtual S GetControl()
+        public virtual S GetControl(Control parent)
         {
             return Control;
         }
 
         public virtual void Shutdown()
         {
-        }
-
-        public S Update(T data)
-        {
-            Data = data;
-            return GetControl();
         }
     }
 }

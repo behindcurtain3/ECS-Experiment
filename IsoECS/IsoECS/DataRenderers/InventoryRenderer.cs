@@ -17,7 +17,7 @@ namespace IsoECS.DataRenderers
             Control.Init();
         }
 
-        public override Table GetControl()
+        public override Table GetControl(Control parent)
         {
             Control.Clear();
 
@@ -48,7 +48,7 @@ namespace IsoECS.DataRenderers
                     Control.AddAt(2, Control.RowsCount - 1, status);
                 }
             }
-            return base.GetControl();
+            return base.GetControl(parent);
         }
     }
 }
