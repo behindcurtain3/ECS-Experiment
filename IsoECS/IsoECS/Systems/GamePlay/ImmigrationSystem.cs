@@ -22,9 +22,11 @@ namespace IsoECS.Systems.GamePlay
 
                 // get the total number of citizens
                 int vacanies = CountVacanies(em.Entities);
+                int population = em.CityInformation.Population;
+                int maxPopulation = MaxPopulation(em.Entities);
 
                 // TODO: don't just fill vacancies, check to see if the city is "good" enough for immigrants
-                if (vacanies > 0)
+                if (population < maxPopulation && vacanies > 0)
                 {
                     int spawnIndex = EntityManager.Random.Next(0, _spawners.Count);
                     SpawnerComponent spawner = _spawners[spawnIndex].Get<SpawnerComponent>();
@@ -83,6 +85,21 @@ namespace IsoECS.Systems.GamePlay
 
                 if (house.NumOccupantsAndProspectives < house.MaxOccupants)
                     count += (house.MaxOccupants - (house.NumOccupantsAndProspectives));
+            }
+
+            return count;
+        }
+
+        private int MaxPopulation(List<Entity> entities)
+        {
+            int count = 0;
+
+            foreach(Entity e in entities)
+            {
+                if (!e.HasComponent<HousingComponent>())
+                    continue;
+
+                count += e.Get<HousingComponent>().MaxOccupants;
             }
 
             return count;
