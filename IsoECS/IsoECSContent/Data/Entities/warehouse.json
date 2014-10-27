@@ -7,6 +7,7 @@
 				"Category": "Infrastructure",
 				"Name": "Warehouse",
 				"Description": "A facility that stores goods for the city.",
+				"Cost": 150,
 				"DragBuildEnabled": false,
 				"AllowConstruction": true
 			},

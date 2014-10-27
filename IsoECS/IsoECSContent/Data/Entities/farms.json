@@ -7,6 +7,7 @@
 				"Category": "Farming",
 				"Name": "Wheat Farm",
 				"Description": "A countryside farm that produces wheat.",
+				"Cost": 100,
 				"DragBuildEnabled": false,
 				"AllowConstruction": true
 			},

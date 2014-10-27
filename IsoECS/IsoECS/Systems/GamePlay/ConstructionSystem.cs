@@ -165,8 +165,9 @@ namespace IsoECS.Systems.GamePlay
             
             if (_input.CurrentMouse.LeftButton == ButtonState.Pressed && (selectedBuildable.DragBuildEnabled || _input.PrevMouse.LeftButton != ButtonState.Pressed))
             {
-                // don't build over a spot that is already taken
-                if (spaceTaken)
+                // don't build over a spot that is already taken, don't build if not enough money
+                // TODO: the money check shouldn't even allow the building to be selected
+                if (spaceTaken || em.CityInformation.Money < selectedBuildable.Cost)
                     return;
 
                 Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
@@ -188,6 +189,8 @@ namespace IsoECS.Systems.GamePlay
                 }
 
                 em.AddEntity(buildable);
+
+                em.CityInformation.Money -= selectedBuildable.Cost;
             }
         }
 

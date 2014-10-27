@@ -8,6 +8,7 @@
 					"Category": "Residential",
 					"Name": "Pleb Housing",
 					"Description": "A lot designated for housing plebs in your city.",
+					"Cost": 10,
 					"DragBuildEnabled": false,
 					"AllowConstruction": true
 				},
