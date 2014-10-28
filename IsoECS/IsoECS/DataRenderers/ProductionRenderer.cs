@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using TomShane.Neoforce.Controls;
 using IsoECS.GamePlay;
 using IsoECS.DataStructures;
+using IsoECS.DataStructures.GamePlay;
 
 namespace IsoECS.DataRenderers
 {
@@ -88,6 +89,39 @@ namespace IsoECS.DataRenderers
                 Width = lbl.Width,
                 Parent = Control
             };
+
+            ListBox inputsBox = new ListBox(Manager)
+            {
+                Top = Control.ClientHeight / 2,
+                Height = Control.ClientHeight / 2,
+                Left = workDoneProgress.Left,
+                Width = Control.ClientWidth / 2 - 2,
+                Parent = Control
+            };
+
+            ListBox outputsBox = new ListBox(Manager)
+            {
+                Top = Control.ClientHeight / 2,
+                Height = Control.ClientHeight / 2,
+                Left = Control.ClientWidth / 2 + 2,
+                Width = Control.ClientWidth / 2 - 2,
+                Parent = Control
+            };
+
+            foreach (RecipeStage stage in recipe.Stages)
+            {
+                foreach (RecipeInput input in stage.Inputs)
+                {
+                    string name = GameData.Instance.GetItem(input.Item).Name;
+                    inputsBox.Items.Add(name);
+                }
+
+                foreach (RecipeOutput output in stage.Outputs)
+                {
+                    string name = GameData.Instance.GetItem(output.Item).Name;
+                    outputsBox.Items.Add(name);
+                }
+            }
 
             return Control;
         }
