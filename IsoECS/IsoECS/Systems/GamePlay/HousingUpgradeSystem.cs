@@ -27,14 +27,13 @@ namespace IsoECS.Systems.GamePlay
                 // then check if the requirement fails, if it does just continue to the next entity
                 if (housing.UpgradeRequirements.MinimumOccupants != -1)
                 {
-                    if (housing.NumOccupants < housing.UpgradeRequirements.MinimumOccupants)
+                    if (housing.Tennants.Length < housing.UpgradeRequirements.MinimumOccupants)
                     {
                         continue;
                     }
                 }
 
                 // swap out the HousingComponent with the upgraded version and the DrawableComponent
-                e.RemoveComponent(e.Get<HousingComponent>());
                 e.RemoveComponent(e.Get<DrawableComponent>());
                 e.RemoveComponent(e.Get<BuildableComponent>());
 
@@ -42,14 +41,20 @@ namespace IsoECS.Systems.GamePlay
                 Entity upgradedEntity = Serialization.DeepCopy<Entity>(EntityLibrary.Instance.Get(housing.UpgradesTo));
 
                 // copy in the new components
-                e.AddComponent(Serialization.DeepCopy<DrawableComponent>(upgradedEntity.Get<DrawableComponent>()));
-                e.AddComponent(Serialization.DeepCopy<HousingComponent>(upgradedEntity.Get<HousingComponent>()));
+                e.AddComponent(Serialization.DeepCopy<DrawableComponent>(upgradedEntity.Get<DrawableComponent>()));                
                 e.AddComponent(Serialization.DeepCopy<BuildableComponent>(upgradedEntity.Get<BuildableComponent>()));
 
                 // make sure the housing tennant data is copied over
-                HousingComponent replacement = e.Get<HousingComponent>();
-                replacement.Tennants.AddRange(Serialization.DeepCopy<List<int>>(housing.Tennants));
-                replacement.ProspectiveTennants.AddRange(Serialization.DeepCopy<List<int>>(housing.ProspectiveTennants));                
+                HousingComponent replacement = Serialization.DeepCopy<HousingComponent>(upgradedEntity.Get<HousingComponent>());
+
+                // copy over housing data
+                housing.MaxOccupants = replacement.MaxOccupants;
+                housing.Rent = replacement.Rent;
+                housing.UpgradesTo = replacement.UpgradesTo;
+                housing.UpgradeRequirements = replacement.UpgradeRequirements;
+
+                // copy over the unique id
+                e.UniqueID = upgradedEntity.UniqueID;
             }
         }
 

@@ -39,7 +39,7 @@ namespace IsoECS.DataRenderers
             Control.Width = parent.ClientWidth;
             Control.Height = parent.ClientHeight;
             Control.Anchor = Anchors.All;
-            Control.ClientMargins = new Margins(4, 4, 4, 4);            
+            Control.ClientMargins = new Margins(4, 4, 4, 4);
 
             Label lbl = new Label(Manager)
             {

@@ -18,14 +18,14 @@ namespace IsoECS.Behaviors
             {
                 HousingComponent house = housingEntity.Get<HousingComponent>();
 
-                if (house.NumOccupantsAndProspectives >= house.MaxOccupants)
+                if (house.SpaceAvailable <= 0)
                     continue;
 
                 // TODO: check for appropriate level of housing (rich, middle class, poor)
                 if (house.Rent <= citizen.Money)
                 {
                     HousingID = housingEntity.ID;
-                    house.ProspectiveTennants.Add(self.ID);
+                    house.AddProspect(self);
 
                     // TODO: enter sub behavior to move into the home (find a path there and then move there)
                     state.Push(new GoToBehavior() { TargetID = HousingID });
@@ -46,7 +46,7 @@ namespace IsoECS.Behaviors
                 Entity house = em.Entities.Find(delegate(Entity e) { return e.ID == HousingID; });
 
                 // take ourselves out of the tennant list
-                house.Get<HousingComponent>().ProspectiveTennants.Remove(self.ID);
+                house.Get<HousingComponent>().RemoveProspect(self);
 
                 if (finished.Status == BehaviorStatus.FAILURE)
                 {
@@ -57,7 +57,7 @@ namespace IsoECS.Behaviors
                 }
                 else
                 {
-                    house.Get<HousingComponent>().Tennants.Add(self.ID);
+                    house.Get<HousingComponent>().AddTennant(self);
                     self.Get<CitizenComponent>().HousingID = HousingID;
                     state.Push(new FadeBehavior() { FadeIn = false });
                 }
