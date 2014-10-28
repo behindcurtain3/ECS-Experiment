@@ -115,6 +115,11 @@ namespace IsoECS.DataRenderers
         private void Data_StageChanged(ProductionComponent sender)
         {
             currentStage.Text = GetStageText();
+
+            Recipe recipe = GameData.Instance.GetRecipe(Data.Recipe);
+
+            if(Data.CurrentStage < recipe.Stages.Count)
+                workDoneProgress.Range = (int)recipe.Stages[Data.CurrentStage].WorkRequired;
         }
 
         private string GetEmployeeText()

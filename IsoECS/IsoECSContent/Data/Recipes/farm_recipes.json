@@ -6,7 +6,7 @@
 			"Description": "",
 			"Stages": [
 				{
-					"WorkRequired": 30,
+					"WorkRequired": 100,
 					"Inputs": [
 						{
 							"Item": "alpha-fertilizer",
