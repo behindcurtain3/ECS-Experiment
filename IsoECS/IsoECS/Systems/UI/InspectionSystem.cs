@@ -169,7 +169,7 @@ namespace IsoECS.Systems.UI
                 if (e.HasComponent<CitizenComponent>())
                 {
                     CitizenComponent citizen = e.Get<CitizenComponent>();
-                    btn.Text = string.Format("{0} {1}", citizen.Name, citizen.FamilyName);
+                    btn.Text = citizen.DisplayName;
                 }
                 else if (e.HasComponent<BuildableComponent>())
                 {

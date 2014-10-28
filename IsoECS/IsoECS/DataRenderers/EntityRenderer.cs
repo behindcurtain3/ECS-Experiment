@@ -105,6 +105,19 @@ namespace IsoECS.DataRenderers
                 Control.Description.Text = buildable.Description;
             }
 
+            if (Data.HasComponent<CitizenComponent>())
+            {
+                CitizenComponent citizen = Data.Get<CitizenComponent>();
+                Control.Text = citizen.DisplayName;
+                Control.Caption.Text = "Pleb";
+                Control.Description.Text = "A lower class citizen of the city.";
+
+                CitizenRenderer cr = new CitizenRenderer(Data.Get<CitizenComponent>(), Manager);
+                TabPage tab = tabs.AddPage("Info");
+
+                Panel cp = cr.GetControl(tab);
+            }
+
             // Get housing control
             if (Data.HasComponent<HousingComponent>())
             {
@@ -112,9 +125,6 @@ namespace IsoECS.DataRenderers
                 TabPage tab = tabs.AddPage("Housing");
 
                 Panel gp = hr.GetControl(tab);
-                gp.Width = tabs.ClientWidth;
-                gp.Height = tabs.ClientHeight;
-                gp.Parent = tab;
             }
 
             // Get production control

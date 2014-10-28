@@ -75,11 +75,11 @@ namespace IsoECS.Entities
                             citizen.Name = names[EntityManager.Random.Next(0, names.Length)];
                         }
 
-                        if (String.IsNullOrWhiteSpace(citizen.FamilyName))
+                        if (String.IsNullOrWhiteSpace(citizen.Surname))
                         {
                             // generate family name
                             string[] names = { "Johnson", "Miller", "Smith" };
-                            citizen.FamilyName = names[EntityManager.Random.Next(0, names.Length)];
+                            citizen.Surname = names[EntityManager.Random.Next(0, names.Length)];
                         }
 
                         if (citizen.Gender == Gender.BOTH)
