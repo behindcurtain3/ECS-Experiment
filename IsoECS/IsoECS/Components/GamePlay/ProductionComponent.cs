@@ -141,6 +141,15 @@ namespace IsoECS.Components.GamePlay
             return true;
         }
 
+        public void RemoveHauler(Entity e)
+        {
+            if (haulers.Remove(e.ID))
+            {
+                if (HaulerRemoved != null)
+                    HaulerRemoved.Invoke(this, e);
+            }
+        }
+
         #endregion
     }
 }

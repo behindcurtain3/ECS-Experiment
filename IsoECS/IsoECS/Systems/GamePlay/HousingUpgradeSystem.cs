@@ -50,8 +50,8 @@ namespace IsoECS.Systems.GamePlay
                 // copy over housing data
                 housing.MaxOccupants = replacement.MaxOccupants;
                 housing.Rent = replacement.Rent;
-                housing.UpgradesTo = replacement.UpgradesTo;
                 housing.UpgradeRequirements = replacement.UpgradeRequirements;
+                housing.Upgrade(replacement.UpgradesTo);
 
                 // copy over the unique id
                 e.UniqueID = upgradedEntity.UniqueID;

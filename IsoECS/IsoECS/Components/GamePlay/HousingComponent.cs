@@ -163,6 +163,22 @@ namespace IsoECS.Components.GamePlay
             }
         }
 
+        public void Upgrade(string to)
+        {
+            UpgradesTo = to;
+
+            if (Upgraded != null)
+                Upgraded.Invoke(this);
+        }
+
+        public void Downgrade(string to)
+        {
+            UpgradesTo = to;
+
+            if (Downgraded != null)
+                Downgraded.Invoke(this);
+        }
+
         #endregion
     }
 }
