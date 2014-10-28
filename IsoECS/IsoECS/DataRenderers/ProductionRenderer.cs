@@ -80,24 +80,35 @@ namespace IsoECS.DataRenderers
                 Anchor = Anchors.Right
             };
 
+            lbl = new Label(Manager)
+            {
+                Text = "Progress: ",
+                Left = currentStage.Left,
+                Top = currentStage.Top + currentStage.Height + 5,
+                Width = currentStage.Width,
+                Parent = Control
+            };
+
             workDoneProgress = new ProgressBar(Manager)
             {
                 Range = (int)recipe.Stages[Data.CurrentStage].WorkRequired,
                 Value = (int)Data.WorkDone,
-                Top = lbl.Top + lbl.Height + 5,
-                Left = Control.ClientMargins.Left,
-                Width = lbl.Width,
+                Top = lbl.Top,
+                Left = 150,
+                Width = lbl.Width - 150,
                 Parent = Control
             };
+            workDoneProgress.Init();
 
             ListBox inputsBox = new ListBox(Manager)
             {
                 Top = Control.ClientHeight / 2,
                 Height = Control.ClientHeight / 2,
-                Left = workDoneProgress.Left,
+                Left = lbl.Left,
                 Width = Control.ClientWidth / 2 - 2,
                 Parent = Control
             };
+            inputsBox.Init();
 
             ListBox outputsBox = new ListBox(Manager)
             {
@@ -107,12 +118,36 @@ namespace IsoECS.DataRenderers
                 Width = Control.ClientWidth / 2 - 2,
                 Parent = Control
             };
+            outputsBox.Init();
+
+            lbl = new Label(Manager)
+            {
+                Text = "Needs:",
+                Top = inputsBox.Top - 18,
+                Left = inputsBox.Left,
+                Width = inputsBox.Width,
+                Parent = Control
+            };
+
+            lbl = new Label(Manager)
+            {
+                Text = "Produces:",
+                Top = outputsBox.Top - 18,
+                Left = outputsBox.Left,
+                Width = outputsBox.Width,
+                Parent = Control
+            };
 
             foreach (RecipeStage stage in recipe.Stages)
             {
                 foreach (RecipeInput input in stage.Inputs)
                 {
-                    string name = GameData.Instance.GetItem(input.Item).Name;
+                    Item item = GameData.Instance.GetItem(input.Item);
+                    string name = item.Name;
+
+                    if (!input.Required)
+                        name += " (Optional)";
+
                     inputsBox.Items.Add(name);
                 }
 
