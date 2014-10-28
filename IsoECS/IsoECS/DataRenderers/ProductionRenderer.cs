@@ -39,6 +39,7 @@ namespace IsoECS.DataRenderers
             Control.Width = parent.ClientWidth;
             Control.Height = parent.ClientHeight;
             Control.Anchor = Anchors.All;
+            Control.ClientMargins = new Margins(4, 4, 4, 4);            
 
             Label lbl = new Label(Manager)
             {
@@ -57,87 +58,51 @@ namespace IsoECS.DataRenderers
                 Width = lbl.Width,
                 Alignment = Alignment.MiddleRight,
                 Parent = Control,
-                Anchor = Anchors.Right
+                Anchor = Anchors.Top | Anchors.Right
             };
-
-            lbl = new Label(Manager)
-            {
-                Text = "Stage:",
-                Left = numberOfEmployees.Left,
-                Top = numberOfEmployees.Top + numberOfEmployees.Height + 5,
-                Width = Control.ClientWidth - Control.ClientMargins.Horizontal,
-                Parent = Control
-            };
-
-            currentStage = new Label(Manager)
-            {
-                Text = GetStageText(),
-                Left = lbl.Left,
-                Top = lbl.Top,
-                Width = lbl.Width,
-                Alignment = Alignment.MiddleRight,
-                Parent = Control,
-                Anchor = Anchors.Right
-            };
-
-            lbl = new Label(Manager)
-            {
-                Text = "Progress: ",
-                Left = currentStage.Left,
-                Top = currentStage.Top + currentStage.Height + 5,
-                Width = currentStage.Width,
-                Parent = Control
-            };
-
-            workDoneProgress = new ProgressBar(Manager)
-            {
-                Range = (int)recipe.Stages[Data.CurrentStage].WorkRequired,
-                Value = (int)Data.WorkDone,
-                Top = lbl.Top,
-                Left = 150,
-                Width = lbl.Width - 150,
-                Parent = Control
-            };
-            workDoneProgress.Init();
-
-            ListBox inputsBox = new ListBox(Manager)
-            {
-                Top = Control.ClientHeight / 2,
-                Height = Control.ClientHeight / 2,
-                Left = lbl.Left,
-                Width = Control.ClientWidth / 2 - 2,
-                Parent = Control
-            };
-            inputsBox.Init();
-
-            ListBox outputsBox = new ListBox(Manager)
-            {
-                Top = Control.ClientHeight / 2,
-                Height = Control.ClientHeight / 2,
-                Left = Control.ClientWidth / 2 + 2,
-                Width = Control.ClientWidth / 2 - 2,
-                Parent = Control
-            };
-            outputsBox.Init();
 
             lbl = new Label(Manager)
             {
                 Text = "Needs:",
-                Top = inputsBox.Top - 18,
+                Top = numberOfEmployees.Top + numberOfEmployees.Height + 5,
+                Left = numberOfEmployees.Left,
+                Width = numberOfEmployees.Width,
+                Parent = Control
+            };
+
+            Label inputsBox = new Label(Manager)
+            {
+                Text = "",
+                Top = lbl.Top,
+                Left = lbl.Left,
+                Width = lbl.Width,
+                Parent = Control,
+                Alignment = Alignment.MiddleRight,
+                Anchor = Anchors.Top | Anchors.Right
+            };
+            inputsBox.Init();
+
+            lbl = new Label(Manager)
+            {
+                Text = "Produces:",
+                Top = inputsBox.Top + inputsBox.Height + 5,
                 Left = inputsBox.Left,
                 Width = inputsBox.Width,
                 Parent = Control
             };
 
-            lbl = new Label(Manager)
+            Label outputsBox = new Label(Manager)
             {
-                Text = "Produces:",
-                Top = outputsBox.Top - 18,
-                Left = outputsBox.Left,
-                Width = outputsBox.Width,
-                Parent = Control
+                Text = "",
+                Top = inputsBox.Top + inputsBox.Height + 5,
+                Left = inputsBox.Left,
+                Width = inputsBox.Width,
+                Parent = Control,
+                Alignment = Alignment.MiddleRight,
+                Anchor = Anchors.Top | Anchors.Right
             };
-
+            outputsBox.Init();
+            
             foreach (RecipeStage stage in recipe.Stages)
             {
                 foreach (RecipeInput input in stage.Inputs)
@@ -148,15 +113,45 @@ namespace IsoECS.DataRenderers
                     if (!input.Required)
                         name += " (Optional)";
 
-                    inputsBox.Items.Add(name);
+                    if (!string.IsNullOrWhiteSpace(inputsBox.Text))
+                        inputsBox.Text += ", ";
+
+                    inputsBox.Text += name;
                 }
 
                 foreach (RecipeOutput output in stage.Outputs)
                 {
                     string name = GameData.Instance.GetItem(output.Item).Name;
-                    outputsBox.Items.Add(name);
+
+                    if (!string.IsNullOrWhiteSpace(outputsBox.Text))
+                        outputsBox.Text += ", ";
+
+                    outputsBox.Text += name;
                 }
             }
+
+            workDoneProgress = new ProgressBar(Manager)
+            {
+                Range = (int)recipe.Stages[Data.CurrentStage].WorkRequired,
+                Value = (int)Data.WorkDone,
+                Top = (int)(Control.ClientHeight * 0.75) - 10,
+                Width = (int)(Control.ClientWidth * 0.75),                
+                Parent = Control,
+                Anchor = Anchors.Horizontal | Anchors.Bottom
+            };
+            workDoneProgress.Left = Control.ClientWidth / 2 - workDoneProgress.Width / 2;
+            workDoneProgress.Init();
+
+            currentStage = new Label(Manager)
+            {
+                Text = GetStageText(),
+                Top = workDoneProgress.Top + workDoneProgress.Height + 5,
+                Left = workDoneProgress.Left,
+                Width = workDoneProgress.Width,
+                Alignment = Alignment.MiddleCenter,
+                Parent = Control,
+                Anchor = Anchors.Horizontal | Anchors.Bottom
+            };
 
             return Control;
         }
