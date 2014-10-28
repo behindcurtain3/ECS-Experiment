@@ -17,12 +17,12 @@ namespace IsoECS.Systems
     {
         public GraphicsDevice Graphics { get; set; }
         public Color ClearColor { get; set; }
-        private List<DrawData> _background = new List<DrawData>();
-        private List<DrawData> _foundation = new List<DrawData>();
-        private List<DrawData> _foreground = new List<DrawData>();
-        private List<DrawData> _text = new List<DrawData>();
+        protected List<DrawData> _background = new List<DrawData>();
+        protected List<DrawData> _foundation = new List<DrawData>();
+        protected List<DrawData> _foreground = new List<DrawData>();
+        protected List<DrawData> _text = new List<DrawData>();
 
-        public void Draw(EntityManager em, SpriteBatch spriteBatch, SpriteFont spriteFont)
+        public virtual void Draw(EntityManager em, SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
             // Get the list of drawable text entities from the main list
             List<Entity> drawables = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
@@ -59,28 +59,16 @@ namespace IsoECS.Systems
             _foreground.Sort(SortDrawables);
             _text.Sort(SortDrawables);
 
-            foreach (DrawData d in _background)
-            {
-                Draw(spriteBatch, spriteFont, d, cameraPosition);
-            }
-            foreach (DrawData d in _foundation)
-            {
-                Draw(spriteBatch, spriteFont, d, cameraPosition);
-            }
-            foreach (DrawData d in _foreground)
-            {
-                Draw(spriteBatch, spriteFont, d, cameraPosition);
-            }
-            foreach (DrawData d in _text)
-            {
-                Draw(spriteBatch, spriteFont, d, cameraPosition);
-            }
+            DrawBackgroundLayer(spriteBatch, spriteFont, cameraPosition, _background);
+            DrawFoundationLayer(spriteBatch, spriteFont, cameraPosition, _foundation);
+            DrawForegroundLayer(spriteBatch, spriteFont, cameraPosition, _foreground);
+            DrawTextLayer(spriteBatch, spriteFont, cameraPosition, _text);
 
             // end the scene
             spriteBatch.End();
         }
 
-        private void AddToDrawables(List<DrawData> addTo, List<IGameDrawable> list, Entity e)
+        protected void AddToDrawables(List<DrawData> addTo, List<IGameDrawable> list, Entity e)
         {
             DrawData dd;
             foreach (IGameDrawable d in list)
@@ -92,7 +80,7 @@ namespace IsoECS.Systems
             }
         }
 
-        private void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont, DrawData dd, PositionComponent cameraPosition)
+        protected void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont, DrawData dd, PositionComponent cameraPosition)
         {
             // if the drawable is not visible continue
             if (!dd.Drawable.Visible) return;
@@ -103,9 +91,41 @@ namespace IsoECS.Systems
                 dd.Drawable.Draw(Graphics, spriteBatch, spriteFont, (int)(dd.Position.X - cameraPosition.X), (int)(dd.Position.Y - cameraPosition.Y));
         }
 
-        private int SortDrawables(DrawData a, DrawData b)
+        protected int SortDrawables(DrawData a, DrawData b)
         {
             return a.Position.Y.CompareTo(b.Position.Y);
+        }
+
+        protected virtual void DrawBackgroundLayer(SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> backgrounds)
+        {
+            foreach (DrawData d in backgrounds)
+            {
+                Draw(spriteBatch, spriteFont, d, camera);
+            }
+        }
+
+        protected virtual void DrawFoundationLayer(SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> foundations)
+        {
+            foreach (DrawData d in foundations)
+            {
+                Draw(spriteBatch, spriteFont, d, camera);
+            }
+        }
+
+        protected virtual void DrawForegroundLayer(SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> foregrounds)
+        {
+            foreach (DrawData d in foregrounds)
+            {
+                Draw(spriteBatch, spriteFont, d, camera);
+            }
+        }
+
+        protected virtual void DrawTextLayer(SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> texts)
+        {
+            foreach (DrawData d in texts)
+            {
+                Draw(spriteBatch, spriteFont, d, camera);
+            }
         }
     }
 }

@@ -109,7 +109,7 @@ namespace IsoECS
             };
             w.Init();
             w.Center();
-            em.UI.Add(w);
+            //em.UI.Add(w);
 
             Table testTable = new Table(em.UI)
             {

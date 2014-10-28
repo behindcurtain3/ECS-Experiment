@@ -198,11 +198,12 @@
     <Compile Include="Systems\GamePlay\HousingUpgradeSystem.cs" />
     <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />
-    <Compile Include="Systems\IRenderSystem.cs" />
-    <Compile Include="Systems\IsometricMapSystem.cs" />
+    <Compile Include="Systems\Renderers\FoundationOverlaySystem.cs" />
+    <Compile Include="Systems\Renderers\IRenderSystem.cs" />
+    <Compile Include="Systems\Renderers\IsometricMapSystem.cs" />
     <Compile Include="Systems\ISystem.cs" />
-    <Compile Include="Systems\ProductionSystem.cs" />
-    <Compile Include="Systems\RenderSystem.cs" />
+    <Compile Include="Systems\GamePlay\ProductionSystem.cs" />
+    <Compile Include="Systems\Renderers\RenderSystem.cs" />
     <Compile Include="Systems\Threaded\PathfinderSystem.cs" />
     <Compile Include="Systems\UI\CityInformationSystem.cs" />
     <Compile Include="Systems\UI\InspectionSystem.cs" />

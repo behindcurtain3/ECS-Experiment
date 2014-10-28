@@ -70,5 +70,16 @@ namespace IsoECS.Components.GamePlay
 
             return Items[name].Amount;
         }
+
+        public int Available(string name)
+        {
+            if (!Items.ContainsKey(name))
+                return 0;
+
+            if (!Items[name].Output)
+                return 0;
+
+            return Items[name].Amount;
+        }
     }
 }

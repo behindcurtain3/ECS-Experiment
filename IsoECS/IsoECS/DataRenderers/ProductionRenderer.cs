@@ -50,7 +50,7 @@ namespace IsoECS.DataRenderers
 
             numberOfEmployees = new Label(Manager)
             {
-                Text = Data.Employees.Length.ToString(),
+                Text = GetEmployeeText(),
                 Left = lbl.Left,
                 Top = lbl.Top,
                 Width = lbl.Width,
@@ -70,7 +70,7 @@ namespace IsoECS.DataRenderers
 
             currentStage = new Label(Manager)
             {
-                Text = string.Format("{0}/{1}", Data.CurrentStage + 1, recipe.Stages.Count),
+                Text = GetStageText(),
                 Left = lbl.Left,
                 Top = lbl.Top,
                 Width = lbl.Width,
@@ -104,7 +104,7 @@ namespace IsoECS.DataRenderers
 
         private void Data_EmployeesChanged(ProductionComponent sender, Entities.Entity employee)
         {
-            numberOfEmployees.Text = sender.Employees.Length.ToString();
+            numberOfEmployees.Text = GetEmployeeText();
         }
 
         private void Data_WorkDoneChanged(ProductionComponent sender)
@@ -114,9 +114,19 @@ namespace IsoECS.DataRenderers
 
         private void Data_StageChanged(ProductionComponent sender)
         {
+            currentStage.Text = GetStageText();
+        }
+
+        private string GetEmployeeText()
+        {
+            return string.Format("{0}/{1} ({2:p0})", Data.Employees.Length, Data.MaxEmployees, ((double)Data.Employees.Length / (double)Data.MaxEmployees));
+        }
+
+        private string GetStageText()
+        {
             Recipe recipe = GameData.Instance.GetRecipe(Data.Recipe);
 
-            currentStage.Text = string.Format("{0}/{1}", Data.CurrentStage + 1, recipe.Stages.Count);
+            return string.Format("{0}/{1}", Data.CurrentStage + 1, recipe.Stages.Count);
         }
     }
 }
