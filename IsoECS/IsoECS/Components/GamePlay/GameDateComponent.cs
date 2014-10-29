@@ -8,7 +8,40 @@ namespace IsoECS.Components.GamePlay
     [Serializable]
     public class GameDateComponent : Component
     {
-        public long Time { get; set; }
+        #region Events
+
+        public delegate void GameDateEventHandler(GameDateComponent sender);
+        public event GameDateEventHandler TimeChanged;
+        public event GameDateEventHandler DayChanged;
+        public event GameDateEventHandler MonthChanged;
+        public event GameDateEventHandler YearChanged;
+
+        #endregion
+
+        #region Fields
+
+        private long time;
+        private int prevDay = 0;
+        private int prevMonth = 0;
+        private int prevYear = 0;
+
+        #endregion
+
+        #region Properties
+
+        public long Time 
+        {
+            get { return time; }
+            set
+            {
+                if (time != value)
+                {
+                    time = value;
+                    if (TimeChanged != null)
+                        TimeChanged.Invoke(this);
+                }
+            }
+        }
 
         public int MinutesPerHour { get; set; }
         public int HoursPerDay { get; set; }
@@ -51,7 +84,7 @@ namespace IsoECS.Components.GamePlay
             get { return (int)((Time / MinutesPerMonth) % MonthsPerYear) + 1; }
         }
 
-        public long Year
+        public int Year
         {
             get { return (int)(Time / MinutesPerYear) + 1; }
         }
@@ -61,9 +94,44 @@ namespace IsoECS.Components.GamePlay
             get { return MonthNames[Month]; }
         }
 
+        #endregion
+
+        public GameDateComponent()
+        {
+            TimeChanged += new GameDateEventHandler(GameDateComponent_TimeChanged);
+        }
+        
+        #region Methods
+
         public long MinutesElapsed(long timeStamp)
         {
             return Time - timeStamp;
         }
+
+        private void GameDateComponent_TimeChanged(GameDateComponent sender)
+        {
+            if (prevDay != Day)
+            {
+                prevDay = Day;
+                if (DayChanged != null)
+                    DayChanged.Invoke(this);
+            }
+
+            if (prevMonth != Month)
+            {
+                prevMonth = Month;
+                if (MonthChanged != null)
+                    MonthChanged.Invoke(this);
+            }
+
+            if (prevYear != Year)
+            {
+                prevYear = Year;
+                if (YearChanged != null)
+                    YearChanged.Invoke(this);
+            }
+        }
+
+        #endregion
     }
 }
