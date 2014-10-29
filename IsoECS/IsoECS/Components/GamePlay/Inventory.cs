@@ -40,7 +40,7 @@ namespace IsoECS.Components.GamePlay
     {
         public delegate void InventoryEventHandler(Inventory sender, InventoryEventArgs e);
 
-        public event InventoryEventHandler ItemAdded;
+        public event InventoryEventHandler AmountChanged;
 
         public Dictionary<string, InventoryData> Items { get; set; }
 
@@ -56,8 +56,8 @@ namespace IsoECS.Components.GamePlay
 
             Items[name].Amount += amount;
 
-            if (ItemAdded != null)
-                ItemAdded.Invoke(this, new InventoryEventArgs(Items[name], amount));
+            if (AmountChanged != null)
+                AmountChanged.Invoke(this, new InventoryEventArgs(Items[name], amount));
 
             // in future check for restrictions like a max amount of inventory space
             return true;
@@ -80,6 +80,17 @@ namespace IsoECS.Components.GamePlay
                 return 0;
 
             return Items[name].Amount;
+        }
+
+        public void Set(string name, int amount)
+        {
+            if (!Items.ContainsKey(name))
+                Items.Add(name, new InventoryData() { Item = name });
+
+            Items[name].Amount = amount;
+
+            if (AmountChanged != null)
+                AmountChanged.Invoke(this, new InventoryEventArgs(Items[name], amount));
         }
     }
 }

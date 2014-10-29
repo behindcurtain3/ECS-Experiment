@@ -23,57 +23,57 @@ namespace IsoECS.Systems.UI
         private int _updateRate = 250;
         private int _updateCountdown;
 
-        public void Init(EntityManager em)
+        public void Init()
         {
             int columnWidth = 175;
 
             // Add the appropraite UI elements to scene
-            _populationLabel = new Label(em.UI)
+            _populationLabel = new Label(EntityManager.Instance.UI)
             {
                 Text = "Population: ",
                 Color = Color.White,
                 Width = columnWidth
             };
 
-            _populationValueLabel = new Label(em.UI)
+            _populationValueLabel = new Label(EntityManager.Instance.UI)
             {
                 Color = Color.White,
                 Alignment = Alignment.MiddleRight,
                 Width = columnWidth
             };
 
-            _moneyLabel = new Label(em.UI)
+            _moneyLabel = new Label(EntityManager.Instance.UI)
             {
                 Text = "Treasury: ",
                 Top = 15,
                 Width = columnWidth
             };
 
-            _moneyValueLabel = new Label(em.UI)
+            _moneyValueLabel = new Label(EntityManager.Instance.UI)
             {
                 Top = 15,
                 Alignment = Alignment.MiddleRight,
                 Width = columnWidth
             };
 
-            em.UI.Add(_populationLabel);
-            em.UI.Add(_populationValueLabel);
-            em.UI.Add(_moneyLabel);
-            em.UI.Add(_moneyValueLabel);
+            EntityManager.Instance.UI.Add(_populationLabel);
+            EntityManager.Instance.UI.Add(_populationValueLabel);
+            EntityManager.Instance.UI.Add(_moneyLabel);
+            EntityManager.Instance.UI.Add(_moneyValueLabel);
 
-            _dateLabel = new Label(em.UI)
+            _dateLabel = new Label(EntityManager.Instance.UI)
             {
                 Width = Graphics.Viewport.Width,
                 Alignment = Alignment.MiddleCenter
             };
 
-            em.UI.Add(_dateLabel);
+            EntityManager.Instance.UI.Add(_dateLabel);
 
             // set to zero so it updates on the first update call
             _updateCountdown = 0;
         }
 
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
             _updateCountdown -= dt;
 
@@ -82,26 +82,26 @@ namespace IsoECS.Systems.UI
                 _updateCountdown += _updateRate;
 
                 // update the city information ui elements
-                em.CityInformation.Population = GetPopulation(em.Entities);
+                EntityManager.Instance.CityInformation.Population = GetPopulation(EntityManager.Instance.Entities);
 
                 lock (PathfinderSystem.PathsRequested)
                 {
-                    _populationValueLabel.Text = em.CityInformation.Population.ToString("G") + string.Format(" ({0})", PathfinderSystem.PathsRequested.Count);
+                    _populationValueLabel.Text = EntityManager.Instance.CityInformation.Population.ToString("G") + string.Format(" ({0})", PathfinderSystem.PathsRequested.Count);
                 }
-                _moneyValueLabel.Text = em.CityInformation.Money.ToString("C0");
+                _moneyValueLabel.Text = EntityManager.Instance.CityInformation.Money.ToString("C0");
 
-                _dateLabel.Text = string.Format("{0} of {1}, {2} C.E.", StringHelper.Ordinal(em.Date.Day), em.Date.MonthName, em.Date.Year);
+                _dateLabel.Text = string.Format("{0} of {1}, {2} C.E.", StringHelper.Ordinal(EntityManager.Instance.Date.Day), EntityManager.Instance.Date.MonthName, EntityManager.Instance.Date.Year);
             }
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
             // Remove the UI elements from the scene
-            em.UI.Remove(_populationLabel);
-            em.UI.Remove(_populationValueLabel);
-            em.UI.Remove(_moneyLabel);
-            em.UI.Remove(_moneyValueLabel);
-            em.UI.Remove(_dateLabel);
+            EntityManager.Instance.UI.Remove(_populationLabel);
+            EntityManager.Instance.UI.Remove(_populationValueLabel);
+            EntityManager.Instance.UI.Remove(_moneyLabel);
+            EntityManager.Instance.UI.Remove(_moneyValueLabel);
+            EntityManager.Instance.UI.Remove(_dateLabel);
         }
 
         private int GetPopulation(List<Entity> entities)

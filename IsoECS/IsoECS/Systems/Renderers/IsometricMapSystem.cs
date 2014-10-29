@@ -13,10 +13,10 @@ namespace IsoECS.Systems
     {
         public GraphicsDevice Graphics { get; set; }
 
-        public void Draw(EntityManager em, SpriteBatch spriteBatch, SpriteFont spriteFont)
+        public void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
-            Entity cameraEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
-            Entity mapEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
+            Entity cameraEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
+            Entity mapEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
 
             if (mapEntity == null || cameraEntity == null)
                 return;

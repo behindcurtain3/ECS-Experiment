@@ -1,6 +1,7 @@
 ﻿using IsoECS.Components.GamePlay;
 using Microsoft.Xna.Framework;
 using TomShane.Neoforce.Controls;
+using IsoECS.Entities;
 
 namespace IsoECS.DataRenderers
 {
@@ -21,6 +22,9 @@ namespace IsoECS.DataRenderers
                 Color = Color.Transparent
             };
             Control.Init();
+
+            Data.HousingChanged += new CitizenComponent.CitizenEventHandler(Data_HousingChanged);
+            Data.JobChanged += new CitizenComponent.CitizenEventHandler(Data_JobChanged);
         }
 
         public override Panel GetControl(Control parent)
@@ -84,7 +88,27 @@ namespace IsoECS.DataRenderers
 
             housing = new Label(Manager)
             {
-                Text = GetHousingText(),
+                Text = GetBuildableText(Data.HousingID),
+                Left = lbl.Left,
+                Top = lbl.Top,
+                Width = lbl.Width,
+                Parent = Control,
+                Alignment = Alignment.MiddleRight,
+                Anchor = Anchors.Right | Anchors.Top
+            };
+
+            lbl = new Label(Manager)
+            {
+                Text = "Works At:",
+                Left = housing.Left,
+                Top = housing.Top + housing.Height + 5,
+                Width = housing.Width,
+                Parent = Control
+            };
+
+            job = new Label(Manager)
+            {
+                Text = GetBuildableText(Data.JobID),
                 Left = lbl.Left,
                 Top = lbl.Top,
                 Width = lbl.Width,
@@ -96,9 +120,33 @@ namespace IsoECS.DataRenderers
             return base.GetControl(parent);
         }
 
-        private string GetHousingText()
+        private string GetBuildableText(int id)
         {
-            return "None";
+            if (id == -1)
+                return "None";
+
+            Entity e = EntityManager.Instance.GetEntity(id);
+
+            if (e != null)
+            {
+                BuildableComponent house = e.Get<BuildableComponent>();
+
+                return house.Name;
+            }
+            else
+            {
+                return "None";
+            }
+        }
+        
+        private void Data_HousingChanged(CitizenComponent sender)
+        {
+            housing.Text = GetBuildableText(Data.HousingID);
+        }
+
+        private void Data_JobChanged(CitizenComponent sender)
+        {
+            job.Text = GetBuildableText(Data.JobID);
         }
     }
 }

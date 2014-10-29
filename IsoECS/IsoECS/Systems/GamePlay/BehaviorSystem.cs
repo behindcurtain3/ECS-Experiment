@@ -7,17 +7,17 @@ namespace IsoECS.Systems.GamePlay
 {
     public class BehaviorSystem : ISystem
     {
-        public void Init(EntityManager em)
+        public void Init()
         {
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
         }
 
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
-            List<Entity> brains = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); });
+            List<Entity> brains = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); });
 
             foreach (Entity e in brains)
             {
@@ -32,7 +32,7 @@ namespace IsoECS.Systems.GamePlay
 
                 // init if the behavior is starting
                 if (citizen.Behaviors.Peek().Status == BehaviorStatus.STARTING)
-                    citizen.Behaviors.Peek().Init(em, e);
+                    citizen.Behaviors.Peek().Init(e);
 
                 // check if the current behavior is still running
                 while (citizen.Behaviors.Peek().Status != BehaviorStatus.RUNNING)
@@ -41,15 +41,15 @@ namespace IsoECS.Systems.GamePlay
                     Behavior completedBehavior = citizen.Behaviors.Pop();
 
                     // let the "higher" behavior know the sub behavior finished
-                    citizen.Behaviors.Peek().OnSubFinished(em, e, completedBehavior, citizen.Behaviors);
+                    citizen.Behaviors.Peek().OnSubFinished(e, completedBehavior, citizen.Behaviors);
 
                     // after calling onsubfinished there might be a new behavior on top of the stack, make sure it is initialized
                     if (citizen.Behaviors.Peek().Status == BehaviorStatus.STARTING)
-                        citizen.Behaviors.Peek().Init(em, e);
+                        citizen.Behaviors.Peek().Init(e);
                 }
 
                 // update the current behavior
-                citizen.Behaviors.Peek().Update(em, e, citizen.Behaviors, dt);
+                citizen.Behaviors.Peek().Update(e, citizen.Behaviors, dt);
             }
         }
     }

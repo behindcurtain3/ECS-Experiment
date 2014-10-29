@@ -12,7 +12,7 @@ namespace IsoECS.Behaviors
         public Path PathToFollow { get; set; }
         public float Speed { get; set; }
 
-        public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
+        public override void Update(Entity self, Stack<Behavior> state, int dt)
         {
             PositionComponent position = self.Get<PositionComponent>();
 
@@ -24,8 +24,8 @@ namespace IsoECS.Behaviors
             else
             {
                 // move to the target
-                Vector2 targetPos = em.Map.GetPositionFromIndex(PathToFollow.Waypoints[0].X, PathToFollow.Waypoints[0].Y);
-                Vector2 arrivedAt = em.Map.MoveTowards(position.Position, Speed, targetPos);
+                Vector2 targetPos = EntityManager.Instance.Map.GetPositionFromIndex(PathToFollow.Waypoints[0].X, PathToFollow.Waypoints[0].Y);
+                Vector2 arrivedAt = EntityManager.Instance.Map.MoveTowards(position.Position, Speed, targetPos);
                 position.X = arrivedAt.X;
                 position.Y = arrivedAt.Y;
                 
@@ -40,7 +40,7 @@ namespace IsoECS.Behaviors
                         Point nextWaypoint = PathToFollow.Waypoints[0];
 
                         // if the next waypoint is blocked, clear the path
-                        if (em.Collisions.Map[nextWaypoint] == PathTypes.BLOCKED)
+                        if (EntityManager.Instance.Collisions.Map[nextWaypoint] == PathTypes.BLOCKED)
                         {
                             // TODO: alert some failure state? Recalculate the path?
                             Status = BehaviorStatus.FAILURE;

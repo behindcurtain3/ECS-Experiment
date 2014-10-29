@@ -13,7 +13,7 @@ namespace IsoECS.Systems.GamePlay
         private List<Entity> _spawners;
         private int _spawnCountdown;
 
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
             _spawnCountdown -= dt;
             if (_spawnCountdown <= 0)
@@ -21,9 +21,9 @@ namespace IsoECS.Systems.GamePlay
                 ResetCountdown();
 
                 // get the total number of citizens
-                int vacanies = CountVacanies(em.Entities);
-                int population = em.CityInformation.Population;
-                int maxPopulation = MaxPopulation(em.Entities);
+                int vacanies = CountVacanies(EntityManager.Instance.Entities);
+                int population = EntityManager.Instance.CityInformation.Population;
+                int maxPopulation = MaxPopulation(EntityManager.Instance.Entities);
 
                 // TODO: don't just fill vacancies, check to see if the city is "good" enough for immigrants
                 if (population < maxPopulation && vacanies > 0)
@@ -51,18 +51,18 @@ namespace IsoECS.Systems.GamePlay
                         spawned.AddComponent(bPosition);
                     }
 
-                    em.AddEntity(spawned);
+                    EntityManager.Instance.AddEntity(spawned);
                 }
             }
         }
 
-        public void Init(EntityManager em)
+        public void Init()
         {
-            _spawners = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<SpawnerComponent>(); }).ToList();
+            _spawners = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<SpawnerComponent>(); }).ToList();
             ResetCountdown();
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
             _spawners.Clear();
         }

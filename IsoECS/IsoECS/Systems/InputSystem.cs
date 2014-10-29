@@ -7,17 +7,17 @@ namespace IsoECS.Systems
 {
     public class InputSystem : ISystem
     {
-        public void Init(EntityManager em)
+        public void Init()
         {
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
         }
 
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
-            List<Entity> inputControls = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<InputController>(); });
+            List<Entity> inputControls = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<InputController>(); });
 
             foreach (Entity e in inputControls)
             {

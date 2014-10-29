@@ -10,8 +10,15 @@ using TomShane.Neoforce.Controls;
 
 namespace IsoECS.Entities
 {
-    public class EntityManager
+    public sealed class EntityManager
     {
+        private static readonly EntityManager _instance = new EntityManager();
+
+        public static EntityManager Instance
+        {
+            get { return _instance; }
+        }
+
         public static Random Random { get; set; }
 
         public List<Entity> Entities { get; private set; }
@@ -24,7 +31,7 @@ namespace IsoECS.Entities
         public GameDateComponent Date { get; set; }
         public CityServicesComponent CityServices { get; private set; }
 
-        public EntityManager()
+        private EntityManager()
         {
             Entities = new List<Entity>();
         }

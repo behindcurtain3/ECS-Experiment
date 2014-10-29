@@ -11,10 +11,10 @@ namespace IsoECS.Systems.Renderers
 {
     public class FoundationOverlaySystem : RenderSystem
     {
-        public override void Draw(EntityManager em, SpriteBatch spriteBatch, SpriteFont spriteFont)
+        public override void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
-            List<Entity> drawables = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
-            PositionComponent cameraPosition = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
+            List<Entity> drawables = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
+            PositionComponent cameraPosition = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
 
             // The idea is to draw as normal with the exception of the foundation layer
             // any non-roads on the foundation should instead draw a generic foundation sprite

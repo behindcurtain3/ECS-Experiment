@@ -26,14 +26,14 @@ namespace IsoECS.Systems.GamePlay
         private List<Button> _buttons = new List<Button>();
         private Manager _manager;
 
-        public void Init(EntityManager em)
+        public void Init()
         {
             HotKeys = new List<Keys>() { Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
-            _manager = em.UI;
-            _dataTracker = em.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
+            _manager = EntityManager.Instance.UI;
+            _dataTracker = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
 
-            Entity inputEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
-            Entity cameraEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
+            Entity inputEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
+            Entity cameraEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
 
             _camera = cameraEntity.Get<PositionComponent>();
             _input = inputEntity.Get<InputController>();
@@ -58,7 +58,7 @@ namespace IsoECS.Systems.GamePlay
             CreateCategoryButtons();
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
             
@@ -75,7 +75,7 @@ namespace IsoECS.Systems.GamePlay
             ClearButtons();
         }
 
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
             // a category has not been chosen
             if(string.IsNullOrWhiteSpace(_category))
@@ -129,24 +129,24 @@ namespace IsoECS.Systems.GamePlay
             int y = _input.CurrentMouse.Y + (int)_camera.Y;
 
             // pick out the tile index that the screen coords intersect
-            Point index = em.Map.GetIndexFromPosition(x, y);
+            Point index = EntityManager.Instance.Map.GetIndexFromPosition(x, y);
 
             // translate the index into a screen position and up the position component
-            Vector2 dPositiion = em.Map.GetPositionFromIndex(index.X, index.Y);
+            Vector2 dPositiion = EntityManager.Instance.Map.GetPositionFromIndex(index.X, index.Y);
             drawablePosition.X = dPositiion.X;
             drawablePosition.Y = dPositiion.Y;
 
             bool spaceTaken = false;
             foreach (LocationValue lv in foundation.Plan)
             {
-                if (em.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
+                if (EntityManager.Instance.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
                 {
                     spaceTaken = true;
                     break;
                 }
             }
 
-            bool visible = em.Map.IsValidIndex(index.X, index.Y);
+            bool visible = EntityManager.Instance.Map.IsValidIndex(index.X, index.Y);
 
             foreach (List<IGameDrawable> d in drawable.Drawables.Values)
             {
@@ -167,7 +167,7 @@ namespace IsoECS.Systems.GamePlay
             {
                 // don't build over a spot that is already taken, don't build if not enough money
                 // TODO: the money check shouldn't even allow the building to be selected
-                if (spaceTaken || em.CityInformation.Money < selectedBuildable.Cost)
+                if (spaceTaken || EntityManager.Instance.CityInformation.Money < selectedBuildable.Cost)
                     return;
 
                 Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
@@ -188,9 +188,9 @@ namespace IsoECS.Systems.GamePlay
                     buildable.AddComponent(bPosition);
                 }
 
-                em.AddEntity(buildable);
+                EntityManager.Instance.AddEntity(buildable);
 
-                em.CityInformation.Money -= selectedBuildable.Cost;
+                EntityManager.Instance.CityInformation.Money -= selectedBuildable.Cost;
             }
         }
 

@@ -24,9 +24,9 @@ namespace IsoECS.Behaviors
 
         public PathRequest PathRequest { get; set; }
 
-        public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
+        public override void Update(Entity self, Stack<Behavior> state, int dt)
         {
-            Entity target = em.Entities.Find(delegate(Entity e) { return e.ID == TargetID; });
+            Entity target = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == TargetID; });
 
             // if invalid target fail out
             if (target == null)
@@ -76,7 +76,7 @@ namespace IsoECS.Behaviors
                     PositionComponent sPosition = self.Get<PositionComponent>();
 
                     if (tPosition.Index == null || tPosition.Index == Point.Zero)
-                        tPosition.Index = em.Map.GetIndexFromPosition((int)tPosition.X, (int)tPosition.Y);
+                        tPosition.Index = EntityManager.Instance.Map.GetIndexFromPosition((int)tPosition.X, (int)tPosition.Y);
 
                     PathRequest = new PathRequest()
                     {
@@ -98,7 +98,7 @@ namespace IsoECS.Behaviors
                     FoundationComponent foundation = target.Get<FoundationComponent>();
 
                     // list to hold valid road tiles to move to
-                    List<Point> validLandings = em.GetValidExitsFromFoundation(target);
+                    List<Point> validLandings = EntityManager.Instance.GetValidExitsFromFoundation(target);
 
                     if (validLandings.Count == 0)
                     {

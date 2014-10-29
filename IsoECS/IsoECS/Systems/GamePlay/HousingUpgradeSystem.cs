@@ -12,9 +12,9 @@ namespace IsoECS.Systems.GamePlay
 {
     public class HousingUpgradeSystem : ISystem
     {
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
-            List<Entity> entities = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); });
+            List<Entity> entities = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); });
 
             foreach (Entity e in entities)
             {
@@ -58,11 +58,11 @@ namespace IsoECS.Systems.GamePlay
             }
         }
 
-        public void Init(EntityManager em)
+        public void Init()
         {
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
         }
     }

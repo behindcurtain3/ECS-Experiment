@@ -18,9 +18,9 @@ namespace IsoECS.Behaviors
             FadeCounter = FadeTime;
         }
 
-        public override void Init(EntityManager em, Entity self)
+        public override void Init(Entity self)
         {
-            base.Init(em, self);
+            base.Init(self);
 
             DrawableComponent drawable = self.Get<DrawableComponent>();
             if (FadeIn)
@@ -45,7 +45,7 @@ namespace IsoECS.Behaviors
             }
         }
 
-        public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
+        public override void Update(Entity self, Stack<Behavior> state, int dt)
         {
             FadeCounter -= dt;
 

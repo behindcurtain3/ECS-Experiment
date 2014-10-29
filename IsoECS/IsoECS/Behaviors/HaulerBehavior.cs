@@ -22,7 +22,7 @@ namespace IsoECS.Behaviors
         public int HaulerCapacity { get; set; }
         public string CurrentItem { get; set; }
 
-        public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
+        public override void Update(Entity self, Stack<Behavior> state, int dt)
         {
             CitizenComponent citizen = self.Get<CitizenComponent>();
 
@@ -32,12 +32,12 @@ namespace IsoECS.Behaviors
             }
             else if (State == HaulerState.DELIVERING)
             {
-                Inventory jobInventory = em.GetEntity(citizen.JobID).Get<Inventory>();
+                Inventory jobInventory = EntityManager.Instance.GetEntity(citizen.JobID).Get<Inventory>();
                 Inventory haulerInventory = self.Get<Inventory>();
 
                 if (jobInventory.Items.Values.ToList().Find(delegate(InventoryData d) { return (d.Output && d.Amount > 0); }) != null)
                 {
-                    List<Entity> stockpiles = em.GetBuildingsWithinWalkableDistance<StockpileComponent>(citizen.JobID, 30);
+                    List<Entity> stockpiles = EntityManager.Instance.GetBuildingsWithinWalkableDistance<StockpileComponent>(citizen.JobID, 30);
                 
                     foreach (Entity se in stockpiles)
                     {
@@ -53,7 +53,7 @@ namespace IsoECS.Behaviors
                             {
                                 int amount = Math.Min(invItem.Amount, HaulerCapacity);
                                 haulerInventory.Add(invItem.Item, amount);
-                                jobInventory.Items[invItem.Item].Amount -= amount;
+                                jobInventory.Add(invItem.Item, -amount);
                                 CurrentItem = invItem.Item;
                                 state.Push(new ExitBuildingBehavior() { ExitID = citizen.InsideID, TargetID = se.ID });
                                 return;
@@ -67,17 +67,17 @@ namespace IsoECS.Behaviors
             }
         }
 
-        public override void Init(EntityManager em, Entity self)
+        public override void Init(Entity self)
         {
-            base.Init(em, self);
+            base.Init(self);
 
             State = HaulerState.RETURNING;
             HaulerCapacity = 50;
         }
 
-        public override void OnSubFinished(EntityManager em, Entity self, Behavior finished, Stack<Behavior> state)
+        public override void OnSubFinished(Entity self, Behavior finished, Stack<Behavior> state)
         {
-            base.OnSubFinished(em, self, finished, state);
+            base.OnSubFinished(self, finished, state);
 
             if (finished is ExitBuildingBehavior)
             {
@@ -87,7 +87,7 @@ namespace IsoECS.Behaviors
                 {
                     // make sure the citizen starts at the right position
                     PositionComponent position = self.Get<PositionComponent>();
-                    Vector2 startAt = em.Map.GetPositionFromIndex(exit.SelectedPath.Start.X, exit.SelectedPath.Start.Y);
+                    Vector2 startAt = EntityManager.Instance.Map.GetPositionFromIndex(exit.SelectedPath.Start.X, exit.SelectedPath.Start.Y);
                     position.X = startAt.X;
                     position.Y = startAt.Y;
                     position.Index = exit.SelectedPath.Start;
@@ -113,10 +113,10 @@ namespace IsoECS.Behaviors
                         if (!string.IsNullOrWhiteSpace(CurrentItem) && selfInventory.Items[CurrentItem].Amount > 0)
                         {
                             CitizenComponent citizen = self.Get<CitizenComponent>();
-                            Inventory jobInventory = em.GetEntity(citizen.JobID).Get<Inventory>();
+                            Inventory jobInventory = EntityManager.Instance.GetEntity(citizen.JobID).Get<Inventory>();
 
                             jobInventory.Add(CurrentItem, selfInventory.Items[CurrentItem].Amount);
-                            selfInventory.Items[CurrentItem].Amount = 0;
+                            selfInventory.Set(CurrentItem, 0);
                         }
 
                         State = HaulerState.DELIVERING;
@@ -126,11 +126,11 @@ namespace IsoECS.Behaviors
                     {
                         // Add the items in out inventory to the stockpile
                         Inventory selfInventory = self.Get<Inventory>();
-                        Entity se = em.GetEntity(((GoToBehavior)finished).TargetID);
+                        Entity se = EntityManager.Instance.GetEntity(((GoToBehavior)finished).TargetID);
                         StockpileComponent stockpile = se.Get<StockpileComponent>();
 
                         int movedAmount = stockpile.AddToItem(CurrentItem, selfInventory.Items[CurrentItem].Amount);
-                        selfInventory.Items[CurrentItem].Amount -= movedAmount;
+                        selfInventory.Add(CurrentItem, -movedAmount);
 
                         State = HaulerState.RETURNING;
                         state.Push(new IdleBehavior() { IdleTime = 200 });

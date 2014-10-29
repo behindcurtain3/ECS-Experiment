@@ -9,9 +9,9 @@ namespace IsoECS.Behaviors
     {
         public int HousingID { get; set; }
 
-        public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
+        public override void Update(Entity self, Stack<Behavior> state, int dt)
         {
-            List<Entity> houses = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); });
+            List<Entity> houses = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); });
             CitizenComponent citizen = self.Get<CitizenComponent>();
 
             foreach (Entity housingEntity in houses)
@@ -37,13 +37,13 @@ namespace IsoECS.Behaviors
             Status = BehaviorStatus.FAILURE;
         }
 
-        public override void OnSubFinished(EntityManager em, Entity self, Behavior finished, Stack<Behavior> state)
+        public override void OnSubFinished(Entity self, Behavior finished, Stack<Behavior> state)
         {
-            base.OnSubFinished(em, self, finished, state);
+            base.OnSubFinished(self, finished, state);
 
             if (finished is GoToBehavior)
             {
-                Entity house = em.Entities.Find(delegate(Entity e) { return e.ID == HousingID; });
+                Entity house = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == HousingID; });
 
                 // take ourselves out of the tennant list
                 house.Get<HousingComponent>().RemoveProspect(self);

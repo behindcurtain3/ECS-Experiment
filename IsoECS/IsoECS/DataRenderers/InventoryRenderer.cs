@@ -16,7 +16,7 @@ namespace IsoECS.DataRenderers
             };
             Control.Init();
 
-            Data.ItemAdded += new Inventory.InventoryEventHandler(Data_ItemAdded);
+            Data.AmountChanged += new Inventory.InventoryEventHandler(Data_AmountChanged);
         }
 
         public override Table GetControl(Control parent)
@@ -28,12 +28,12 @@ namespace IsoECS.DataRenderers
 
         public override void Shutdown()
         {
-            Data.ItemAdded -= Data_ItemAdded;
+            Data.AmountChanged -= Data_AmountChanged;
 
             base.Shutdown();
         }
 
-        private void Data_ItemAdded(Inventory sender, InventoryEventArgs e)
+        private void Data_AmountChanged(Inventory sender, InventoryEventArgs e)
         {
             UpdateEntireTable();
         }

@@ -26,21 +26,21 @@ namespace IsoECS.Systems
             ControlSystems.Add(typeof(InspectionSystem), new InspectionSystem());
         }
 
-        public void Init(EntityManager em)
+        public void Init()
         {
             foreach (ISystem system in ControlSystems.Values)
-                system.Init(em);
+                system.Init();
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
             foreach (ISystem system in ControlSystems.Values)
-                system.Shutdown(em);
+                system.Shutdown();
         }
 
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
-            Entity input = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
+            Entity input = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
             KeyboardState keyboard = input.Get<InputController>().CurrentKeyboard;
             KeyboardState prevKeyboard = input.Get<InputController>().PrevKeyboard;
 
@@ -53,13 +53,13 @@ namespace IsoECS.Systems
                     if (ExclusiveSystem != null)
                     {
                         // turn it off
-                        ExclusiveSystem.Shutdown(em);
+                        ExclusiveSystem.Shutdown();
                     }
 
                     if (ExclusiveSystem == null || ExclusiveSystem.GetType() != binding.Value)
                     {
                         ISystem instance = (ISystem)Activator.CreateInstance(binding.Value);
-                        instance.Init(em);
+                        instance.Init();
                         ExclusiveSystem = instance;
                     }
                     else
@@ -71,10 +71,10 @@ namespace IsoECS.Systems
 
             // Update the subsystems
             foreach (ISystem system in ControlSystems.Values)
-                system.Update(em, dt);
+                system.Update(dt);
 
             if (ExclusiveSystem != null)
-                ExclusiveSystem.Update(em, dt);
+                ExclusiveSystem.Update(dt);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace IsoECS.Behaviors
             PreviousBehavior = new IdleBehavior();
         }
 
-        public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
+        public override void Update(Entity self, Stack<Behavior> state, int dt)
         {
             // look for a secondary behavior to do
             CitizenComponent citizen = self.Get<CitizenComponent>();
@@ -62,9 +62,9 @@ namespace IsoECS.Behaviors
             }
         }
 
-        public override void OnSubFinished(EntityManager em, Entity self, Behavior finished, Stack<Behavior> state)
+        public override void OnSubFinished(Entity self, Behavior finished, Stack<Behavior> state)
         {
-            base.OnSubFinished(em, self, finished, state);
+            base.OnSubFinished(self, finished, state);
 
             if (finished is ExitBuildingBehavior)
             {
@@ -74,7 +74,7 @@ namespace IsoECS.Behaviors
                 {
                     // make sure the citizen starts at the right position
                     PositionComponent position = self.Get<PositionComponent>();
-                    Vector2 startAt = em.Map.GetPositionFromIndex(exit.SelectedPath.Start.X, exit.SelectedPath.Start.Y);
+                    Vector2 startAt = EntityManager.Instance.Map.GetPositionFromIndex(exit.SelectedPath.Start.X, exit.SelectedPath.Start.Y);
                     position.X = startAt.X;
                     position.Y = startAt.Y;
                     position.Index = exit.SelectedPath.Start;

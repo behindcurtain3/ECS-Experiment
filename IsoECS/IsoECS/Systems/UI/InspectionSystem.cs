@@ -22,13 +22,12 @@ namespace IsoECS.Systems.UI
 
         private InputController _input;
         private PositionComponent _camera;
-        private EntityManager _em;
 
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
             if (_input.CurrentMouse.RightButton == ButtonState.Pressed && _input.PrevMouse.RightButton != ButtonState.Pressed)
             {
-                foreach (Control c in em.UI.Controls)
+                foreach (Control c in EntityManager.Instance.UI.Controls)
                 {
                     if (c.Passive || !c.Visible)
                         continue;
@@ -45,8 +44,8 @@ namespace IsoECS.Systems.UI
                 int y = _input.CurrentMouse.Y + (int)_camera.Y;
 
                 // pick out the tile index that the screen coords intersect
-                Point index = em.Map.GetIndexFromPosition(x, y);
-                List<Entity> potentialEntities = em.Entities.FindAll(ValidEntity);
+                Point index = EntityManager.Instance.Map.GetIndexFromPosition(x, y);
+                List<Entity> potentialEntities = EntityManager.Instance.Entities.FindAll(ValidEntity);
                 List<Entity> selectedEntities = new List<Entity>();
 
                 foreach (Entity potential in potentialEntities)
@@ -61,8 +60,8 @@ namespace IsoECS.Systems.UI
                 }
 
                 Entity foundationEntity = null;
-                if(em.Foundations.SpaceTaken.ContainsKey(index))
-                    foundationEntity = em.GetEntity(em.Foundations.SpaceTaken[index]);
+                if (EntityManager.Instance.Foundations.SpaceTaken.ContainsKey(index))
+                    foundationEntity = EntityManager.Instance.GetEntity(EntityManager.Instance.Foundations.SpaceTaken[index]);
 
                 if (foundationEntity != null && !selectedEntities.Contains(foundationEntity))
                     selectedEntities.Add(foundationEntity);
@@ -90,14 +89,13 @@ namespace IsoECS.Systems.UI
             }
         }
 
-        public void Init(EntityManager em)
+        public void Init()
         {
-            _em = em;
-            _manager = em.UI;
-            _input = em.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); }).Get<InputController>();
-            _camera = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); }).Get<PositionComponent>();
+            _manager = EntityManager.Instance.UI;
+            _input = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); }).Get<InputController>();
+            _camera = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); }).Get<PositionComponent>();
 
-            _selectionWindow = new Window(em.UI)
+            _selectionWindow = new Window(_manager)
             {
                 Visible = false,
                 Text = "Inspector",
@@ -109,17 +107,17 @@ namespace IsoECS.Systems.UI
                 Left = -1000
             };
             _selectionWindow.Init();
-            em.UI.Add(_selectionWindow);
+            EntityManager.Instance.UI.Add(_selectionWindow);
 
             _selectionButtons = new List<Button>();
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
             if (_renderer != null)
                 _renderer.Shutdown();
 
-            em.UI.Remove(_selectionWindow);
+            EntityManager.Instance.UI.Remove(_selectionWindow);
         }
 
         private void ShowEntity(Entity e)
@@ -201,17 +199,17 @@ namespace IsoECS.Systems.UI
                 return;
 
             Entity entity = _renderer.Data;
-            int index = _em.Entities.IndexOf(entity);
-            int previous = (index - 1 < 0) ? _em.Entities.Count - 1 : index - 1;
+            int index = EntityManager.Instance.Entities.IndexOf(entity);
+            int previous = (index - 1 < 0) ? EntityManager.Instance.Entities.Count - 1 : index - 1;
 
             while (previous != index)
             {
-                if (!string.IsNullOrWhiteSpace(_em.Entities[previous].UniqueID))
+                if (!string.IsNullOrWhiteSpace(EntityManager.Instance.Entities[previous].UniqueID))
                 {
                     // do the check
-                    if (_em.Entities[previous].UniqueID.Equals(entity.UniqueID))
+                    if (EntityManager.Instance.Entities[previous].UniqueID.Equals(entity.UniqueID))
                     {
-                        _renderer.Update(_em.Entities[previous]);
+                        _renderer.Update(EntityManager.Instance.Entities[previous]);
                         return;
                     }
                 }
@@ -220,7 +218,7 @@ namespace IsoECS.Systems.UI
                 previous--;
 
                 if (previous < 0)
-                    previous = _em.Entities.Count - 1;
+                    previous = EntityManager.Instance.Entities.Count - 1;
             }
         }
 
@@ -235,17 +233,17 @@ namespace IsoECS.Systems.UI
             // citizen -> citizen
 
             Entity entity = _renderer.Data;
-            int index = _em.Entities.IndexOf(entity);
-            int next = (index + 1 >= _em.Entities.Count) ? 0 : index + 1;
+            int index = EntityManager.Instance.Entities.IndexOf(entity);
+            int next = (index + 1 >= EntityManager.Instance.Entities.Count) ? 0 : index + 1;
 
             while (next != index)
             {
-                if (!string.IsNullOrWhiteSpace(_em.Entities[next].UniqueID))
+                if (!string.IsNullOrWhiteSpace(EntityManager.Instance.Entities[next].UniqueID))
                 {
                     // do the check
-                    if (_em.Entities[next].UniqueID.Equals(entity.UniqueID))
+                    if (EntityManager.Instance.Entities[next].UniqueID.Equals(entity.UniqueID))
                     {
-                        _renderer.Update(_em.Entities[next]);
+                        _renderer.Update(EntityManager.Instance.Entities[next]);
                         return;
                     }
                 }
@@ -253,7 +251,7 @@ namespace IsoECS.Systems.UI
                 // increment the index
                 next++;
 
-                if (next >= _em.Entities.Count)
+                if (next >= EntityManager.Instance.Entities.Count)
                     next = 0;
             }
         }

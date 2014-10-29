@@ -10,23 +10,23 @@ namespace IsoECS.Systems
 {
     public class ProductionSystem : ISystem
     {
-        public void Init(EntityManager em)
+        public void Init()
         {
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
         }
 
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
-            List<Entity> producers = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<ProductionComponent>(); });
+            List<Entity> producers = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<ProductionComponent>(); });
 
             foreach (Entity e in producers)
             {
                 ProductionComponent p = e.Get<ProductionComponent>();
 
-                if (p.LastUpdateTime == em.Date.Time)
+                if (p.LastUpdateTime == EntityManager.Instance.Date.Time)
                     continue;
 
                 if (string.IsNullOrWhiteSpace(p.Recipe))
@@ -35,10 +35,10 @@ namespace IsoECS.Systems
                 // determines how much work is done
                 // TODO: check for divide by zero?
                 float workerPercentage = (float)p.Employees.Length / (float)p.MaxEmployees;
-                long elapsed = em.Date.MinutesElapsed(p.LastUpdateTime);
+                long elapsed = EntityManager.Instance.Date.MinutesElapsed(p.LastUpdateTime);
 
                 p.WorkDone += (elapsed * workerPercentage);
-                p.LastUpdateTime = em.Date.Time;
+                p.LastUpdateTime = EntityManager.Instance.Date.Time;
 
                 Recipe r = GameData.Instance.GetRecipe(p.Recipe);
                 if (p.WorkDone >= r.Stages[p.CurrentStage].WorkRequired)

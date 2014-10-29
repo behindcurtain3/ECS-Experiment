@@ -5,8 +5,8 @@ namespace IsoECS.Systems
 {
     public interface ISystem
     {
-        void Update(EntityManager em, int dt);
-        void Init(EntityManager em);
-        void Shutdown(EntityManager em);
+        void Update(int dt);
+        void Init();
+        void Shutdown();
     }
 }

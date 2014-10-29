@@ -10,7 +10,7 @@ namespace IsoECS.Behaviors
         public int TargetID { get; set; }
         public Path GeneratedPath { get; set; }
 
-        public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
+        public override void Update(Entity self, Stack<Behavior> state, int dt)
         {
             if (GeneratedPath == null)
             {
@@ -27,7 +27,7 @@ namespace IsoECS.Behaviors
             }
         }
 
-        public override void OnSubFinished(EntityManager em, Entity self, Behavior finished, Stack<Behavior> state)
+        public override void OnSubFinished(Entity self, Behavior finished, Stack<Behavior> state)
         {
             if (finished is FindPathBehavior)
             {

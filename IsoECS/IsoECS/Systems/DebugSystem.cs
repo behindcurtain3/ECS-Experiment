@@ -12,9 +12,9 @@ namespace IsoECS.Systems
 {
     public class DebugSystem : ISystem
     {
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
-            List<Entity> citizens = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); });
+            List<Entity> citizens = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); });
 
             foreach (Entity e in citizens)
             {
@@ -38,11 +38,11 @@ namespace IsoECS.Systems
             }
         }
 
-        public void Init(EntityManager em)
+        public void Init()
         {
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
         }
     }

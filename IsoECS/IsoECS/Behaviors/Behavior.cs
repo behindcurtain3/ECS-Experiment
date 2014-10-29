@@ -24,15 +24,15 @@ namespace IsoECS.Behaviors
             Status = BehaviorStatus.STARTING;
         }
 
-        public virtual void Init(EntityManager em, Entity self) 
+        public virtual void Init(Entity self) 
         {
             Status = BehaviorStatus.RUNNING;
         }
 
         // called to update the behavior
-        public abstract void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt);
+        public abstract void Update(Entity self, Stack<Behavior> state, int dt);
         
         // called when a sub behavior has finished/quit
-        public virtual void OnSubFinished(EntityManager em, Entity self, Behavior finished, Stack<Behavior> state) { }
+        public virtual void OnSubFinished(Entity self, Behavior finished, Stack<Behavior> state) { }
     }
 }

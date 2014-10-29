@@ -14,16 +14,16 @@ namespace IsoECS.Behaviors
             IdleTime = -1;
         }
 
-        public override void Init(EntityManager em, Entity self)
+        public override void Init(Entity self)
         {
-            base.Init(em, self);
+            base.Init(self);
 
             if(IdleTime == -1)
                 IdleTime = EntityManager.Random.Next(5, 25) * 1000;
             IdleCountdown = IdleTime;
         }
 
-        public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
+        public override void Update(Entity self, Stack<Behavior> state, int dt)
         {
             IdleCountdown -= dt;
 

@@ -20,13 +20,13 @@ namespace IsoECS.Behaviors
         public int ExitID { get; set; }
         public Path SelectedPath { get; set; }
 
-        public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
+        public override void Update(Entity self, Stack<Behavior> state, int dt)
         {
             // get any valid exits
             if (_validExits.Count == 0)
             {
-                Entity target = em.Entities.Find(delegate(Entity e) { return e.ID == TargetID; });
-                Entity exit = em.Entities.Find(delegate(Entity e) { return e.ID == ExitID; });
+                Entity target = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == TargetID; });
+                Entity exit = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == ExitID; });
 
                 // if invalid target fail out
                 if (target == null || exit == null)
@@ -42,7 +42,7 @@ namespace IsoECS.Behaviors
                     return;
                 }
 
-                _validExits = em.GetValidExitsFromFoundation(exit);
+                _validExits = EntityManager.Instance.GetValidExitsFromFoundation(exit);
 
                 if (_validExits.Count == 0)
                 {
@@ -63,9 +63,9 @@ namespace IsoECS.Behaviors
             }
         }
 
-        public override void OnSubFinished(EntityManager em, Entity self, Behavior finished, Stack<Behavior> state)
+        public override void OnSubFinished(Entity self, Behavior finished, Stack<Behavior> state)
         {
-            base.OnSubFinished(em, self, finished, state);
+            base.OnSubFinished(self, finished, state);
 
             if (finished is FindPathBehavior)
             {

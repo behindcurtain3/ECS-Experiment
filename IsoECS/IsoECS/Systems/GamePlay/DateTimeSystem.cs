@@ -11,7 +11,7 @@ namespace IsoECS.Systems.GamePlay
         private int _updateRate = 50;
         private int _updateCountdown;
 
-        public void Update(EntityManager em, int dt)
+        public void Update(int dt)
         {
             _updateCountdown -= dt;
 
@@ -19,7 +19,7 @@ namespace IsoECS.Systems.GamePlay
             {
                 _updateCountdown += _updateRate;
 
-                Entity dateEntity = em.Entities.Find(delegate(Entity e) { return e.HasComponent<GameDateComponent>(); });
+                Entity dateEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<GameDateComponent>(); });
 
                 if (dateEntity != null)
                 {
@@ -29,12 +29,12 @@ namespace IsoECS.Systems.GamePlay
             }
         }
 
-        public void Init(EntityManager em)
+        public void Init()
         {
             _updateCountdown = _updateRate;
         }
 
-        public void Shutdown(EntityManager em)
+        public void Shutdown()
         {
         }
     }

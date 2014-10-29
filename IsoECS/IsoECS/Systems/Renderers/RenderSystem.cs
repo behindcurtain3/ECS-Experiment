@@ -22,11 +22,11 @@ namespace IsoECS.Systems
         protected List<DrawData> _foreground = new List<DrawData>();
         protected List<DrawData> _text = new List<DrawData>();
 
-        public virtual void Draw(EntityManager em, SpriteBatch spriteBatch, SpriteFont spriteFont)
+        public virtual void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
             // Get the list of drawable text entities from the main list
-            List<Entity> drawables = em.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
-            PositionComponent cameraPosition = em.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
+            List<Entity> drawables = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
+            PositionComponent cameraPosition = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
 
             // Setup the scene
             Graphics.Clear(ClearColor);

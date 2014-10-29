@@ -7,10 +7,10 @@ namespace IsoECS.Behaviors
 {
     public class FindJobBehavior : Behavior
     {
-        public override void Update(EntityManager em, Entity self, Stack<Behavior> state, int dt)
+        public override void Update(Entity self, Stack<Behavior> state, int dt)
         {
             CitizenComponent citizen = self.Get<CitizenComponent>();
-            List<Entity> potentialJobs = em.GetBuildingsWithinWalkableDistance<ProductionComponent>(citizen.HousingID, 20);
+            List<Entity> potentialJobs = EntityManager.Instance.GetBuildingsWithinWalkableDistance<ProductionComponent>(citizen.HousingID, 20);
             
             foreach (Entity e in potentialJobs)
             {

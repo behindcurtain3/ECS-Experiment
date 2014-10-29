@@ -31,7 +31,6 @@ namespace IsoECS
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
-        EntityManager em;
         List<ISystem> systems;
         List<IRenderSystem> renderers;
         Thread pathThread;
@@ -93,17 +92,16 @@ namespace IsoECS
             };
             renderers.Add(renderSystem);
 
-            em = new EntityManager();
-            em.UI = new Manager(this, "Pixel")
+            EntityManager.Instance.UI = new Manager(this, "Pixel")
             {
                 AutoCreateRenderTarget = false,
                 AutoUnfocus = true,
                 TargetFrames = 60
             };
-            em.UI.Initialize();
-            em.UI.RenderTarget = em.UI.CreateRenderTarget();
+            EntityManager.Instance.UI.Initialize();
+            EntityManager.Instance.UI.RenderTarget = EntityManager.Instance.UI.CreateRenderTarget();
 
-            Window w = new TomShane.Neoforce.Controls.Window(em.UI)
+            Window w = new TomShane.Neoforce.Controls.Window(EntityManager.Instance.UI)
             {
                 Text = "My Quick Test Window"
             };
@@ -111,7 +109,7 @@ namespace IsoECS
             w.Center();
             //em.UI.Add(w);
 
-            Table testTable = new Table(em.UI)
+            Table testTable = new Table(EntityManager.Instance.UI)
             {
                 Top = 2,
                 Left = 2,
@@ -151,38 +149,25 @@ namespace IsoECS
             {
                 Entity e = EntityLibrary.Instance.LoadEntity(o);
 
-                em.AddEntity(e);
+                EntityManager.Instance.AddEntity(e);
             }
 
             // start up the pathfinder thread
             PathfinderSystem pfs = new PathfinderSystem()
             {
-                Map = em.Map,
-                Collisions = em.Collisions
+                Map = EntityManager.Instance.Map,
+                Collisions = EntityManager.Instance.Collisions
             };
             pathThread = new Thread(new ThreadStart(pfs.Run));
             pathThread.Start();
 
             pfs = new PathfinderSystem()
             {
-                Map = em.Map,
-                Collisions = em.Collisions
+                Map = EntityManager.Instance.Map,
+                Collisions = EntityManager.Instance.Collisions
             };
             pathThread2 = new Thread(new ThreadStart(pfs.Run));
             //pathThread2.Start();
-
-            // add some test entities to the map
-            for (int j = 0; j < 3; j++)
-            {
-                Entity test = new Entity();
-
-                test.AddComponent(new PositionComponent()
-                {
-                    X = EntityManager.Random.Next(GraphicsDevice.Viewport.Width),
-                    Y = EntityManager.Random.Next(GraphicsDevice.Viewport.Height)
-                });
-                em.AddEntity(test);
-            }
 
             // TODO: create a settings file to read any key bindings from
             inputControlEntity = new Entity();
@@ -193,7 +178,7 @@ namespace IsoECS
             inputControlEntity.Get<CameraController>().Down.AddRange(new List<Keys>() { Keys.S, Keys.Down });
             inputControlEntity.Get<CameraController>().Left.AddRange(new List<Keys>() { Keys.A, Keys.Left });
             inputControlEntity.Get<CameraController>().Right.AddRange(new List<Keys>() { Keys.D, Keys.Right });
-            em.AddEntity(inputControlEntity);
+            EntityManager.Instance.AddEntity(inputControlEntity);
 
             DrawableComponent diagDrawable = new DrawableComponent();
             diagDrawable.Add("Text", new DrawableText()
@@ -207,11 +192,11 @@ namespace IsoECS
             diagnosticEntity = new Entity();
             diagnosticEntity.AddComponent(new PositionComponent() { X = 0, Y = 50f });
             diagnosticEntity.AddComponent(diagDrawable);
-            em.AddEntity(diagnosticEntity);
+            EntityManager.Instance.AddEntity(diagnosticEntity);
 
             // init the systems
             foreach (ISystem system in systems)
-                system.Init(em);
+                system.Init();
         }
 
         /// <summary>
@@ -242,14 +227,14 @@ namespace IsoECS
         {
             // update the UI
             diagnostics.RestartTiming("UI");
-            em.UI.Update(gameTime);
+            EntityManager.Instance.UI.Update(gameTime);
             diagnostics.StopTiming("UI");
 
             // update the game systems
             foreach (ISystem system in systems)
             {
                 diagnostics.RestartTiming(system.GetType().Name);
-                system.Update(em, gameTime.ElapsedGameTime.Milliseconds);
+                system.Update(gameTime.ElapsedGameTime.Milliseconds);
                 diagnostics.StopTiming(system.GetType().Name);
             }
 
@@ -269,16 +254,16 @@ namespace IsoECS
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            em.UI.BeginDraw(gameTime);
+            EntityManager.Instance.UI.BeginDraw(gameTime);
 
             foreach (IRenderSystem render in renderers)
             {
                 diagnostics.RestartTiming(render.GetType().Name);
-                render.Draw(em, spriteBatch, spriteFont);
+                render.Draw(spriteBatch, spriteFont);
                 diagnostics.StopTiming(render.GetType().Name);
             }
 
-            em.UI.EndDraw();
+            EntityManager.Instance.UI.EndDraw();
 
             base.Draw(gameTime);
         }
