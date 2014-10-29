@@ -12,6 +12,10 @@ namespace IsoECS.Entities
 {
     public sealed class EntityManager
     {
+        public delegate void EntityEventHandler(Entity e);
+        public event EntityEventHandler EntityAdded;
+        public event EntityEventHandler EntityRemoved;
+
         private static readonly EntityManager _instance = new EntityManager();
 
         public static EntityManager Instance
@@ -38,25 +42,30 @@ namespace IsoECS.Entities
 
         public void RemoveEntity(Entity entity)
         {
-            Entities.Remove(entity);
-
-            Point index = entity.Get<PositionComponent>().Index;
-            foreach (IsoECS.Components.Component c in entity.Components.Values.ToList())
+            if (Entities.Remove(entity))
             {
-                switch (c.GetType().Name)
-                {
-                    case "FoundationComponent":
-                        FoundationComponent foundation = (FoundationComponent)c;
 
-                        // remove any foundations from the planner
-                        foreach (LocationValue lv in foundation.Plan)
-                        {
-                            Point update = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
-                            if (Foundations.SpaceTaken.ContainsKey(update))
-                                Foundations.SpaceTaken.Remove(update);
-                        }
-                        break;
+                Point index = entity.Get<PositionComponent>().Index;
+                foreach (IsoECS.Components.Component c in entity.Components.Values.ToList())
+                {
+                    switch (c.GetType().Name)
+                    {
+                        case "FoundationComponent":
+                            FoundationComponent foundation = (FoundationComponent)c;
+
+                            // remove any foundations from the planner
+                            foreach (LocationValue lv in foundation.Plan)
+                            {
+                                Point update = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
+                                if (Foundations.SpaceTaken.ContainsKey(update))
+                                    Foundations.SpaceTaken.Remove(update);
+                            }
+                            break;
+                    }
                 }
+
+                if (EntityRemoved != null)
+                    EntityRemoved.Invoke(entity);
             }
         }
 
@@ -243,6 +252,9 @@ namespace IsoECS.Entities
                         break;
                 }
             }
+
+            if (EntityAdded != null)
+                EntityAdded.Invoke(entity);
         }
 
         public List<Point> GetValidExitsFromFoundation(Entity entity)

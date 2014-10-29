@@ -12,11 +12,11 @@ namespace IsoECS.Systems.GamePlay
 {
     public class HousingUpgradeSystem : ISystem
     {
+        private List<Entity> housingUnits = new List<Entity>();
+
         public void Update(int dt)
         {
-            List<Entity> entities = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); });
-
-            foreach (Entity e in entities)
+            foreach (Entity e in housingUnits)
             {
                 HousingComponent housing = e.Get<HousingComponent>();
 
@@ -60,10 +60,26 @@ namespace IsoECS.Systems.GamePlay
 
         public void Init()
         {
+            housingUnits.AddRange(EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); }));
+
+            EntityManager.Instance.EntityAdded += new EntityManager.EntityEventHandler(Instance_EntityAdded);
+            EntityManager.Instance.EntityRemoved -= new EntityManager.EntityEventHandler(Instance_EntityRemoved);
+        }
+
+        private void Instance_EntityAdded(Entity e)
+        {
+            if (e.HasComponent<HousingComponent>())
+                housingUnits.Add(e);
+        }
+
+        private void Instance_EntityRemoved(Entity e)
+        {
+            housingUnits.Remove(e);
         }
 
         public void Shutdown()
         {
+            housingUnits.Clear();
         }
     }
 }
