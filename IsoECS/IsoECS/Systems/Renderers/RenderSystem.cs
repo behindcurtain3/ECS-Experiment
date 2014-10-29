@@ -22,12 +22,26 @@ namespace IsoECS.Systems
         protected List<DrawData> _foreground = new List<DrawData>();
         protected List<DrawData> _text = new List<DrawData>();
 
-        public virtual void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
+        protected List<Entity> drawables = new List<Entity>();
+        protected PositionComponent cameraPosition;
+
+        public void Init()
         {
             // Get the list of drawable text entities from the main list
-            List<Entity> drawables = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
-            PositionComponent cameraPosition = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
+            drawables.AddRange(EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); }));
+            cameraPosition = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
 
+            EntityManager.Instance.EntityAdded += new EntityManager.EntityEventHandler(Instance_EntityAdded);
+            EntityManager.Instance.EntityRemoved += new EntityManager.EntityEventHandler(Instance_EntityRemoved);
+        }
+
+        public void Shutdown()
+        {
+            drawables.Clear();
+        }
+
+        public virtual void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
+        {
             // Setup the scene
             Graphics.Clear(ClearColor);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
@@ -126,6 +140,17 @@ namespace IsoECS.Systems
             {
                 Draw(spriteBatch, spriteFont, d, camera);
             }
+        }
+
+        private void Instance_EntityRemoved(Entity e)
+        {
+            drawables.Remove(e);
+        }
+
+        private void Instance_EntityAdded(Entity e)
+        {
+            if (e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>())
+                drawables.Add(e);
         }
     }
 }

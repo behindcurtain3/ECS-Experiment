@@ -6,6 +6,8 @@ namespace IsoECS.Systems
 {
     public interface IRenderSystem
     {
+        void Init();
         void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont);
+        void Shutdown();
     }
 }

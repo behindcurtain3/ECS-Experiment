@@ -13,11 +13,21 @@ namespace IsoECS.Systems
     {
         public GraphicsDevice Graphics { get; set; }
 
+        private Entity cameraEntity;
+        private Entity mapEntity;
+
+        public void Init()
+        {
+            cameraEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
+            mapEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
+        }
+
+        public void Shutdown()
+        {
+        }
+
         public void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
-            Entity cameraEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
-            Entity mapEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
-
             if (mapEntity == null || cameraEntity == null)
                 return;
 

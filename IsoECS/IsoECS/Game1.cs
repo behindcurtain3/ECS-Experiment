@@ -197,6 +197,9 @@ namespace IsoECS
             // init the systems
             foreach (ISystem system in systems)
                 system.Init();
+
+            foreach (IRenderSystem renderer in renderers)
+                renderer.Init();
         }
 
         /// <summary>
