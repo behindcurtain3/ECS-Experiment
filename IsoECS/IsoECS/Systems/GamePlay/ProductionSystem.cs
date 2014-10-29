@@ -10,8 +10,12 @@ namespace IsoECS.Systems
 {
     public class ProductionSystem : ISystem
     {
+        private long lastUpdate;
+
         public void Init()
         {
+            lastUpdate = EntityManager.Instance.Date.Time;
+            EntityManager.Instance.Date.TimeChanged += new GameDateComponent.GameDateEventHandler(Date_TimeChanged);
         }
 
         public void Shutdown()
@@ -19,15 +23,19 @@ namespace IsoECS.Systems
         }
 
         public void Update(int dt)
+        {   
+        }
+
+        private void Date_TimeChanged(GameDateComponent sender)
         {
+            long elapsed = EntityManager.Instance.Date.MinutesElapsed(lastUpdate);
+            lastUpdate = EntityManager.Instance.Date.Time;
+
             List<Entity> producers = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<ProductionComponent>(); });
 
             foreach (Entity e in producers)
             {
                 ProductionComponent p = e.Get<ProductionComponent>();
-
-                if (p.LastUpdateTime == EntityManager.Instance.Date.Time)
-                    continue;
 
                 if (string.IsNullOrWhiteSpace(p.Recipe))
                     continue;
@@ -35,10 +43,8 @@ namespace IsoECS.Systems
                 // determines how much work is done
                 // TODO: check for divide by zero?
                 float workerPercentage = (float)p.Employees.Length / (float)p.MaxEmployees;
-                long elapsed = EntityManager.Instance.Date.MinutesElapsed(p.LastUpdateTime);
 
                 p.WorkDone += (elapsed * workerPercentage);
-                p.LastUpdateTime = EntityManager.Instance.Date.Time;
 
                 Recipe r = GameData.Instance.GetRecipe(p.Recipe);
                 if (p.WorkDone >= r.Stages[p.CurrentStage].WorkRequired)
@@ -72,7 +78,7 @@ namespace IsoECS.Systems
                     {
                         drawable.RemoveByUniqueID(str);
                     }
-                    
+
                     // add
                     foreach (string str in stage.AddToDrawableComponent)
                     {

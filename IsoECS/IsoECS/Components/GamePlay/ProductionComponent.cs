@@ -79,8 +79,6 @@ namespace IsoECS.Components.GamePlay
                 }
             }
         }
-        
-        public long LastUpdateTime { get; set; }
 
         #endregion
 
