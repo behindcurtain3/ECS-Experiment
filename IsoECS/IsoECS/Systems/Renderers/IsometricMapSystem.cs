@@ -15,11 +15,25 @@ namespace IsoECS.Systems
 
         private Entity cameraEntity;
         private Entity mapEntity;
+        private IsometricMapComponent map;
+
+        private int verticalTiles;
+        private int horizontalTiles;
 
         public void Init()
         {
             cameraEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
             mapEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
+            map = mapEntity.Get<IsometricMapComponent>();
+
+            if (map.Graphics == null)
+                map.Graphics = Graphics;
+
+            if (map.Buffer == null)
+                map.Buffer = new RenderTarget2D(map.Graphics, map.Graphics.Viewport.Width, map.Graphics.Viewport.Height);
+
+            verticalTiles = (map.Graphics.Viewport.Height / map.PxTileHeight);
+            horizontalTiles = (map.Graphics.Viewport.Width / map.PxTileWidth);
         }
 
         public void Shutdown()
@@ -32,18 +46,11 @@ namespace IsoECS.Systems
                 return;
 
             PositionComponent camera = cameraEntity.Get<PositionComponent>();
-            IsometricMapComponent map = mapEntity.Get<IsometricMapComponent>();
             DrawableComponent mapDrawable = mapEntity.Get<DrawableComponent>();
 
             Vector2 position;
             Rectangle destination;
             Rectangle source;
-
-            if (map.Graphics == null)
-                map.Graphics = Graphics;
-
-            if (map.Buffer == null)
-                map.Buffer = new RenderTarget2D(map.Graphics, map.Graphics.Viewport.Width, map.Graphics.Viewport.Height);
 
             // Set the render target to the internal buffer
             map.Graphics.SetRenderTarget(map.Buffer);
@@ -56,12 +63,12 @@ namespace IsoECS.Systems
             // loop through the map and render each tile
             // TODO: implement z-levels?
 
-            Point Center = map.GetIndexFromPosition(map.Graphics.Viewport.Width / 2 + (int)camera.X, map.Graphics.Viewport.Height / 2 + (int)camera.Y);
+            Point Center = map.GetIndexFromPosition((int)(map.Graphics.Viewport.Width * 0.5) + (int)camera.X, (int)(map.Graphics.Viewport.Height * 0.5) + (int)camera.Y);
 
-            int goFirstA = (Center.X + Center.Y) - (map.Graphics.Viewport.Height / map.PxTileHeight) - 2;
-            int goLastA = (Center.X + Center.Y) + (map.Graphics.Viewport.Height / map.PxTileHeight) + 3;
-            int goFirstB = (Center.X - Center.Y) - (map.Graphics.Viewport.Width / map.PxTileWidth) - 2;
-            int goLastB = (Center.X - Center.Y) + (map.Graphics.Viewport.Width / map.PxTileWidth) + 3;
+            int goFirstA = (Center.X + Center.Y) - verticalTiles - 2;
+            int goLastA = (Center.X + Center.Y) + verticalTiles + 3;
+            int goFirstB = (Center.X - Center.Y) - horizontalTiles - 2;
+            int goLastB = (Center.X - Center.Y) + horizontalTiles + 3;
             int x, y;
             for (int z = 0; z < 1; z++)
             {
