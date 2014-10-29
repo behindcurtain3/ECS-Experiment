@@ -15,6 +15,12 @@ namespace IsoECS.DataRenderers
 
         private int previousSelectedTab = 0;
 
+        private CitizenRenderer cr;
+        private HousingRenderer hr;
+        private InventoryRenderer ir;
+        private ProductionRenderer pr;
+        private StockpileRenderer sr;
+
         public EntityRenderer(Entity e, Manager manager)
             : base(e, manager)
         {
@@ -112,7 +118,7 @@ namespace IsoECS.DataRenderers
                 Control.Caption.Text = "Pleb";
                 Control.Description.Text = "A lower class citizen of the city.";
 
-                CitizenRenderer cr = new CitizenRenderer(Data.Get<CitizenComponent>(), Manager);
+                cr = new CitizenRenderer(Data.Get<CitizenComponent>(), Manager);
                 TabPage tab = tabs.AddPage("Info");
 
                 Panel cp = cr.GetControl(tab);
@@ -121,7 +127,7 @@ namespace IsoECS.DataRenderers
             // Get housing control
             if (Data.HasComponent<HousingComponent>())
             {
-                HousingRenderer hr = new HousingRenderer(Data.Get<HousingComponent>(), Manager);
+                hr = new HousingRenderer(Data.Get<HousingComponent>(), Manager);
                 TabPage tab = tabs.AddPage("Housing");
 
                 Panel gp = hr.GetControl(tab);
@@ -130,7 +136,7 @@ namespace IsoECS.DataRenderers
             // Get production control
             if (Data.HasComponent<ProductionComponent>())
             {
-                ProductionRenderer pr = new ProductionRenderer(Data.Get<ProductionComponent>(), Manager);
+                pr = new ProductionRenderer(Data.Get<ProductionComponent>(), Manager);
                 TabPage tab = tabs.AddPage("Production");
                 Panel p = pr.GetControl(tab);
             }
@@ -138,10 +144,10 @@ namespace IsoECS.DataRenderers
             // Get stockpile
             if (Data.HasComponent<StockpileComponent>())
             {
-                StockpileRenderer spr = new StockpileRenderer(Data.Get<StockpileComponent>(), Manager);
+                sr = new StockpileRenderer(Data.Get<StockpileComponent>(), Manager);
                 TabPage tab = tabs.AddPage("Stockpile");
 
-                Table t = spr.GetControl(tab);
+                Table t = sr.GetControl(tab);
                 t.SetPosition(-tabs.ClientMargins.Left, -2);
                 t.SetSize(tab.ClientWidth + tabs.ClientMargins.Horizontal, tab.ClientHeight + 2 + tabs.ClientMargins.Bottom);
                 t.Parent = tab;
@@ -150,7 +156,7 @@ namespace IsoECS.DataRenderers
             // Get inventory
             if (Data.HasComponent<Inventory>())
             {
-                InventoryRenderer ir = new InventoryRenderer(Data.Get<Inventory>(), Manager);
+                ir = new InventoryRenderer(Data.Get<Inventory>(), Manager);
                 TabPage tab = tabs.AddPage("Inventory");
 
                 Table it = ir.GetControl(tab);
@@ -171,6 +177,21 @@ namespace IsoECS.DataRenderers
 
         public override void Shutdown()
         {
+            if (cr != null)
+                cr.Shutdown();
+
+            if (hr != null)
+                hr.Shutdown();
+
+            if (ir != null)
+                ir.Shutdown();
+
+            if (pr != null)
+                pr.Shutdown();
+
+            if (sr != null)
+                sr.Shutdown();
+
             Control.Manager.Remove(Control);
         }
 

@@ -11,7 +11,6 @@ namespace IsoECS.DataRenderers
         private Label money;
         private Label job;
         private Label housing;
-        private Label inside;
 
         public CitizenRenderer(CitizenComponent data, Manager manager)
             : base(data, manager)
@@ -25,6 +24,8 @@ namespace IsoECS.DataRenderers
 
             Data.HousingChanged += new CitizenComponent.CitizenEventHandler(Data_HousingChanged);
             Data.JobChanged += new CitizenComponent.CitizenEventHandler(Data_JobChanged);
+            Data.AgeChanged += new CitizenComponent.CitizenEventHandler(Data_AgeChanged);
+            Data.MoneyChanged += new CitizenComponent.CitizenEventHandler(Data_MoneyChanged);
         }
 
         public override Panel GetControl(Control parent)
@@ -120,6 +121,16 @@ namespace IsoECS.DataRenderers
             return base.GetControl(parent);
         }
 
+        public override void Shutdown()
+        {
+            Data.AgeChanged -= Data_AgeChanged;
+            Data.MoneyChanged -= Data_MoneyChanged;
+            Data.JobChanged -= Data_JobChanged;
+            Data.HousingChanged -= Data_HousingChanged;
+
+            base.Shutdown();
+        }
+
         private string GetBuildableText(int id)
         {
             if (id == -1)
@@ -147,6 +158,16 @@ namespace IsoECS.DataRenderers
         private void Data_JobChanged(CitizenComponent sender)
         {
             job.Text = GetBuildableText(Data.JobID);
+        }
+
+        private void Data_MoneyChanged(CitizenComponent sender)
+        {
+            money.Text = Data.Money.ToString("c0");
+        }
+
+        private void Data_AgeChanged(CitizenComponent sender)
+        {
+            age.Text = Data.Age.ToString();
         }
     }
 }
