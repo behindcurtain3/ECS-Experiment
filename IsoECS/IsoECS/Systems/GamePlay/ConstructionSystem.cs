@@ -167,7 +167,7 @@ namespace IsoECS.Systems.GamePlay
             {
                 // don't build over a spot that is already taken, don't build if not enough money
                 // TODO: the money check shouldn't even allow the building to be selected
-                if (spaceTaken || EntityManager.Instance.CityInformation.Money < selectedBuildable.Cost)
+                if (spaceTaken || EntityManager.Instance.CityInformation.Treasury < selectedBuildable.Cost)
                     return;
 
                 Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
@@ -190,7 +190,7 @@ namespace IsoECS.Systems.GamePlay
 
                 EntityManager.Instance.AddEntity(buildable);
 
-                EntityManager.Instance.CityInformation.Money -= selectedBuildable.Cost;
+                EntityManager.Instance.CityInformation.Treasury -= selectedBuildable.Cost;
             }
         }
 

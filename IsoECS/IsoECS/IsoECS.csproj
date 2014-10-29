@@ -151,6 +151,7 @@
     <Compile Include="Controls\TableColumnHeader.cs" />
     <Compile Include="Controls\TableRow.cs" />
     <Compile Include="DataRenderers\CitizenRenderer.cs" />
+    <Compile Include="DataRenderers\CityInformationRenderer.cs" />
     <Compile Include="DataRenderers\DataRenderer.cs" />
     <Compile Include="DataRenderers\EntityRenderer.cs" />
     <Compile Include="DataRenderers\HousingRenderer.cs" />

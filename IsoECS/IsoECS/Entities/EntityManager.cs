@@ -117,6 +117,8 @@ namespace IsoECS.Entities
 
                     case "CityInformationComponent":
                         CityInformation = (CityInformationComponent)c;
+                        if (CityInformation.Treasury == 0)
+                            CityInformation.Treasury = 1000;
                         break;
 
                     case "CityServicesComponent":
