@@ -24,100 +24,108 @@ namespace IsoECS.Behaviors
 
         public PathRequest PathRequest { get; set; }
 
-        public override void Update(Entity self, Stack<Behavior> state, int dt)
+        public override BehaviorStatus Update(Entity self, int dt)
         {
-            Entity target = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == TargetID; });
+            BehaviorStatus status = base.Update(self, dt);
 
-            // if invalid target fail out
-            if (target == null)
+            switch (status)
             {
-                Status = BehaviorStatus.FAILURE;
-                return;
-            }
+                case BehaviorStatus.SUCCESS:
+                case BehaviorStatus.FAIL:
+                    break;
 
-            if (PathRequest != null)
-            {
-                // try to retrieve the path
-                Path p = PathfinderSystem.GetPath(PathRequest.ID);
+                case BehaviorStatus.RUN:
+                    Entity target = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == TargetID; });
 
-                if (p == null)
-                {
-                    // idle for a short bit
-                    state.Push(new IdleBehavior() { IdleTime = 100 });
-                    return;
-                }
-                else
-                {
-                    GeneratedPath = p;
-
-                    // TODO: check for tPosition = sPosition
-                    if (GeneratedPath.Waypoints.Count == 0)
+                    // if invalid target fail out
+                    if (target == null)
                     {
-                        Status = BehaviorStatus.FAILURE;
-                        return;
+                        return BehaviorStatus.FAIL;
                     }
 
-                    Status = BehaviorStatus.SUCCESS;
-                }
-            }
-            else
-            {
-                // make sure the target has a position or foundation
-                if (!MoveToNearbyRoad)
-                {
-                    // if the target or self has no position fail out
-                    if (!target.HasComponent<PositionComponent>() || !self.HasComponent<PositionComponent>())
+                    if (PathRequest != null)
                     {
-                        Status = BehaviorStatus.FAILURE;
-                        return;
-                    }
+                        // try to retrieve the path
+                        Path p = PathfinderSystem.GetPath(PathRequest.ID);
 
-                    PositionComponent tPosition = target.Get<PositionComponent>();
-                    PositionComponent sPosition = self.Get<PositionComponent>();
+                        if (p == null)
+                        {
+                            // idle for a short bit
+                            AddChild(new IdleBehavior() { IdleTime = 100 });
+                            return BehaviorStatus.WAIT;
+                        }
+                        else
+                        {
+                            GeneratedPath = p;
 
-                    if (tPosition.Index == null || tPosition.Index == Point.Zero)
-                        tPosition.Index = EntityManager.Instance.Map.GetIndexFromPosition((int)tPosition.X, (int)tPosition.Y);
+                            // TODO: check for tPosition = sPosition
+                            if (GeneratedPath.Waypoints.Count == 0)
+                            {
+                                return BehaviorStatus.FAIL;
+                            }
 
-                    PathRequest = new PathRequest()
-                    {
-                        Start = sPosition.Index,
-                        End = tPosition.Index
-                    };
-                    PathfinderSystem.RequestPath(PathRequest);
-                }
-                else
-                {
-                    // check for a starting position and ensure the target has a foundation
-                    if (!self.HasComponent<PositionComponent>() || !target.HasComponent<FoundationComponent>() || !target.HasComponent<PositionComponent>())
-                    {
-                        Status = BehaviorStatus.FAILURE;
-                        return;
-                    }
-
-                    PositionComponent tPosition = target.Get<PositionComponent>();
-                    FoundationComponent foundation = target.Get<FoundationComponent>();
-
-                    // list to hold valid road tiles to move to
-                    List<Point> validLandings = EntityManager.Instance.GetValidExitsFromFoundation(target);
-
-                    if (validLandings.Count == 0)
-                    {
-                        Status = BehaviorStatus.FAILURE;
-                        return;
+                            return BehaviorStatus.SUCCESS;
+                        }
                     }
                     else
                     {
-                        // find a multi-path
-                        PositionComponent sPosition = self.Get<PositionComponent>();
-                        PathRequest = new PathRequest()
+                        // make sure the target has a position or foundation
+                        if (!MoveToNearbyRoad)
                         {
-                            Start = sPosition.Index,
-                            Ends = validLandings
-                        };
-                        PathfinderSystem.RequestPath(PathRequest);
-                    }
-                }
-            }                
+                            // if the target or self has no position fail out
+                            if (!target.HasComponent<PositionComponent>() || !self.HasComponent<PositionComponent>())
+                            {
+                                return BehaviorStatus.FAIL;
+                            }
+
+                            PositionComponent tPosition = target.Get<PositionComponent>();
+                            PositionComponent sPosition = self.Get<PositionComponent>();
+
+                            if (tPosition.Index == null || tPosition.Index == Point.Zero)
+                                tPosition.Index = EntityManager.Instance.Map.GetIndexFromPosition((int)tPosition.X, (int)tPosition.Y);
+
+                            PathRequest = new PathRequest()
+                            {
+                                Start = sPosition.Index,
+                                End = tPosition.Index
+                            };
+                            PathfinderSystem.RequestPath(PathRequest);
+                        }
+                        else
+                        {
+                            // check for a starting position and ensure the target has a foundation
+                            if (!self.HasComponent<PositionComponent>() || !target.HasComponent<FoundationComponent>() || !target.HasComponent<PositionComponent>())
+                            {
+                                return BehaviorStatus.FAIL;
+                            }
+
+                            PositionComponent tPosition = target.Get<PositionComponent>();
+                            FoundationComponent foundation = target.Get<FoundationComponent>();
+
+                            // list to hold valid road tiles to move to
+                            List<Point> validLandings = EntityManager.Instance.GetValidExitsFromFoundation(target);
+
+                            if (validLandings.Count == 0)
+                            {
+                                return BehaviorStatus.FAIL;
+                            }
+                            else
+                            {
+                                // find a multi-path
+                                PositionComponent sPosition = self.Get<PositionComponent>();
+                                PathRequest = new PathRequest()
+                                {
+                                    Start = sPosition.Index,
+                                    Ends = validLandings
+                                };
+                                PathfinderSystem.RequestPath(PathRequest);
+                            }
+                        }
+                    }       
+                    break;
+            }
+
+            return BehaviorStatus.WAIT;
         }
     }
 }

@@ -10,59 +10,68 @@ namespace IsoECS.Behaviors
         public int TargetID { get; set; }
         public Path GeneratedPath { get; set; }
 
-        public override void Update(Entity self, Stack<Behavior> state, int dt)
+        public override BehaviorStatus Update(Entity self, int dt)
         {
-            if (GeneratedPath == null)
+            BehaviorStatus status = base.Update(self, dt);
+
+            switch (status)
             {
-                FindPathBehavior fpb = new FindPathBehavior()
-                {
-                    MoveToNearbyRoad = true,
-                    TargetID = this.TargetID
-                };
-                state.Push(fpb);
+                case BehaviorStatus.SUCCESS:
+                case BehaviorStatus.FAIL:
+                    if (Finished is FindPathBehavior)
+                    {
+                        if (status == BehaviorStatus.SUCCESS)
+                        {
+                            FollowPath(((FindPathBehavior)Finished).GeneratedPath, 1.5f);
+                        }
+                        else
+                        {
+                            // TODO: quit job if not able to find a path to it
+                            return BehaviorStatus.FAIL;
+                        }
+                    }
+                    else if (Finished is FollowPathBehavior)
+                    {
+                        if (status == BehaviorStatus.SUCCESS)
+                        {
+                            // Fadeout
+                            AddChild(new FadeBehavior() { FadeIn = false });
+                            self.Get<CitizenComponent>().InsideID = TargetID;
+                        }
+                        else
+                        {
+                            // failed to follow path to home
+                            // TOOD: possibly fail out to decide to do something else?
+                            return BehaviorStatus.WAIT;
+                        }
+                    }
+                    else
+                    {
+                        return status;
+                    }
+                    break;
+
+                case BehaviorStatus.RUN:
+                    if (GeneratedPath == null)
+                    {
+                        FindPathBehavior fpb = new FindPathBehavior()
+                        {
+                            MoveToNearbyRoad = true,
+                            TargetID = this.TargetID
+                        };
+                        AddChild(fpb);
+                    }
+                    else
+                    {
+                        FollowPath(GeneratedPath, 1.5f);
+                    }
+                    break;
             }
-            else
-            {
-                FollowPath(state, GeneratedPath, 1.5f);
-            }
+
+            return BehaviorStatus.WAIT;
         }
 
-        public override void OnSubFinished(Entity self, Behavior finished, Stack<Behavior> state)
-        {
-            if (finished is FindPathBehavior)
-            {
-                if (finished.Status == BehaviorStatus.SUCCESS)
-                {
-                    FollowPath(state, ((FindPathBehavior)finished).GeneratedPath, 1.5f);
-                }
-                else
-                {
-                    // TODO: quit job if not able to find a path to it
-                    Status = BehaviorStatus.FAILURE;
-                }
-            }
-            else if (finished is FollowPathBehavior)
-            {
-                if (finished.Status == BehaviorStatus.SUCCESS)
-                {
-                    // Fadeout
-                    state.Push(new FadeBehavior() { FadeIn = false });
-                    self.Get<CitizenComponent>().InsideID = TargetID;
-                }
-                else
-                {
-                    // failed to follow path to home
-                    // TOOD: possibly fail out to decide to do something else?
-                    Status = BehaviorStatus.RUNNING;
-                }
-            }
-            else
-            {
-                Status = finished.Status;
-            }
-        }
-
-        private void FollowPath(Stack<Behavior> state, Path p, float speed)
+        private void FollowPath(Path p, float speed)
         {
             // follow path
             FollowPathBehavior fpb = new FollowPathBehavior()
@@ -70,8 +79,8 @@ namespace IsoECS.Behaviors
                 PathToFollow = p,
                 Speed = speed
             };
-            state.Push(fpb);
-            state.Push(new FadeBehavior() { FadeIn = true });
+            AddChild(fpb);
+            fpb.AddChild(new FadeBehavior() { FadeIn = true });
         }
     }
 }

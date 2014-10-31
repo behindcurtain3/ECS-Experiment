@@ -23,14 +23,27 @@ namespace IsoECS.Behaviors
             IdleCountdown = IdleTime;
         }
 
-        public override void Update(Entity self, Stack<Behavior> state, int dt)
+        public override BehaviorStatus Update(Entity self, int dt)
         {
-            IdleCountdown -= dt;
+            BehaviorStatus status = base.Update(self, dt);
 
-            if (IdleCountdown <= 0)
+            switch (status)
             {
-                Status = BehaviorStatus.SUCCESS;
+                case BehaviorStatus.SUCCESS:
+                case BehaviorStatus.FAIL:
+                    return status;
+
+                case BehaviorStatus.RUN:
+                    IdleCountdown -= dt;
+
+                    if (IdleCountdown <= 0)
+                    {
+                        return BehaviorStatus.SUCCESS;
+                    }
+                    break;
             }
+
+            return BehaviorStatus.WAIT;
         }
     }
 }

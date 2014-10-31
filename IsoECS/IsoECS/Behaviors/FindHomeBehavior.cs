@@ -9,63 +9,68 @@ namespace IsoECS.Behaviors
     {
         public int HousingID { get; set; }
 
-        public override void Update(Entity self, Stack<Behavior> state, int dt)
+        public override BehaviorStatus Update(Entity self, int dt)
         {
-            List<Entity> houses = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); });
-            CitizenComponent citizen = self.Get<CitizenComponent>();
+            BehaviorStatus status = base.Update(self, dt);
 
-            foreach (Entity housingEntity in houses)
+            switch (status)
             {
-                HousingComponent house = housingEntity.Get<HousingComponent>();
+                case BehaviorStatus.SUCCESS:
+                case BehaviorStatus.FAIL:
+                    if (Finished is GoToBehavior)
+                    {
+                        Entity house = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == HousingID; });
 
-                if (house.SpaceAvailable <= 0)
-                    continue;
+                        // take ourselves out of the tennant list
+                        house.Get<HousingComponent>().RemoveProspect(self);
 
-                // TODO: check for appropriate level of housing (rich, middle class, poor)
-                if (house.Rent <= citizen.Money)
-                {
-                    HousingID = housingEntity.ID;
-                    house.AddProspect(self);
+                        if (status == BehaviorStatus.FAIL)
+                        {
+                            // reset the tracking house ID
+                            HousingID = -1;
+                            return BehaviorStatus.FAIL;
+                        }
+                        else
+                        {
+                            house.Get<HousingComponent>().AddTennant(self);
+                            self.Get<CitizenComponent>().HousingID = HousingID;
+                            AddChild(new FadeBehavior() { FadeIn = false });
+                        }
+                    }
+                    else
+                    {
+                        return status;
+                    }
+                    break;
 
-                    // TODO: enter sub behavior to move into the home (find a path there and then move there)
-                    state.Push(new GoToBehavior() { TargetID = HousingID });
-                    return;
-                }
+                case BehaviorStatus.RUN:
+                    List<Entity> houses = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); });
+                    CitizenComponent citizen = self.Get<CitizenComponent>();
+
+                    foreach (Entity housingEntity in houses)
+                    {
+                        HousingComponent house = housingEntity.Get<HousingComponent>();
+
+                        if (house.SpaceAvailable <= 0)
+                            continue;
+
+                        // TODO: check for appropriate level of housing (rich, middle class, poor)
+                        if (house.Rent <= citizen.Money)
+                        {
+                            HousingID = housingEntity.ID;
+                            house.AddProspect(self);
+
+                            // TODO: enter sub behavior to move into the home (find a path there and then move there)
+                            AddChild(new GoToBehavior() { TargetID = HousingID });
+                            return BehaviorStatus.WAIT;
+                        }
+                    }
+
+                    // if no home was found enter failure state
+                    return BehaviorStatus.FAIL;
             }
 
-            // if no home was found enter failure state
-            Status = BehaviorStatus.FAILURE;
-        }
-
-        public override void OnSubFinished(Entity self, Behavior finished, Stack<Behavior> state)
-        {
-            base.OnSubFinished(self, finished, state);
-
-            if (finished is GoToBehavior)
-            {
-                Entity house = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == HousingID; });
-
-                // take ourselves out of the tennant list
-                house.Get<HousingComponent>().RemoveProspect(self);
-
-                if (finished.Status == BehaviorStatus.FAILURE)
-                {
-                    Status = BehaviorStatus.FAILURE;
-                    
-                    // reset the tracking house ID
-                    HousingID = -1;
-                }
-                else
-                {
-                    house.Get<HousingComponent>().AddTennant(self);
-                    self.Get<CitizenComponent>().HousingID = HousingID;
-                    state.Push(new FadeBehavior() { FadeIn = false });
-                }
-            }
-            else
-            {
-                Status = finished.Status;
-            }
+            return BehaviorStatus.WAIT;
         }
     }
 }

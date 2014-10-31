@@ -7,7 +7,7 @@ namespace IsoECS.Behaviors
 {
     public class FindJobBehavior : Behavior
     {
-        public override void Update(Entity self, Stack<Behavior> state, int dt)
+        public override BehaviorStatus Update(Entity self, int dt)
         {
             CitizenComponent citizen = self.Get<CitizenComponent>();
             List<Entity> potentialJobs = EntityManager.Instance.GetBuildingsWithinWalkableDistance<ProductionComponent>(citizen.HousingID, 20);
@@ -38,12 +38,11 @@ namespace IsoECS.Behaviors
                             self.AddComponent(new Inventory()); // add an inventory to the hauler
                         }
                     }
-                    Status = BehaviorStatus.SUCCESS;
-                    return;
+                    return BehaviorStatus.SUCCESS;
                 }
             }
-            
-            Status = BehaviorStatus.FAILURE;
+
+            return BehaviorStatus.FAIL;
         }
     }
 }

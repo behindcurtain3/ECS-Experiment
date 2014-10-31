@@ -23,13 +23,16 @@ namespace IsoECS.Systems
 
                 foreach (IGameDrawable d in drawable.Get("Text"))
                 {
+                    d.Visible = true;
                     if (d is DrawableText)
                     {
                         string text = "";
 
-                        foreach(Behavior b in citizen.Behaviors)
+                        Behavior brain = citizen.Brain;
+                        while (brain != null)
                         {
-                            text += b.GetType().ToString() + System.Environment.NewLine;
+                            text += brain.GetType().Name + System.Environment.NewLine;
+                            brain = brain.Child;
                         }
 
                         ((DrawableText)d).Text = text;

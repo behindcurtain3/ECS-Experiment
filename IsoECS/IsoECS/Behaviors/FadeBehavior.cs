@@ -10,9 +10,11 @@ namespace IsoECS.Behaviors
         public int FadeTime { get; set; }
         public int FadeCounter { get; set; }
         public bool FadeIn { get; set; }
+        public bool Skip { get; private set; }
 
         public FadeBehavior() : base()
         {
+            Skip = false;
             FadeIn = true;
             FadeTime = 750;
             FadeCounter = FadeTime;
@@ -23,13 +25,14 @@ namespace IsoECS.Behaviors
             base.Init(self);
 
             DrawableComponent drawable = self.Get<DrawableComponent>();
+
             if (FadeIn)
-            {   
+            {
                 foreach (IGameDrawable d in drawable.Get("Foreground"))
                 {
                     if (d is DrawableSprite)
                         if (d.Alpha >= 1.0f)
-                            Status = BehaviorStatus.SUCCESS;
+                            Skip = true;
 
                     d.Visible = true;
                 }
@@ -45,8 +48,13 @@ namespace IsoECS.Behaviors
             }
         }
 
-        public override void Update(Entity self, Stack<Behavior> state, int dt)
+        public override BehaviorStatus Update(Entity self, int dt)
         {
+            BehaviorStatus status = base.Update(self, dt);
+
+            if (Skip)
+                return BehaviorStatus.SUCCESS;
+
             FadeCounter -= dt;
 
             DrawableComponent drawable = self.Get<DrawableComponent>();
@@ -73,8 +81,10 @@ namespace IsoECS.Behaviors
                     }
                 }
 
-                Status = BehaviorStatus.SUCCESS;
+                return BehaviorStatus.SUCCESS;
             }
+
+            return BehaviorStatus.WAIT;
         }
     }
 }

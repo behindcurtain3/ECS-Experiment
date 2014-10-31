@@ -211,7 +211,7 @@ namespace IsoECS.Components.GamePlay
         }
 
         // TODO: switch to a different component + use a behavior manager/brain
-        public Stack<Behavior> Behaviors { get; set; }
+        public Behavior Brain { get; set; }
 
         #endregion
 
@@ -224,8 +224,6 @@ namespace IsoECS.Components.GamePlay
             InsideID = -1;
             Gender = GamePlay.Gender.BOTH;
             IsHauler = false;
-
-            Behaviors = new Stack<Behavior>();
         }
     }
 }
