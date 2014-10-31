@@ -62,6 +62,20 @@ namespace IsoECS.Systems
 
         public void Shutdown()
         {
+            EntityManager.Instance.EntityRemoved -= Instance_EntityRemoved;
+            EntityManager.Instance.EntityAdded -= Instance_EntityAdded;
+
+            foreach (Entity e in brains)
+            {
+                DrawableComponent drawable = e.Get<DrawableComponent>();
+
+                foreach (IGameDrawable d in drawable.Get("Text"))
+                {
+                    d.Visible = false;
+                }
+            }
+
+            brains.Clear();
         }
     }
 }

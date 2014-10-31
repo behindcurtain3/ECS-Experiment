@@ -20,6 +20,7 @@ namespace IsoECS.Systems
         {
             KeyBindings = new Dictionary<Keys, Type>();
             KeyBindings.Add(Keys.B, typeof(ConstructionSystem));
+            KeyBindings.Add(Keys.OemTilde, typeof(DebugSystem));
 
             ControlSystems = new Dictionary<Type, ISystem>();
             ControlSystems.Add(typeof(CameraSystem), new CameraSystem());

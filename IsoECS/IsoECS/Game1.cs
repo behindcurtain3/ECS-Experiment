@@ -73,7 +73,6 @@ namespace IsoECS
             systems.Add(new ControlSystem());
             systems.Add(new DateTimeSystem());
             systems.Add(new BehaviorSystem());
-            systems.Add(new DebugSystem());
             systems.Add(new ProductionSystem());
             systems.Add(new ImmigrationSystem());
             systems.Add(new CityInformationSystem());
