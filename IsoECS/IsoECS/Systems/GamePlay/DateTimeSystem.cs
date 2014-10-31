@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using IsoECS.Components.GamePlay;
+﻿using IsoECS.Components.GamePlay;
 using IsoECS.Entities;
 
 namespace IsoECS.Systems.GamePlay
@@ -10,6 +8,7 @@ namespace IsoECS.Systems.GamePlay
         // an update rate of 50ms mean for each real life second 20 in game seconds pass
         private int _updateRate = 50;
         private int _updateCountdown;
+        private Entity _dateEntity;
 
         public void Update(int dt)
         {
@@ -19,11 +18,9 @@ namespace IsoECS.Systems.GamePlay
             {
                 _updateCountdown += _updateRate;
 
-                Entity dateEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<GameDateComponent>(); });
-
-                if (dateEntity != null)
+                if (_dateEntity != null)
                 {
-                    GameDateComponent date = dateEntity.Get<GameDateComponent>();
+                    GameDateComponent date = _dateEntity.Get<GameDateComponent>();
                     date.Time++;
                 }
             }
@@ -32,6 +29,7 @@ namespace IsoECS.Systems.GamePlay
         public void Init()
         {
             _updateCountdown = _updateRate;
+            _dateEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<GameDateComponent>(); });
         }
 
         public void Shutdown()
