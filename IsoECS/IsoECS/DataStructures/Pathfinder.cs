@@ -4,7 +4,7 @@ using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using Microsoft.Xna.Framework;
 
-namespace IsoECS.Util
+namespace IsoECS.DataStructures
 {
     public enum PathTypes
     {

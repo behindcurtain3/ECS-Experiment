@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using IsoECS.Entities;
-using IsoECS.Components.GamePlay;
 using IsoECS.Components;
+using IsoECS.Components.GamePlay;
+using IsoECS.Entities;
 using Microsoft.Xna.Framework;
-using IsoECS.Util;
 
 namespace IsoECS.Behaviors
 {

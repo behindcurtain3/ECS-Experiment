@@ -2,7 +2,7 @@
 using IsoECS.Components.GamePlay;
 using Microsoft.Xna.Framework;
 
-namespace IsoECS.Util
+namespace IsoECS.DataStructures
 {
     public class Pathwalker
     {

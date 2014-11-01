@@ -106,21 +106,6 @@ namespace IsoECS
             };
             w.Init();
             w.Center();
-            //em.UI.Add(w);
-
-            Table testTable = new Table(EntityManager.Instance.UI)
-            {
-                Top = 2,
-                Left = 2,
-                Width = w.ClientWidth - 4,
-                Height = w.ClientHeight - 4,
-                Anchor = Anchors.All
-            };
-            testTable.Init();
-            testTable.SetTableSize(4, 5, new string[]{ "My Column" });
-            testTable.AddAt(3, 3, "Hello Data!");
-            testTable.AddAt(0, 0, "What?");
-            w.Add(testTable);
 
             // setup random
             // TODO: init the seed from the scenario?
