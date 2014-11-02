@@ -20,6 +20,7 @@ namespace IsoECS.Systems
 
         public void Shutdown()
         {
+            EntityManager.Instance.Date.TimeChanged -= Date_TimeChanged;
         }
 
         public void Update(int dt)

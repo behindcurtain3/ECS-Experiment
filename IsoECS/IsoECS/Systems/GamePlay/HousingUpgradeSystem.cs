@@ -16,46 +16,6 @@ namespace IsoECS.Systems.GamePlay
 
         public void Update(int dt)
         {
-            foreach (Entity e in housingUnits)
-            {
-                HousingComponent housing = e.Get<HousingComponent>();
-
-                if (string.IsNullOrWhiteSpace(housing.UpgradesTo) || housing.UpgradeRequirements == null)
-                    continue;
-
-                // check each requirement to see if it has been set
-                // then check if the requirement fails, if it does just continue to the next entity
-                if (housing.UpgradeRequirements.MinimumOccupants != -1)
-                {
-                    if (housing.Tennants.Length < housing.UpgradeRequirements.MinimumOccupants)
-                    {
-                        continue;
-                    }
-                }
-
-                // swap out the HousingComponent with the upgraded version and the DrawableComponent
-                e.RemoveComponent(e.Get<DrawableComponent>());
-                e.RemoveComponent(e.Get<BuildableComponent>());
-
-                // copy out the entity to upgrade to from the library
-                Entity upgradedEntity = Serialization.DeepCopy<Entity>(EntityLibrary.Instance.Get(housing.UpgradesTo));
-
-                // copy in the new components
-                e.AddComponent(Serialization.DeepCopy<DrawableComponent>(upgradedEntity.Get<DrawableComponent>()));                
-                e.AddComponent(Serialization.DeepCopy<BuildableComponent>(upgradedEntity.Get<BuildableComponent>()));
-
-                // make sure the housing tennant data is copied over
-                HousingComponent replacement = Serialization.DeepCopy<HousingComponent>(upgradedEntity.Get<HousingComponent>());
-
-                // copy over housing data
-                housing.MaxOccupants = replacement.MaxOccupants;
-                housing.Rent = replacement.Rent;
-                housing.UpgradeRequirements = replacement.UpgradeRequirements;
-                housing.Upgrade(replacement.UpgradesTo);
-
-                // copy over the unique id
-                e.UniqueID = upgradedEntity.UniqueID;
-            }
         }
 
         public void Init()
@@ -69,11 +29,60 @@ namespace IsoECS.Systems.GamePlay
         private void Instance_EntityAdded(Entity e)
         {
             if (e.HasComponent<HousingComponent>())
+            {
                 housingUnits.Add(e);
+
+                HousingComponent housing = e.Get<HousingComponent>();
+                housing.TennantAdded += new HousingComponent.HousingEventHandler(Housing_TennantAdded);
+            }
+        }
+
+        private void Housing_TennantAdded(HousingComponent sender)
+        {
+            HousingComponent housing = sender;
+
+            if (string.IsNullOrWhiteSpace(housing.UpgradesTo) || housing.UpgradeRequirements == null)
+                return;
+
+            // check each requirement to see if it has been set
+            // then check if the requirement fails, if it does just continue to the next entity
+            if (housing.UpgradeRequirements.MinimumOccupants != -1)
+            {
+                if (housing.Tennants.Length < housing.UpgradeRequirements.MinimumOccupants)
+                {
+                    return;
+                }
+            }
+
+            // swap out the HousingComponent with the upgraded version and the DrawableComponent
+            housing.BelongsTo.RemoveComponent(housing.BelongsTo.Get<DrawableComponent>());
+            housing.BelongsTo.RemoveComponent(housing.BelongsTo.Get<BuildableComponent>());
+
+            // copy out the entity to upgrade to from the library
+            Entity upgradedEntity = Serialization.DeepCopy<Entity>(EntityLibrary.Instance.Get(housing.UpgradesTo));
+
+            // copy in the new components
+            housing.BelongsTo.AddComponent(Serialization.DeepCopy<DrawableComponent>(upgradedEntity.Get<DrawableComponent>()));
+            housing.BelongsTo.AddComponent(Serialization.DeepCopy<BuildableComponent>(upgradedEntity.Get<BuildableComponent>()));
+
+            // make sure the housing tennant data is copied over
+            HousingComponent replacement = Serialization.DeepCopy<HousingComponent>(upgradedEntity.Get<HousingComponent>());
+
+            // copy over housing data
+            housing.MaxOccupants = replacement.MaxOccupants;
+            housing.Rent = replacement.Rent;
+            housing.UpgradeRequirements = replacement.UpgradeRequirements;
+            housing.Upgrade(replacement.UpgradesTo);
+
+            // copy over the unique id
+            housing.BelongsTo.UniqueID = upgradedEntity.UniqueID;
         }
 
         private void Instance_EntityRemoved(Entity e)
         {
+            if (e.HasComponent<HousingComponent>())
+                e.Get<HousingComponent>().TennantAdded -= Housing_TennantAdded;
+
             housingUnits.Remove(e);
         }
 

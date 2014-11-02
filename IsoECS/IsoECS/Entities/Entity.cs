@@ -28,11 +28,13 @@ namespace IsoECS.Entities
 
         public void AddComponent(Component component)
         {
+            component.BelongsTo = this;
             Components.Add(component.GetType(), component);
         }
 
         public bool RemoveComponent(Component component)
         {
+            component.BelongsTo = null;
             return Components.Remove(component.GetType());
         }
 

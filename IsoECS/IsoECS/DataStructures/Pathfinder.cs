@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using Microsoft.Xna.Framework;
+using MathHelper = IsoECS.Util.MathHelper;
 
 namespace IsoECS.DataStructures
 {
