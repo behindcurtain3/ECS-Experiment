@@ -123,7 +123,7 @@ namespace IsoECS
             DrawableLibrary.Instance.LoadFromJson(scenario.Drawables, true);
 
             // Load in entities
-            EntityLibrary.Instance.LoadFromJson(scenario.Entities, true);
+            Prototype.Instance.LoadFromJson(scenario.Entities, true);
                 
             // load scenario data
             GameData.Instance.LoadItemsFromJson(scenario.Items, true);
@@ -131,7 +131,7 @@ namespace IsoECS
 
             foreach (JObject o in scenario.DefaultEntities)
             {
-                Entity e = EntityLibrary.Instance.LoadEntity(o);
+                Entity e = Prototype.Instance.LoadEntity(o);
 
                 EntityManager.Instance.AddEntity(e);
             }

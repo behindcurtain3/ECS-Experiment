@@ -9,14 +9,15 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.Xna.Framework;
 using IsoECS.DataStructures.Json.Converters;
+using IsoECS.DataStructures;
 
-namespace IsoECS.DataStructures
+namespace IsoECS.Entities
 {
-    public sealed class EntityLibrary
+    public sealed class Prototype
     {
-        private static readonly EntityLibrary _instance = new EntityLibrary();
+        private static readonly Prototype _instance = new Prototype();
 
-        public static EntityLibrary Instance
+        public static Prototype Instance
         {
             get { return _instance; }
         }
@@ -24,7 +25,7 @@ namespace IsoECS.DataStructures
         // stores ready made entities by their unique ID
         private Dictionary<string, Entity> _entities;
 
-        private EntityLibrary()
+        private Prototype()
         {
             _entities = new Dictionary<string, Entity>();
         }

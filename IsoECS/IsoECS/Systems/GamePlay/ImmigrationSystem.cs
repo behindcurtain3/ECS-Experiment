@@ -34,7 +34,7 @@ namespace IsoECS.Systems.GamePlay
 
                     string spawnID = spawner.Spawns[EntityManager.Random.Next(0, spawner.Spawns.Count)];
 
-                    Entity spawned = Serialization.DeepCopy<Entity>(EntityLibrary.Instance.Get(spawnID));
+                    Entity spawned = Serialization.DeepCopy<Entity>(Prototype.Instance.Get(spawnID));
                     spawned.ResetID();
 
                     if (spawned.HasComponent<PositionComponent>())

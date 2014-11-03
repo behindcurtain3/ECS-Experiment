@@ -56,7 +56,7 @@ namespace IsoECS.Systems.GamePlay
             housing.BelongsTo.RemoveComponent(housing.BelongsTo.Get<BuildableComponent>());
 
             // copy out the entity to upgrade to from the library
-            Entity upgradedEntity = Serialization.DeepCopy<Entity>(EntityLibrary.Instance.Get(housing.UpgradesTo));
+            Entity upgradedEntity = Serialization.DeepCopy<Entity>(Prototype.Instance.Get(housing.UpgradesTo));
 
             // copy in the new components
             housing.BelongsTo.AddComponent(Serialization.DeepCopy<DrawableComponent>(upgradedEntity.Get<DrawableComponent>()));

@@ -40,7 +40,7 @@ namespace IsoECS.Systems.GamePlay
 
             _db = new Dictionary<string, List<Entity>>();
 
-            List<Entity> allBuildables = EntityLibrary.Instance.GetAll<BuildableComponent>();
+            List<Entity> allBuildables = Prototype.Instance.GetAll<BuildableComponent>();
 
             foreach (Entity e in allBuildables)
             {

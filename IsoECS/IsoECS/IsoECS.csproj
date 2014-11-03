@@ -161,7 +161,7 @@
     <Compile Include="DataStructures\DrawableLibrary.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />
     <Compile Include="DataStructures\DrawableText.cs" />
-    <Compile Include="DataStructures\EntityLibrary.cs" />
+    <Compile Include="Entities\Prototype.cs" />
     <Compile Include="DataStructures\GameData.cs" />
     <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeInput.cs" />
