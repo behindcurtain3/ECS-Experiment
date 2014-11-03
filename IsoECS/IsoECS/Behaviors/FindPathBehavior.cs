@@ -87,7 +87,8 @@ namespace IsoECS.Behaviors
                             PathRequest = new PathRequest()
                             {
                                 Start = sPosition.Index,
-                                End = tPosition.Index
+                                End = tPosition.Index,
+                                Validation = AnyPathNotBlocked
                             };
                             PathfinderSystem.RequestPath(PathRequest);
                         }
@@ -116,7 +117,8 @@ namespace IsoECS.Behaviors
                                 PathRequest = new PathRequest()
                                 {
                                     Start = sPosition.Index,
-                                    Ends = validLandings
+                                    Ends = validLandings,
+                                    Validation = OnlyRoads
                                 };
                                 PathfinderSystem.RequestPath(PathRequest);
                             }
@@ -126,6 +128,18 @@ namespace IsoECS.Behaviors
             }
 
             return BehaviorStatus.WAIT;
+        }
+
+        private bool AnyPathNotBlocked(Point current)
+        {
+            //collisionMap.Map[waypoint.Location] != PathTypes.BLOCKED
+            return EntityManager.Instance.Collisions.Map[current] != PathTypes.BLOCKED;
+        }
+
+        private bool OnlyRoads(Point current)
+        {
+            //return EntityManager.Instance.Collisions.Map[current] != PathTypes.BLOCKED;
+            return EntityManager.Instance.Collisions.Map[current] == PathTypes.ROAD;
         }
     }
 }

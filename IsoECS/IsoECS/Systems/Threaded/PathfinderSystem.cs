@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using IsoECS.Util;
 using IsoECS.Components.GamePlay;
 using System.Threading;
+using IsoECS.Entities;
 
 namespace IsoECS.Systems.Threaded
 {
@@ -16,6 +17,7 @@ namespace IsoECS.Systems.Threaded
         public Point Start { get; set; }
         public Point End { get; set; }
         public List<Point> Ends { get; set; }
+        public Pathfinder.PathValidationHandler Validation { get; set; }
     }
 
     public class PathfinderSystem
@@ -84,11 +86,11 @@ namespace IsoECS.Systems.Threaded
                 // generate the path
                 if (pr.Ends == null)
                 {
-                    p = Pathfinder.Generate(Collisions, Map, pr.Start, pr.End);
+                    p = Pathfinder.Generate(Collisions, Map, pr.Start, pr.End, pr.Validation);
                 }
                 else
                 {
-                    p = Pathfinder.Generate(Collisions, Map, pr.Start, pr.Ends);
+                    p = Pathfinder.Generate(Collisions, Map, pr.Start, pr.Ends, pr.Validation);
                 }
 
                 // add the path to the completion dictionary

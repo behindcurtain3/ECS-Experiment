@@ -19,7 +19,9 @@ namespace IsoECS.DataStructures
         private Dictionary<Point, PathWaypoint> _openList = new Dictionary<Point, PathWaypoint>();
         private Dictionary<Point, PathWaypoint> _closedList = new Dictionary<Point, PathWaypoint>();
 
-        public Path Generate(CollisionMapComponent collisionMap, IsometricMapComponent map, Point start, Point end)
+        public delegate bool PathValidationHandler(Point current);
+
+        public Path Generate(CollisionMapComponent collisionMap, IsometricMapComponent map, Point start, Point end, PathValidationHandler validation)
         {
             // reset the lists
             _openList.Clear();
@@ -82,7 +84,7 @@ namespace IsoECS.DataStructures
                                                             selectedNode
                                                             );
 
-                        if (collisionMap.Map[waypoint.Location] != PathTypes.BLOCKED && !_closedList.ContainsKey(waypoint.Location))
+                        if (validation(waypoint.Location) && !_closedList.ContainsKey(waypoint.Location))
                         {
                             if (_openList.ContainsKey(waypoint.Location))
                             {
@@ -99,7 +101,7 @@ namespace IsoECS.DataStructures
             return new Path();
         }
 
-        public Path Generate(CollisionMapComponent collisionMap, IsometricMapComponent map, Point start, List<Point> end)
+        public Path Generate(CollisionMapComponent collisionMap, IsometricMapComponent map, Point start, List<Point> end, PathValidationHandler validation)
         {
             // reset the lists
             _openList.Clear();
@@ -168,7 +170,7 @@ namespace IsoECS.DataStructures
                                                             selectedNode
                                                             );
 
-                        if (collisionMap.Map[waypoint.Location] != PathTypes.BLOCKED && !_closedList.ContainsKey(waypoint.Location))
+                        if (validation(waypoint.Location) && !_closedList.ContainsKey(waypoint.Location))
                         {
                             if (_openList.ContainsKey(waypoint.Location))
                             {

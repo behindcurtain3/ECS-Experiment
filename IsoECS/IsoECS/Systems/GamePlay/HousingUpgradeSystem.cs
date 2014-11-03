@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IsoECS.Entities;
+﻿using System.Collections.Generic;
+using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
-using IsoECS.Components;
+using IsoECS.Entities;
 using IsoECS.Util;
 
 namespace IsoECS.Systems.GamePlay
