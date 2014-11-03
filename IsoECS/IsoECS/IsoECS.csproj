@@ -199,6 +199,7 @@
     <Compile Include="Systems\GamePlay\DateTimeSystem.cs" />
     <Compile Include="Systems\GamePlay\HousingUpgradeSystem.cs" />
     <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
+    <Compile Include="Systems\GamePlay\OverlaySystem.cs" />
     <Compile Include="Systems\InputSystem.cs" />
     <Compile Include="Systems\Renderers\FoundationOverlaySystem.cs" />
     <Compile Include="Systems\Renderers\IRenderSystem.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="Systems\ISystem.cs" />
     <Compile Include="Systems\GamePlay\ProductionSystem.cs" />
     <Compile Include="Systems\Renderers\RenderSystem.cs" />
+    <Compile Include="Systems\SystemManager.cs" />
     <Compile Include="Systems\Threaded\PathfinderSystem.cs" />
     <Compile Include="Systems\UI\CityInformationSystem.cs" />
     <Compile Include="Systems\UI\InspectionSystem.cs" />

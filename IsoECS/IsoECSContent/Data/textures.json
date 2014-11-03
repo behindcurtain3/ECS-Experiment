@@ -12,6 +12,7 @@
 	"Content/Data/Sprites/warehouse.json",
 	"Content/Data/Sprites/spawner.json",
 	"Content/Data/Sprites/misc_textures.json",
-	"Content/Data/Sprites/debug.json"
+	"Content/Data/Sprites/debug.json",
+	"Content/Data/Sprites/foundation-overlay.json"
   ]
 }

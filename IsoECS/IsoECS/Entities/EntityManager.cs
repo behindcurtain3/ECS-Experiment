@@ -7,6 +7,7 @@ using IsoECS.DataStructures;
 using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using TomShane.Neoforce.Controls;
+using Component = IsoECS.Components.Component;
 
 namespace IsoECS.Entities
 {
@@ -46,7 +47,11 @@ namespace IsoECS.Entities
             {
 
                 Point index = entity.Get<PositionComponent>().Index;
-                foreach (IsoECS.Components.Component c in entity.Components.Values.ToList())
+
+                // MASSIVE TODO: all the remove & add entity case by case code should be handled in a system that
+                // subscribes to the add or remove entity events
+                
+                foreach (Component c in entity.Components.Values.ToList())
                 {
                     switch (c.GetType().Name)
                     {
@@ -76,7 +81,7 @@ namespace IsoECS.Entities
             Entities.Add(entity);
 
             // update the game data
-            foreach (IsoECS.Components.Component c in entity.Components.Values.ToList())
+            foreach (Component c in entity.Components.Values.ToList())
             {
                 switch (c.GetType().Name)
                 {

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
+using IsoECS.DataStructures;
 using IsoECS.DataStructures.Json;
-using IsoECS.Entities;
+using IsoECS.DataStructures.Json.Converters;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Microsoft.Xna.Framework;
-using IsoECS.DataStructures.Json.Converters;
-using IsoECS.DataStructures;
 
 namespace IsoECS.Entities
 {

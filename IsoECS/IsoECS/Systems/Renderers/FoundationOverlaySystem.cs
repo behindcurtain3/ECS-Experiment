@@ -1,61 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IsoECS.Entities;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System.Collections.Generic;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
+using Microsoft.Xna.Framework.Graphics;
+using IsoECS.DataStructures;
+using Microsoft.Xna.Framework;
+using IsoECS.Entities;
 
 namespace IsoECS.Systems.Renderers
 {
     public class FoundationOverlaySystem : RenderSystem
     {
-        public override void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
+        private string spriteSheet = "foundation-overlay";
+        private string source = "overlay";
+
+        protected override void DrawLayer(string layer, SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> layerData)
         {
-            List<Entity> drawables = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); });
-            PositionComponent cameraPosition = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
-
-            // The idea is to draw as normal with the exception of the foundation layer
-            // any non-roads on the foundation should instead draw a generic foundation sprite
-            // covering their foundation and block the drawing of foregrounds drawing
-            // on those locations
-
-            // Setup the scene
-            Graphics.Clear(ClearColor);
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
-
-            // TODO: render any background
-            // TODO: this should be cached and only updated when drawbles are added, removed or changed
-            _background.Clear();
-            _foundation.Clear();
-            _foreground.Clear();
-            _text.Clear();
-
-            // TODO: separate the drawables out into their layers?
-            // Draw order (back to front):
-            // 1. Background
-            // 2. Foundation
-            // 3. Foreground
-            // 4. Text
-            foreach (Entity e in drawables)
+            if (layer.Equals("Foundation"))
             {
-                AddToDrawables(_background, e.Get<DrawableComponent>().Get("Background"), e);
+                // override the drawing of the foundation layer
+                DrawFoundationOverlay(layer, spriteBatch, spriteFont, camera, layerData);
+            }
+            else if (layer.Equals("Foreground") || layer.Equals("Text"))
+            {
+                // override the drawing of the foundation layer
+                DrawFoundationOverlay(layer, spriteBatch, spriteFont, camera, layerData);
+            }
+            else
+                base.DrawLayer(layer, spriteBatch, spriteFont, camera, layerData);
+        }
 
-                if (e.HasComponent<RoadComponent>())
+        protected virtual void DrawFoundationOverlay(string layer, SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> layerData)
+        {
+            // if the drawable is a building draw the foundation placeholder, otherwise just draw it
+            foreach (DrawData dd in layerData)
+            {
+                if (!dd.Position.BelongsTo.HasComponent<FoundationComponent>() || dd.Position.BelongsTo.HasComponent<RoadComponent>())
                 {
-                    AddToDrawables(_foundation, e.Get<DrawableComponent>().Get("Foundation"), e);
+                    Draw(spriteBatch, spriteFont, dd, camera);
                 }
-                else if(e.HasComponent<FoundationComponent>())
+                else
                 {
-                    // draw in the custom foundation sprite
-                }
+                    // draw basic foundation overlay
+                    if(layer.Equals("Foundation"))
+                    {
+                        FoundationComponent foundation = dd.Position.BelongsTo.Get<FoundationComponent>();
 
-                // only draw the upper layers
-                if (!e.HasComponent<FoundationComponent>() || e.HasComponent<RoadComponent>())
-                {
-                    AddToDrawables(_foreground, e.Get<DrawableComponent>().Get("Foreground"), e);
-                    AddToDrawables(_text, e.Get<DrawableComponent>().Get("Text"), e);
+                        foreach (LocationValue lv in foundation.Plan)
+                        {
+                            Point index = new Point(lv.Offset.X, lv.Offset.Y);
+                            index.X += dd.Position.Index.X;
+                            index.Y += dd.Position.Index.Y;
+
+                            Vector2 p = EntityManager.Instance.Map.GetPositionFromIndex(index.X, index.Y);
+                            p.X -= cameraPosition.X;
+                            p.Y -= cameraPosition.Y;
+
+                            spriteBatch.Draw(Textures.Instance.Get(spriteSheet), p, Textures.Instance.GetSource(spriteSheet, source), dd.Drawable.Color);
+                        }
+                    }
                 }
             }
         }

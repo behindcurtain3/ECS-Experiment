@@ -113,6 +113,10 @@
       <Name>alpha</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Sprites\foundation-overlay.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>foundation-overlay</Name>
+    </None>
     <None Include="Data\Sprites\warehouse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>warehouse</Name>
@@ -252,6 +256,13 @@
   <ItemGroup>
     <Compile Include="Data\Sprites\warehouse.png">
       <Name>warehouse</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Sprites\foundation-overlay.png">
+      <Name>foundation-overlay</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

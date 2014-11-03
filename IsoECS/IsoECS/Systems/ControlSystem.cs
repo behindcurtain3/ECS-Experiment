@@ -15,6 +15,7 @@ namespace IsoECS.Systems
         public Dictionary<Keys, Type> KeyBindings { get; private set; }
 
         public Dictionary<Type, ISystem> ControlSystems { get; private set; }
+
         public ISystem ExclusiveSystem { get; private set; }
 
         public ControlSystem()

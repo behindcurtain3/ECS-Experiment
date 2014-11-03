@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
@@ -9,6 +10,8 @@ using IsoECS.GamePlay;
 using IsoECS.GamePlay.Map;
 using IsoECS.Systems;
 using IsoECS.Systems.GamePlay;
+using IsoECS.Systems.Threaded;
+using IsoECS.Systems.UI;
 using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,10 +19,6 @@ using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TomShane.Neoforce.Controls;
-using IsoECS.Systems.UI;
-using IsoECS.DataStructures.Json.Converters;
-using System.Threading;
-using IsoECS.Systems.Threaded;
 
 namespace IsoECS
 {
@@ -32,11 +31,9 @@ namespace IsoECS
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
         List<ISystem> systems;
-        List<IRenderSystem> renderers;
         Thread pathThread;
         Thread pathThread2;
 
-        RenderSystem renderSystem;
         DiagnosticInfo diagnostics;
         Entity diagnosticEntity;
         Entity inputControlEntity;
@@ -77,19 +74,18 @@ namespace IsoECS
             systems.Add(new ImmigrationSystem());
             systems.Add(new CityInformationSystem());
             systems.Add(new HousingUpgradeSystem());
+            systems.Add(new OverlaySystem() { Graphics = GraphicsDevice });
 
-            renderers = new List<IRenderSystem>();
-            renderers.Add(new IsometricMapSystem()
+            SystemManager.Instance.CustomRenderers.Add(new IsometricMapSystem()
             {
                 Graphics = GraphicsDevice
             });
 
-            renderSystem = new RenderSystem()
+            SystemManager.Instance.Renderer = new RenderSystem()
             {
                 Graphics = GraphicsDevice,
                 ClearColor = Color.Black
             };
-            renderers.Add(renderSystem);
 
             EntityManager.Instance.UI = new Manager(this, "Pixel")
             {
@@ -182,8 +178,10 @@ namespace IsoECS
             foreach (ISystem system in systems)
                 system.Init();
 
-            foreach (IRenderSystem renderer in renderers)
+            foreach (IRenderSystem renderer in SystemManager.Instance.CustomRenderers)
                 renderer.Init();
+
+            SystemManager.Instance.Renderer.Init();
         }
 
         /// <summary>
@@ -243,12 +241,16 @@ namespace IsoECS
         {
             EntityManager.Instance.UI.BeginDraw(gameTime);
 
-            foreach (IRenderSystem render in renderers)
+            foreach (IRenderSystem render in SystemManager.Instance.CustomRenderers)
             {
                 diagnostics.RestartTiming(render.GetType().Name);
                 render.Draw(spriteBatch, spriteFont);
                 diagnostics.StopTiming(render.GetType().Name);
             }
+
+            diagnostics.RestartTiming(SystemManager.Instance.Renderer.GetType().Name);
+            SystemManager.Instance.Renderer.Draw(spriteBatch, spriteFont);
+            diagnostics.StopTiming(SystemManager.Instance.Renderer.GetType().Name);
 
             EntityManager.Instance.UI.EndDraw();
 
