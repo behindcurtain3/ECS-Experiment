@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using IsoECS.Entities;
-using IsoECS.Util;
-using Microsoft.Xna.Framework;
 using IsoECS.Systems.Threaded;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.Behaviors
 {
@@ -132,13 +130,11 @@ namespace IsoECS.Behaviors
 
         private bool AnyPathNotBlocked(Point current)
         {
-            //collisionMap.Map[waypoint.Location] != PathTypes.BLOCKED
             return EntityManager.Instance.Collisions.Map[current] != PathTypes.BLOCKED;
         }
 
         private bool OnlyRoads(Point current)
         {
-            //return EntityManager.Instance.Collisions.Map[current] != PathTypes.BLOCKED;
             return EntityManager.Instance.Collisions.Map[current] == PathTypes.ROAD;
         }
     }
