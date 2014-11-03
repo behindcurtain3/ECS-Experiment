@@ -17,6 +17,8 @@ namespace IsoECS.Behaviors
         // if false find a path to the exact position
         public bool MoveToNearbyRoad { get; set; }
 
+        public bool FollowRoadsOnly { get; set; }
+
         // the path generated
         public Path GeneratedPath { get; private set; }
 
@@ -85,9 +87,13 @@ namespace IsoECS.Behaviors
                             PathRequest = new PathRequest()
                             {
                                 Start = sPosition.Index,
-                                End = tPosition.Index,
-                                Validation = AnyPathNotBlocked
+                                End = tPosition.Index
                             };
+                            if(FollowRoadsOnly)
+                                PathRequest.Validation = OnlyRoads;
+                            else
+                                PathRequest.Validation = AnyPathNotBlocked;
+
                             PathfinderSystem.RequestPath(PathRequest);
                         }
                         else
@@ -115,9 +121,13 @@ namespace IsoECS.Behaviors
                                 PathRequest = new PathRequest()
                                 {
                                     Start = sPosition.Index,
-                                    Ends = validLandings,
-                                    Validation = OnlyRoads
+                                    Ends = validLandings
                                 };
+                                if (FollowRoadsOnly)
+                                    PathRequest.Validation = OnlyRoads;
+                                else
+                                    PathRequest.Validation = AnyPathNotBlocked;
+
                                 PathfinderSystem.RequestPath(PathRequest);
                             }
                         }
@@ -128,12 +138,12 @@ namespace IsoECS.Behaviors
             return BehaviorStatus.WAIT;
         }
 
-        private bool AnyPathNotBlocked(Point current)
+        public bool AnyPathNotBlocked(Point current)
         {
             return EntityManager.Instance.Collisions.Map[current] != PathTypes.BLOCKED;
         }
 
-        private bool OnlyRoads(Point current)
+        public bool OnlyRoads(Point current)
         {
             return EntityManager.Instance.Collisions.Map[current] == PathTypes.ROAD;
         }

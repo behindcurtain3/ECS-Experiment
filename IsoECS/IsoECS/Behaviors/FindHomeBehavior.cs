@@ -61,7 +61,7 @@ namespace IsoECS.Behaviors
                             house.AddProspect(self);
 
                             // TODO: enter sub behavior to move into the home (find a path there and then move there)
-                            AddChild(new GoToBehavior() { TargetID = HousingID });
+                            AddChild(new GoToBehavior() { TargetID = HousingID, FollowRoadsOnly = false });
                             return BehaviorStatus.WAIT;
                         }
                     }

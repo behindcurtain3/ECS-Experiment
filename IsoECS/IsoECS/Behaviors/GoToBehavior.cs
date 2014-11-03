@@ -8,7 +8,14 @@ namespace IsoECS.Behaviors
     public class GoToBehavior : Behavior
     {
         public int TargetID { get; set; }
+        public bool FollowRoadsOnly { get; set; }
         public Path GeneratedPath { get; set; }
+
+        public GoToBehavior()
+            : base()
+        {
+            FollowRoadsOnly = true;
+        }
 
         public override BehaviorStatus Update(Entity self, int dt)
         {
@@ -57,7 +64,8 @@ namespace IsoECS.Behaviors
                         FindPathBehavior fpb = new FindPathBehavior()
                         {
                             MoveToNearbyRoad = true,
-                            TargetID = this.TargetID
+                            TargetID = this.TargetID,
+                            FollowRoadsOnly = FollowRoadsOnly
                         };
                         AddChild(fpb);
                     }
