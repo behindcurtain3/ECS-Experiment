@@ -15,51 +15,61 @@ namespace IsoECS.Systems.Renderers
 
         protected override void DrawLayer(string layer, SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> layerData)
         {
-            if (layer.Equals("Foundation"))
+            if (layer.Equals("Foundation") || layer.Equals("Foreground") || layer.Equals("Text"))
             {
                 // override the drawing of the foundation layer
-                DrawFoundationOverlay(layer, spriteBatch, spriteFont, camera, layerData);
-            }
-            else if (layer.Equals("Foreground") || layer.Equals("Text"))
-            {
-                // override the drawing of the foundation layer
-                DrawFoundationOverlay(layer, spriteBatch, spriteFont, camera, layerData);
+                DrawOverlay(layer, spriteBatch, spriteFont, camera, layerData);
             }
             else
+            {
                 base.DrawLayer(layer, spriteBatch, spriteFont, camera, layerData);
+            }
         }
 
-        protected virtual void DrawFoundationOverlay(string layer, SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> layerData)
+        protected virtual void DrawOverlay(string layer, SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> layerData)
         {
             // if the drawable is a building draw the foundation placeholder, otherwise just draw it
-            foreach (DrawData dd in layerData)
+            if(layer.Equals("Foundation"))
             {
-                if (!dd.Position.BelongsTo.HasComponent<FoundationComponent>() || dd.Position.BelongsTo.HasComponent<RoadComponent>())
+                foreach (var space in EntityManager.Instance.Foundations.SpaceTaken)
                 {
-                    Draw(spriteBatch, spriteFont, dd, camera);
-                }
-                else
-                {
-                    // draw basic foundation overlay
-                    if(layer.Equals("Foundation"))
+                    Entity e = EntityManager.Instance.GetEntity(space.Value);
+                    DrawData dd = layerData.Find(delegate(DrawData d) { return d.Position.BelongsTo.ID == e.ID; });
+
+                    if (e == null)
+                        continue;
+
+                    if (IsEntityValid(e))
                     {
-                        FoundationComponent foundation = dd.Position.BelongsTo.Get<FoundationComponent>();
+                        Vector2 p = EntityManager.Instance.Map.GetPositionFromIndex(space.Key.X, space.Key.Y);
+                        p.X -= cameraPosition.X;
+                        p.Y -= cameraPosition.Y;
 
-                        foreach (LocationValue lv in foundation.Plan)
-                        {
-                            Point index = new Point(lv.Offset.X, lv.Offset.Y);
-                            index.X += dd.Position.Index.X;
-                            index.Y += dd.Position.Index.Y;
-
-                            Vector2 p = EntityManager.Instance.Map.GetPositionFromIndex(index.X, index.Y);
-                            p.X -= cameraPosition.X;
-                            p.Y -= cameraPosition.Y;
-
-                            spriteBatch.Draw(Textures.Instance.Get(spriteSheet), p, Textures.Instance.GetSource(spriteSheet, source), dd.Drawable.Color);
-                        }
+                        spriteBatch.Draw(Textures.Instance.Get(spriteSheet), p, Textures.Instance.GetSource(spriteSheet, source), Color.White);
+                    }
+                    else
+                    {
+                        if(dd.Drawable != null)
+                            Draw(spriteBatch, spriteFont, dd, camera);
                     }
                 }
             }
+            else
+            {
+                foreach (DrawData dd in layerData)
+                {
+                    if (!IsEntityValid(dd.Position.BelongsTo))
+                    {
+                        Draw(spriteBatch, spriteFont, dd, camera);
+                    }
+                }
+            }
+
+        }
+
+        protected bool IsEntityValid(Entity e)
+        {
+            return e.HasComponent<FoundationComponent>() && !e.HasComponent<RoadComponent>();
         }
     }
 }
