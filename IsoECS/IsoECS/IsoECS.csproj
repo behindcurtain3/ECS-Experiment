@@ -139,7 +139,7 @@
     <Compile Include="Components\GamePlay\HousingComponent.cs" />
     <Compile Include="Components\GamePlay\ProductionComponent.cs" />
     <Compile Include="Components\GamePlay\Inventory.cs" />
-    <Compile Include="Components\Controls\InputController.cs" />
+    <Compile Include="Input\InputController.cs" />
     <Compile Include="Components\GamePlay\IsometricMapComponent.cs" />
     <Compile Include="Components\GamePlay\MoveToTargetComponent.cs" />
     <Compile Include="Components\GamePlay\RoadComponent.cs" />
@@ -200,7 +200,6 @@
     <Compile Include="Systems\GamePlay\HousingUpgradeSystem.cs" />
     <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
     <Compile Include="Systems\GamePlay\OverlaySystem.cs" />
-    <Compile Include="Systems\InputSystem.cs" />
     <Compile Include="Systems\Renderers\FoundationOverlaySystem.cs" />
     <Compile Include="Systems\Renderers\IRenderSystem.cs" />
     <Compile Include="Systems\Renderers\IsometricMapSystem.cs" />

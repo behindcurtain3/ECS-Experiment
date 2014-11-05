@@ -19,6 +19,7 @@ using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TomShane.Neoforce.Controls;
+using IsoECS.Input;
 
 namespace IsoECS
 {
@@ -66,7 +67,8 @@ namespace IsoECS
             Textures.Instance.Content = Content;
 
             systems = new List<ISystem>();
-            systems.Add(new IsoECS.Systems.InputSystem()); // input system should update before any other system that needs to read the input
+            systems.Add(new CameraSystem());
+            systems.Add(new InspectionSystem());
             systems.Add(new ControlSystem());
             systems.Add(new DateTimeSystem());
             systems.Add(new BehaviorSystem());
@@ -151,13 +153,8 @@ namespace IsoECS
 
             // TODO: create a settings file to read any key bindings from
             inputControlEntity = new Entity();
-            inputControlEntity.AddComponent(new InputController());
             inputControlEntity.AddComponent(new PositionComponent());
             inputControlEntity.AddComponent(new CameraController());
-            inputControlEntity.Get<CameraController>().Up.AddRange(new List<Keys>() { Keys.W, Keys.Up });
-            inputControlEntity.Get<CameraController>().Down.AddRange(new List<Keys>() { Keys.S, Keys.Down });
-            inputControlEntity.Get<CameraController>().Left.AddRange(new List<Keys>() { Keys.A, Keys.Left });
-            inputControlEntity.Get<CameraController>().Right.AddRange(new List<Keys>() { Keys.D, Keys.Right });
             EntityManager.Instance.AddEntity(inputControlEntity);
 
             DrawableComponent diagDrawable = new DrawableComponent();
@@ -175,6 +172,8 @@ namespace IsoECS
             EntityManager.Instance.AddEntity(diagnosticEntity);
 
             // init the systems
+            InputController.Instance.Init();
+
             foreach (ISystem system in systems)
                 system.Init();
 
@@ -214,6 +213,10 @@ namespace IsoECS
             diagnostics.RestartTiming("UI");
             EntityManager.Instance.UI.Update(gameTime);
             diagnostics.StopTiming("UI");
+
+            diagnostics.RestartTiming("InputController");
+            InputController.Instance.Update(gameTime.ElapsedGameTime.Milliseconds);
+            diagnostics.StopTiming("InputController");
 
             // update the game systems
             foreach (ISystem system in systems)

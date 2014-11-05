@@ -7,6 +7,7 @@ using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TomShane.Neoforce.Controls;
+using IsoECS.Input;
 
 namespace IsoECS.Systems.GamePlay
 {
@@ -21,7 +22,6 @@ namespace IsoECS.Systems.GamePlay
 
         private Entity _dataTracker;
         private PositionComponent _camera;
-        private InputController _input;
 
         private List<Button> _buttons = new List<Button>();
         private Manager _manager;
@@ -36,7 +36,6 @@ namespace IsoECS.Systems.GamePlay
             Entity cameraEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
 
             _camera = cameraEntity.Get<PositionComponent>();
-            _input = inputEntity.Get<InputController>();
 
             _db = new Dictionary<string, List<Entity>>();
 
@@ -56,12 +55,26 @@ namespace IsoECS.Systems.GamePlay
             }
 
             CreateCategoryButtons();
+
+            InputController.Instance.LeftClick += new InputController.MouseEventHandler(Instance_LeftClick);
+            InputController.Instance.LeftButtonDown += new InputController.MouseEventHandler(Instance_LeftButtonDown);
+            InputController.Instance.BuildBack.Event += new InputController.KeyboardEventHandler(BuildBack_Event);
+            InputController.Instance.BuildHotKey1.Event += new InputController.KeyboardEventHandler(BuildHotKey1_Event);
+            InputController.Instance.BuildHotKey2.Event += new InputController.KeyboardEventHandler(BuildHotKey2_Event);
+            InputController.Instance.BuildHotKey3.Event += new InputController.KeyboardEventHandler(BuildHotKey3_Event);
+            InputController.Instance.BuildHotKey4.Event += new InputController.KeyboardEventHandler(BuildHotKey4_Event);
+            InputController.Instance.BuildHotKey5.Event += new InputController.KeyboardEventHandler(BuildHotKey5_Event);
+            InputController.Instance.BuildHotKey6.Event += new InputController.KeyboardEventHandler(BuildHotKey6_Event);
+            InputController.Instance.BuildHotKey7.Event += new InputController.KeyboardEventHandler(BuildHotKey7_Event);
+            InputController.Instance.BuildHotKey8.Event += new InputController.KeyboardEventHandler(BuildHotKey8_Event);
+            InputController.Instance.BuildHotKey9.Event += new InputController.KeyboardEventHandler(BuildHotKey9_Event);
+            InputController.Instance.BuildHotKey0.Event += new InputController.KeyboardEventHandler(BuildHotKey0_Event);
         }
 
         public void Shutdown()
         {
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
-            
+
             foreach (List<IGameDrawable> d in drawable.Drawables.Values)
             {
                 foreach (IGameDrawable gd in d)
@@ -73,47 +86,181 @@ namespace IsoECS.Systems.GamePlay
 
             drawable.Drawables.Clear();
             ClearButtons();
+
+            InputController.Instance.LeftClick -= Instance_LeftClick;
+            InputController.Instance.LeftButtonDown -= Instance_LeftButtonDown;
+            InputController.Instance.BuildBack.Event -= BuildBack_Event;
+            InputController.Instance.BuildHotKey1.Event -= BuildHotKey1_Event;
+            InputController.Instance.BuildHotKey2.Event -= BuildHotKey2_Event;
+            InputController.Instance.BuildHotKey3.Event -= BuildHotKey3_Event;
+            InputController.Instance.BuildHotKey4.Event -= BuildHotKey4_Event;
+            InputController.Instance.BuildHotKey5.Event -= BuildHotKey5_Event;
+            InputController.Instance.BuildHotKey6.Event -= BuildHotKey6_Event;
+            InputController.Instance.BuildHotKey7.Event -= BuildHotKey7_Event;
+            InputController.Instance.BuildHotKey8.Event -= BuildHotKey8_Event;
+            InputController.Instance.BuildHotKey9.Event -= BuildHotKey9_Event;
+            InputController.Instance.BuildHotKey0.Event -= BuildHotKey0_Event;
         }
 
-        public void Update(int dt)
+        private void BuildBack_Event(Keys key, InputEventArgs e)
         {
-            // a category has not been chosen
-            if(string.IsNullOrWhiteSpace(_category))
+            if (!string.IsNullOrWhiteSpace(_category))
             {
-                // listen for hotkeys
-                for (int i = 0; i < _buttons.Count; i++)
+                _category = null;
+                _selection = -1;
+                DeselectEntity();
+                ClearButtons();
+                CreateCategoryButtons();
+            }
+        }
+
+        private void BuildHotKey1_Event(Keys key, InputEventArgs e)
+        {
+            TriggerHotkey(0);
+        }
+
+        private void BuildHotKey2_Event(Keys key, InputEventArgs e)
+        {
+            TriggerHotkey(1);
+        }
+
+        private void BuildHotKey3_Event(Keys key, InputEventArgs e)
+        {
+            TriggerHotkey(2);
+        }
+
+        private void BuildHotKey4_Event(Keys key, InputEventArgs e)
+        {
+            TriggerHotkey(3);
+        }
+
+        private void BuildHotKey5_Event(Keys key, InputEventArgs e)
+        {
+            TriggerHotkey(4);
+        }
+
+        private void BuildHotKey6_Event(Keys key, InputEventArgs e)
+        {
+            TriggerHotkey(5);
+        }
+
+        private void BuildHotKey7_Event(Keys key, InputEventArgs e)
+        {
+            TriggerHotkey(6);
+        }
+
+        private void BuildHotKey8_Event(Keys key, InputEventArgs e)
+        {
+            TriggerHotkey(7);
+        }
+
+        private void BuildHotKey9_Event(Keys key, InputEventArgs e)
+        {
+            TriggerHotkey(8);
+        }
+
+        private void BuildHotKey0_Event(Keys key, InputEventArgs e)
+        {
+            TriggerHotkey(9);
+        }
+
+        private void Instance_LeftClick(InputEventArgs e)
+        {
+            BuildSelected();
+        }
+
+        private void Instance_LeftButtonDown(InputEventArgs e)
+        {
+            BuildSelected(true);
+        }
+
+        private void TriggerHotkey(int key)
+        {
+            if (_buttons.Count > key)
+            {
+                if (string.IsNullOrWhiteSpace(_category))
                 {
-                    if (_input.CurrentKeyboard.IsKeyDown(HotKeys[i]) && !_input.PrevKeyboard.IsKeyDown(HotKeys[i]))
-                    {
-                        DisplayCategory((string)_buttons[i].Tag);
-                        break;
-                    }
+                    DisplayCategory((string)_buttons[key].Tag);
+                }
+                else
+                {
+                    _selection = (int)_buttons[key].Tag;
+                    SelectEntity();
                 }
             }
-            // a category has been chosen but no selection
-            else
+        }
+
+        private void BuildSelected(bool drag = false)
+        {
+            if (string.IsNullOrWhiteSpace(_category) || _selection == -1)
+                return;
+
+            DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
+            PositionComponent drawablePosition = _dataTracker.Get<PositionComponent>();
+
+            Entity selectedEntity = _db[_category][_selection];
+            BuildableComponent selectedBuildable = selectedEntity.Get<BuildableComponent>();
+            FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
+
+            if (!selectedBuildable.DragBuildEnabled && drag)
+                return;
+
+            // set the starting coords
+            int x = InputController.Instance.CurrentMouse.X + (int)_camera.X;
+            int y = InputController.Instance.CurrentMouse.Y + (int)_camera.Y;
+
+            // pick out the tile index that the screen coords intersect
+            Point index = EntityManager.Instance.Map.GetIndexFromPosition(x, y);
+
+            // translate the index into a screen position and up the position component
+            Vector2 dPositiion = EntityManager.Instance.Map.GetPositionFromIndex(index.X, index.Y);
+            drawablePosition.X = dPositiion.X;
+            drawablePosition.Y = dPositiion.Y;
+
+            bool spaceTaken = false;
+            foreach (LocationValue lv in foundation.Plan)
             {
-                // listen for hotkeys
-                if (_input.CurrentKeyboard.IsKeyDown(Keys.Escape) && !_input.PrevKeyboard.IsKeyDown(Keys.Escape))
+                if (EntityManager.Instance.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
                 {
-                    _category = null;
-                    _selection = -1;
-                    DeselectEntity();
-                    ClearButtons();
-                    CreateCategoryButtons();
-                    return;
-                }
-                for (int i = 0; i < _buttons.Count; i++)
-                {
-                    if (_input.CurrentKeyboard.IsKeyDown(HotKeys[i]) && !_input.PrevKeyboard.IsKeyDown(HotKeys[i]))
-                    {
-                        _selection = (int)_buttons[i].Tag;
-                        SelectEntity();
-                        break;
-                    }
+                    spaceTaken = true;
+                    break;
                 }
             }
 
+            bool visible = EntityManager.Instance.Map.IsValidIndex(index.X, index.Y);
+
+            if (!visible)
+                return;
+
+            // don't build over a spot that is already taken, don't build if not enough money
+            // TODO: the money check shouldn't even allow the building to be selected
+            if (spaceTaken || EntityManager.Instance.CityInformation.Treasury < selectedBuildable.Cost)
+                return;
+
+            Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
+            buildable.ResetID();
+
+            if (buildable.HasComponent<PositionComponent>())
+            {
+                PositionComponent aPosition = buildable.Get<PositionComponent>();
+                aPosition.X = drawablePosition.X;
+                aPosition.Y = drawablePosition.Y;
+                aPosition.Index = index;
+                aPosition.GenerateAt = string.Empty;
+            }
+            else
+            {
+                PositionComponent bPosition = new PositionComponent(drawablePosition.Position);
+                bPosition.Index = index;
+                buildable.AddComponent(bPosition);
+            }
+
+            EntityManager.Instance.AddEntity(buildable);
+            EntityManager.Instance.CityInformation.Treasury -= selectedBuildable.Cost;
+        }
+        
+        public void Update(int dt)
+        {
             if(string.IsNullOrWhiteSpace(_category) || _selection == -1)
                 return;
 
@@ -125,8 +272,8 @@ namespace IsoECS.Systems.GamePlay
             FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
             
             // set the starting coords
-            int x = _input.CurrentMouse.X + (int)_camera.X;
-            int y = _input.CurrentMouse.Y + (int)_camera.Y;
+            int x = InputController.Instance.CurrentMouse.X + (int)_camera.X;
+            int y = InputController.Instance.CurrentMouse.Y + (int)_camera.Y;
 
             // pick out the tile index that the screen coords intersect
             Point index = EntityManager.Instance.Map.GetIndexFromPosition(x, y);
@@ -158,40 +305,7 @@ namespace IsoECS.Systems.GamePlay
             {
                 foreach (IGameDrawable gd in d)
                     gd.Alpha = (spaceTaken) ? 0.5f : 0.85f;
-            }
-            
-            if (!visible)
-                return;
-            
-            if (_input.CurrentMouse.LeftButton == ButtonState.Pressed && (selectedBuildable.DragBuildEnabled || _input.PrevMouse.LeftButton != ButtonState.Pressed))
-            {
-                // don't build over a spot that is already taken, don't build if not enough money
-                // TODO: the money check shouldn't even allow the building to be selected
-                if (spaceTaken || EntityManager.Instance.CityInformation.Treasury < selectedBuildable.Cost)
-                    return;
-
-                Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
-                buildable.ResetID();
-
-                if (buildable.HasComponent<PositionComponent>())
-                {
-                    PositionComponent aPosition = buildable.Get<PositionComponent>();
-                    aPosition.X = drawablePosition.X;
-                    aPosition.Y = drawablePosition.Y;
-                    aPosition.Index = index;
-                    aPosition.GenerateAt = string.Empty;
-                }
-                else
-                {
-                    PositionComponent bPosition = new PositionComponent(drawablePosition.Position);
-                    bPosition.Index = index;
-                    buildable.AddComponent(bPosition);
-                }
-
-                EntityManager.Instance.AddEntity(buildable);
-
-                EntityManager.Instance.CityInformation.Treasury -= selectedBuildable.Cost;
-            }
+            }            
         }
 
         // called when the selected entity changes

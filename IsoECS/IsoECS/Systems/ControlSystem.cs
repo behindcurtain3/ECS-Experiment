@@ -6,43 +6,50 @@ using IsoECS.Systems.GamePlay;
 using IsoECS.Systems.UI;
 using Microsoft.Xna.Framework.Input;
 using IsoECS.Systems.Threaded;
+using IsoECS.Input;
 
 namespace IsoECS.Systems
 {
     public class ControlSystem : ISystem
     {
-        // binds a key to activate/deactivate a system
-        public Dictionary<Keys, Type> KeyBindings { get; private set; }
-
-        public Dictionary<Type, ISystem> ControlSystems { get; private set; }
-
         public ISystem ExclusiveSystem { get; private set; }
 
         public ControlSystem()
         {
-            KeyBindings = new Dictionary<Keys, Type>();
-            KeyBindings.Add(Keys.B, typeof(ConstructionSystem));
-            KeyBindings.Add(Keys.OemTilde, typeof(DebugSystem));
-
-            ControlSystems = new Dictionary<Type, ISystem>();
-            ControlSystems.Add(typeof(CameraSystem), new CameraSystem());
-            ControlSystems.Add(typeof(InspectionSystem), new InspectionSystem());
         }
 
         public void Init()
         {
-            foreach (ISystem system in ControlSystems.Values)
-                system.Init();
+            InputController.Instance.ConstructionMode.Event += new InputController.KeyboardEventHandler(Instance_ConstructionMode);
         }
 
         public void Shutdown()
         {
-            foreach (ISystem system in ControlSystems.Values)
-                system.Shutdown();
+            InputController.Instance.ConstructionMode.Event -= Instance_ConstructionMode;
+        }
+
+        private void Instance_ConstructionMode(Keys key, InputEventArgs e)
+        {
+            if (ExclusiveSystem != null)
+                ExclusiveSystem.Shutdown();
+
+            if (ExclusiveSystem is ConstructionSystem)
+            {
+                ExclusiveSystem = null;
+            }
+            else
+            {
+                ExclusiveSystem = new ConstructionSystem();
+                ExclusiveSystem.Init();
+            }
         }
 
         public void Update(int dt)
         {
+            if (ExclusiveSystem != null)
+                ExclusiveSystem.Update(dt);
+
+            /*
             Entity input = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
             KeyboardState keyboard = input.Get<InputController>().CurrentKeyboard;
             KeyboardState prevKeyboard = input.Get<InputController>().PrevKeyboard;
@@ -78,6 +85,7 @@ namespace IsoECS.Systems
 
             if (ExclusiveSystem != null)
                 ExclusiveSystem.Update(dt);
+             */
         }
     }
 }

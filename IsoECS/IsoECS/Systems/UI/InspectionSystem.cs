@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using TomShane.Neoforce.Controls;
 using EventArgs = TomShane.Neoforce.Controls.EventArgs;
 using EventHandler = TomShane.Neoforce.Controls.EventHandler;
+using IsoECS.Input;
 
 namespace IsoECS.Systems.UI
 {
@@ -20,79 +21,15 @@ namespace IsoECS.Systems.UI
         private List<Button> _selectionButtons;
         private EntityRenderer _renderer;
 
-        private InputController _input;
         private PositionComponent _camera;
 
         public void Update(int dt)
         {
-            if (_input.CurrentMouse.RightButton == ButtonState.Pressed && _input.PrevMouse.RightButton != ButtonState.Pressed)
-            {
-                foreach (Control c in EntityManager.Instance.UI.Controls)
-                {
-                    if (c.Passive || !c.Visible)
-                        continue;
-
-                    if (c.ControlRect.Contains((int)_input.CurrentMouse.X, (int)_input.CurrentMouse.Y))
-                    {
-                        return;
-                    }
-                }
-
-                // find any entities at the index the mouse was clicked on
-                // set the starting coords
-                int x = _input.CurrentMouse.X + (int)_camera.X;
-                int y = _input.CurrentMouse.Y + (int)_camera.Y;
-
-                // pick out the tile index that the screen coords intersect
-                Point index = EntityManager.Instance.Map.GetIndexFromPosition(x, y);
-                List<Entity> potentialEntities = EntityManager.Instance.Entities.FindAll(ValidEntity);
-                List<Entity> selectedEntities = new List<Entity>();
-
-                foreach (Entity potential in potentialEntities)
-                {
-                    PositionComponent position = potential.Get<PositionComponent>();
-
-                    if (position.Index == index)
-                    {
-                        selectedEntities.Add(potential);
-                        continue;
-                    }
-                }
-
-                Entity foundationEntity = null;
-                if (EntityManager.Instance.Foundations.SpaceTaken.ContainsKey(index))
-                    foundationEntity = EntityManager.Instance.GetEntity(EntityManager.Instance.Foundations.SpaceTaken[index]);
-
-                if (foundationEntity != null && !selectedEntities.Contains(foundationEntity))
-                    selectedEntities.Add(foundationEntity);
-
-                if (selectedEntities.Count > 0)
-                {
-                    if (selectedEntities.Count == 1)
-                    {
-                        // show the entity!
-                        ShowEntity(selectedEntities[0]);
-                    }
-                    else
-                    {
-                        // show the selection window
-                        ShowSelection(selectedEntities);
-                    }
-                }
-                else
-                {
-                    if(_renderer != null)
-                        _renderer.Shutdown();
-
-                    _selectionWindow.Hide();
-                }
-            }
         }
 
         public void Init()
         {
             _manager = EntityManager.Instance.UI;
-            _input = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); }).Get<InputController>();
             _camera = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); }).Get<PositionComponent>();
 
             _selectionWindow = new Window(_manager)
@@ -110,6 +47,8 @@ namespace IsoECS.Systems.UI
             EntityManager.Instance.UI.Add(_selectionWindow);
 
             _selectionButtons = new List<Button>();
+
+            InputController.Instance.RightClick += new InputController.MouseEventHandler(Instance_RightClick);
         }
 
         public void Shutdown()
@@ -118,6 +57,59 @@ namespace IsoECS.Systems.UI
                 _renderer.Shutdown();
 
             EntityManager.Instance.UI.Remove(_selectionWindow);
+            InputController.Instance.RightClick -= Instance_RightClick;
+        }
+
+        private void Instance_RightClick(InputEventArgs e)
+        {
+            // find any entities at the index the mouse was clicked on
+            // set the starting coords
+            int x = e.Input.CurrentMouse.X + (int)_camera.X;
+            int y = e.Input.CurrentMouse.Y + (int)_camera.Y;
+
+            // pick out the tile index that the screen coords intersect
+            Point index = EntityManager.Instance.Map.GetIndexFromPosition(x, y);
+            List<Entity> potentialEntities = EntityManager.Instance.Entities.FindAll(ValidEntity);
+            List<Entity> selectedEntities = new List<Entity>();
+
+            foreach (Entity potential in potentialEntities)
+            {
+                PositionComponent position = potential.Get<PositionComponent>();
+
+                if (position.Index == index)
+                {
+                    selectedEntities.Add(potential);
+                    continue;
+                }
+            }
+
+            Entity foundationEntity = null;
+            if (EntityManager.Instance.Foundations.SpaceTaken.ContainsKey(index))
+                foundationEntity = EntityManager.Instance.GetEntity(EntityManager.Instance.Foundations.SpaceTaken[index]);
+
+            if (foundationEntity != null && !selectedEntities.Contains(foundationEntity))
+                selectedEntities.Add(foundationEntity);
+
+            if (selectedEntities.Count > 0)
+            {
+                if (selectedEntities.Count == 1)
+                {
+                    // show the entity!
+                    ShowEntity(selectedEntities[0]);
+                }
+                else
+                {
+                    // show the selection window
+                    ShowSelection(selectedEntities);
+                }
+            }
+            else
+            {
+                if (_renderer != null)
+                    _renderer.Shutdown();
+
+                _selectionWindow.Hide();
+            }
         }
 
         private void ShowEntity(Entity e)

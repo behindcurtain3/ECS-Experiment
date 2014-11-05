@@ -1,76 +1,58 @@
-﻿using System.Collections.Generic;
-using IsoECS.Components;
+﻿using IsoECS.Components;
 using IsoECS.Entities;
+using IsoECS.Input;
 using Microsoft.Xna.Framework.Input;
 
 namespace IsoECS.Systems
 {
     public class CameraSystem : ISystem
     {
+        public int Speed { get; set; }
+        public PositionComponent Camera { get; set; }
+
         public void Init()
         {
+            Speed = 10;
+
+            Entity camera = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
+            Camera = camera.Get<PositionComponent>();
+
+            InputController.Instance.CameraUpListener.Event += new InputController.KeyboardEventHandler(Instance_CameraUp);
+            InputController.Instance.CameraDownListener.Event += new InputController.KeyboardEventHandler(Instance_CameraDown);
+            InputController.Instance.CameraLeftListener.Event += new InputController.KeyboardEventHandler(Instance_CameraLeft);
+            InputController.Instance.CameraRightListener.Event += new InputController.KeyboardEventHandler(Instance_CameraRight);
         }
 
         public void Shutdown()
         {
+            InputController.Instance.CameraUpListener.Event -= Instance_CameraUp;
+            InputController.Instance.CameraDownListener.Event -= Instance_CameraDown;
+            InputController.Instance.CameraLeftListener.Event -= Instance_CameraLeft;
+            InputController.Instance.CameraRightListener.Event -= Instance_CameraRight;
         }
+
         public void Update(int dt)
         {
-            Entity camera = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
-            Entity input = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
+        }
 
-            if (camera != null)
-            {
-                CameraController controller = camera.Get<CameraController>();
-                KeyboardState keyboard = input.Get<InputController>().CurrentKeyboard;
-                PositionComponent position = camera.Get<PositionComponent>();
-                int speed = 10;
+        private void Instance_CameraRight(Keys key, InputEventArgs e)
+        {
+            Camera.X += Speed;   
+        }
 
-                bool up, down, left, right;
-                up = down = left = right = false;
+        private void Instance_CameraLeft(Keys key, InputEventArgs e)
+        {
+            Camera.X -= Speed;
+        }
 
-                // check each type of key
-                foreach (Keys key in controller.Up)
-                {
-                    if (keyboard.IsKeyDown(key))
-                    {
-                        up = true;
-                        break;
-                    }
-                }
+        private void Instance_CameraDown(Keys key, InputEventArgs e)
+        {
+            Camera.Y += Speed;
+        }
 
-                foreach (Keys key in controller.Down)
-                {
-                    if (keyboard.IsKeyDown(key))
-                    {
-                        down = true;
-                        break;
-                    }
-                }
-
-                foreach (Keys key in controller.Left)
-                {
-                    if (keyboard.IsKeyDown(key))
-                    {
-                        left = true;
-                        break;
-                    }
-                }
-
-                foreach (Keys key in controller.Right)
-                {
-                    if (keyboard.IsKeyDown(key))
-                    {
-                        right = true;
-                        break;
-                    }
-                }
-
-                if (up) position.Y -= speed;
-                if (down) position.Y += speed;
-                if (left) position.X -= speed;
-                if (right) position.X += speed;
-            }
+        private void Instance_CameraUp(Keys key, InputEventArgs e)
+        {
+            Camera.Y -= Speed;
         }
     }
 }
