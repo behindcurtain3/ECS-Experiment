@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using IsoECS.Components;
 using IsoECS.DataStructures;
-using IsoECS.Entities;
 using Microsoft.Xna.Framework;
+using TecsDotNet;
 
 namespace IsoECS.Behaviors
 {
@@ -11,11 +11,11 @@ namespace IsoECS.Behaviors
         private List<Point> _validExits = new List<Point>();
         private List<Path> _createdPaths = new List<Path>();
 
-        public int TargetID { get; set; }
-        public int ExitID { get; set; }
+        public uint TargetID { get; set; }
+        public uint ExitID { get; set; }
         public Path SelectedPath { get; set; }
 
-        public override BehaviorStatus Update(Entity self, int dt)
+        public override BehaviorStatus Update(Entity self, double dt)
         {
             BehaviorStatus status = base.Update(self, dt);
 
@@ -79,8 +79,8 @@ namespace IsoECS.Behaviors
                     // get any valid exits
                     if (_validExits.Count == 0)
                     {
-                        Entity target = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == TargetID; });
-                        Entity exit = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == ExitID; });
+                        Entity target = World.Entities.Get(TargetID);
+                        Entity exit = World.Entities.Get(ExitID);
 
                         // if invalid target fail out
                         if (target == null || exit == null)
@@ -94,7 +94,7 @@ namespace IsoECS.Behaviors
                             return BehaviorStatus.FAIL;
                         }
 
-                        _validExits = EntityManager.Instance.GetValidExitsFromFoundation(exit);
+                        _validExits = World.GetValidExitsFromFoundation(exit);
 
                         if (_validExits.Count == 0)
                         {

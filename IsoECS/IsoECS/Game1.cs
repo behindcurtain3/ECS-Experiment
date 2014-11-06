@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
-using IsoECS.Entities;
+using IsoECS.DataStructures.Json.Converters;
 using IsoECS.GamePlay;
 using IsoECS.GamePlay.Map;
+using IsoECS.RenderSystems;
 using IsoECS.Systems;
 using IsoECS.Systems.GamePlay;
 using IsoECS.Systems.Threaded;
@@ -15,11 +14,10 @@ using IsoECS.Systems.UI;
 using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TecsDotNet;
 using TomShane.Neoforce.Controls;
-using IsoECS.Input;
 
 namespace IsoECS
 {
@@ -31,11 +29,12 @@ namespace IsoECS
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
-        List<ISystem> systems;
         Thread pathThread;
         Thread pathThread2;
 
         DiagnosticInfo diagnostics;
+        GameWorld world;
+
         Entity diagnosticEntity;
         Entity inputControlEntity;
         int _updateDiagnosticsRate = 500;
@@ -66,48 +65,46 @@ namespace IsoECS
             Textures.Instance.Graphics = GraphicsDevice;
             Textures.Instance.Content = Content;
 
-            systems = new List<ISystem>();
-            systems.Add(new CameraSystem());
-            systems.Add(new InspectionSystem());
-            systems.Add(new ControlSystem());
-            systems.Add(new DateTimeSystem());
-            systems.Add(new BehaviorSystem());
-            systems.Add(new ProductionSystem());
-            systems.Add(new ImmigrationSystem());
-            systems.Add(new CityInformationSystem());
-            systems.Add(new HousingUpgradeSystem());
-            systems.Add(new OverlaySystem() { Graphics = GraphicsDevice });
-
-            SystemManager.Instance.CustomRenderers.Add(new IsometricMapSystem()
+            world = new GameWorld();
+            world.Systems.Add(world.Input);
+            world.Systems.Add(new CameraSystem());
+            world.Systems.Add(new InspectionSystem());
+            world.Systems.Add(new ControlSystem());
+            world.Systems.Add(new DateTimeSystem());
+            world.Systems.Add(new BehaviorSystem());
+            world.Systems.Add(new ImmigrationSystem());
+            world.Systems.Add(new ProductionSystem());
+            world.Systems.Add(new CityInformationSystem());
+            world.Systems.Add(new HousingUpgradeSystem());
+            world.Systems.Add(new OverlaySystem() { Graphics = GraphicsDevice });
+            //world.Systems.Add(new DebugSystem());
+            world.Systems.Add(new IsometricMapSystem()
             {
                 Graphics = GraphicsDevice
             });
 
-            SystemManager.Instance.Renderer = new RenderSystem()
+            world.Renderer = new DefaultRenderSystem()
             {
                 Graphics = GraphicsDevice,
                 ClearColor = Color.Black
             };
-
-            EntityManager.Instance.UI = new Manager(this, "Pixel")
+            world.Systems.Add(world.Renderer);
+            
+            world.UI = new Manager(this, "Pixel")
             {
                 AutoCreateRenderTarget = false,
                 AutoUnfocus = true,
                 TargetFrames = 60
             };
-            EntityManager.Instance.UI.Initialize();
-            EntityManager.Instance.UI.RenderTarget = EntityManager.Instance.UI.CreateRenderTarget();
+            world.UI.Initialize();
+            world.UI.RenderTarget = world.UI.CreateRenderTarget();
 
-            Window w = new TomShane.Neoforce.Controls.Window(EntityManager.Instance.UI)
+            Window w = new TomShane.Neoforce.Controls.Window(world.UI)
             {
                 Text = "My Quick Test Window"
             };
             w.Init();
             w.Center();
-
-            // setup random
-            // TODO: init the seed from the scenario?
-            EntityManager.Random = new Random();
 
             // Load the scenario
             // TODO: put this in a method somewhere
@@ -118,35 +115,47 @@ namespace IsoECS
             Textures.Instance.LoadFromJson(scenario.Textures, true);
 
             // Load the drawables
-            DrawableLibrary.Instance.LoadFromJson(scenario.Drawables, true);
+            world.Prototypes.LoadFromFile(
+                new DrawablesLoader(),
+                scenario.Drawables,
+                true);
+
 
             // Load in entities
-            Prototype.Instance.LoadFromJson(scenario.Entities, true);
+            world.Prototypes.LoadFromFile(
+                new CustomEntityLoader() { Converter = new CustomComponentConverter() }, 
+                scenario.Entities, 
+                true);
                 
             // load scenario data
             GameData.Instance.LoadItemsFromJson(scenario.Items, true);
             GameData.Instance.LoadRecipesFromJson(scenario.Recipes, true);
 
+            CustomEntityLoader cel = new CustomEntityLoader()
+            {
+                Library = world.Prototypes,
+                Converter = new CustomComponentConverter()
+            };
             foreach (JObject o in scenario.DefaultEntities)
             {
-                Entity e = Prototype.Instance.LoadEntity(o);
+                Entity e = (Entity)cel.LoadPrototype(o);
 
-                EntityManager.Instance.AddEntity(e);
+                world.Entities.Add(e);
             }
 
             // start up the pathfinder thread
             PathfinderSystem pfs = new PathfinderSystem()
             {
-                Map = EntityManager.Instance.Map,
-                Collisions = EntityManager.Instance.Collisions
+                Map = world.Map,
+                Collisions = world.Collisions
             };
             pathThread = new Thread(new ThreadStart(pfs.Run));
             pathThread.Start();
 
             pfs = new PathfinderSystem()
             {
-                Map = EntityManager.Instance.Map,
-                Collisions = EntityManager.Instance.Collisions
+                Map = world.Map,
+                Collisions = world.Collisions
             };
             pathThread2 = new Thread(new ThreadStart(pfs.Run));
             //pathThread2.Start();
@@ -155,7 +164,7 @@ namespace IsoECS
             inputControlEntity = new Entity();
             inputControlEntity.AddComponent(new PositionComponent());
             inputControlEntity.AddComponent(new CameraController());
-            EntityManager.Instance.AddEntity(inputControlEntity);
+            world.Entities.Add(inputControlEntity);
 
             DrawableComponent diagDrawable = new DrawableComponent();
             diagDrawable.Add("Text", new DrawableText()
@@ -169,18 +178,7 @@ namespace IsoECS
             diagnosticEntity = new Entity();
             diagnosticEntity.AddComponent(new PositionComponent() { X = 0, Y = 50f });
             diagnosticEntity.AddComponent(diagDrawable);
-            EntityManager.Instance.AddEntity(diagnosticEntity);
-
-            // init the systems
-            InputController.Instance.Init();
-
-            foreach (ISystem system in systems)
-                system.Init();
-
-            foreach (IRenderSystem renderer in SystemManager.Instance.CustomRenderers)
-                renderer.Init();
-
-            SystemManager.Instance.Renderer.Init();
+            world.Entities.Add(diagnosticEntity);
         }
 
         /// <summary>
@@ -209,22 +207,14 @@ namespace IsoECS
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            // update the game systems
+            double dt = (double)gameTime.ElapsedGameTime.Milliseconds * 0.001;
+            world.Update(dt);
+
             // update the UI
             diagnostics.RestartTiming("UI");
-            EntityManager.Instance.UI.Update(gameTime);
+            world.UI.Update(gameTime);
             diagnostics.StopTiming("UI");
-
-            diagnostics.RestartTiming("InputController");
-            InputController.Instance.Update(gameTime.ElapsedGameTime.Milliseconds);
-            diagnostics.StopTiming("InputController");
-
-            // update the game systems
-            foreach (ISystem system in systems)
-            {
-                diagnostics.RestartTiming(system.GetType().Name);
-                system.Update(gameTime.ElapsedGameTime.Milliseconds);
-                diagnostics.StopTiming(system.GetType().Name);
-            }
 
             _updateDiagnosticsCountdown -= gameTime.ElapsedGameTime.Milliseconds;
             if (_updateDiagnosticsCountdown <= 0)
@@ -242,20 +232,19 @@ namespace IsoECS
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            EntityManager.Instance.UI.BeginDraw(gameTime);
+            world.UI.BeginDraw(gameTime);
 
-            foreach (IRenderSystem render in SystemManager.Instance.CustomRenderers)
+            foreach(TecsDotNet.System s in world.Systems)
             {
-                diagnostics.RestartTiming(render.GetType().Name);
-                render.Draw(spriteBatch, spriteFont);
-                diagnostics.StopTiming(render.GetType().Name);
+                if (s is RenderSystem)
+                {
+                    diagnostics.RestartTiming(s.GetType().Name);
+                    ((RenderSystem)s).Draw(spriteBatch, spriteFont);
+                    diagnostics.StopTiming(s.GetType().Name);
+                }
             }
 
-            diagnostics.RestartTiming(SystemManager.Instance.Renderer.GetType().Name);
-            SystemManager.Instance.Renderer.Draw(spriteBatch, spriteFont);
-            diagnostics.StopTiming(SystemManager.Instance.Renderer.GetType().Name);
-
-            EntityManager.Instance.UI.EndDraw();
+            world.UI.EndDraw();
 
             base.Draw(gameTime);
         }

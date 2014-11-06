@@ -2,37 +2,34 @@
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataRenderers;
-using IsoECS.DataStructures;
-using IsoECS.Entities;
-using IsoECS.GamePlay;
+using IsoECS.Input;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+using TecsDotNet;
 using TomShane.Neoforce.Controls;
 using EventArgs = TomShane.Neoforce.Controls.EventArgs;
 using EventHandler = TomShane.Neoforce.Controls.EventHandler;
-using IsoECS.Input;
 
 namespace IsoECS.Systems.UI
 {
-    public class InspectionSystem : ISystem
+    public class InspectionSystem : GameSystem
     {
-        private Manager _manager;
         private Window _selectionWindow;
         private List<Button> _selectionButtons;
         private EntityRenderer _renderer;
 
         private PositionComponent _camera;
 
-        public void Update(int dt)
+        public override void Update(double dt)
         {
         }
 
-        public void Init()
+        public override void Init()
         {
-            _manager = EntityManager.Instance.UI;
-            _camera = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); }).Get<PositionComponent>();
+            base.Init();
 
-            _selectionWindow = new Window(_manager)
+            _camera = World.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); }).Get<PositionComponent>();
+
+            _selectionWindow = new Window(World.UI)
             {
                 Visible = false,
                 Text = "Inspector",
@@ -44,20 +41,20 @@ namespace IsoECS.Systems.UI
                 Left = -1000
             };
             _selectionWindow.Init();
-            EntityManager.Instance.UI.Add(_selectionWindow);
+            World.UI.Add(_selectionWindow);
 
             _selectionButtons = new List<Button>();
 
-            InputController.Instance.RightClick += new InputController.MouseEventHandler(Instance_RightClick);
+            World.Input.RightClick += new InputController.MouseEventHandler(Instance_RightClick);
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
             if (_renderer != null)
                 _renderer.Shutdown();
 
-            EntityManager.Instance.UI.Remove(_selectionWindow);
-            InputController.Instance.RightClick -= Instance_RightClick;
+            World.UI.Remove(_selectionWindow);
+            World.Input.RightClick -= Instance_RightClick;
         }
 
         private void Instance_RightClick(InputEventArgs e)
@@ -68,8 +65,8 @@ namespace IsoECS.Systems.UI
             int y = e.Input.CurrentMouse.Y + (int)_camera.Y;
 
             // pick out the tile index that the screen coords intersect
-            Point index = EntityManager.Instance.Map.GetIndexFromPosition(x, y);
-            List<Entity> potentialEntities = EntityManager.Instance.Entities.FindAll(ValidEntity);
+            Point index = World.Map.GetIndexFromPosition(x, y);
+            List<Entity> potentialEntities = World.Entities.FindAll(ValidEntity);
             List<Entity> selectedEntities = new List<Entity>();
 
             foreach (Entity potential in potentialEntities)
@@ -84,8 +81,8 @@ namespace IsoECS.Systems.UI
             }
 
             Entity foundationEntity = null;
-            if (EntityManager.Instance.Foundations.SpaceTaken.ContainsKey(index))
-                foundationEntity = EntityManager.Instance.GetEntity(EntityManager.Instance.Foundations.SpaceTaken[index]);
+            if (World.Foundations.SpaceTaken.ContainsKey(index))
+                foundationEntity = World.Entities.Get(World.Foundations.SpaceTaken[index]);
 
             if (foundationEntity != null && !selectedEntities.Contains(foundationEntity))
                 selectedEntities.Add(foundationEntity);
@@ -124,7 +121,7 @@ namespace IsoECS.Systems.UI
                 }
                 else
                 {
-                    _renderer = new EntityRenderer(e, _manager);
+                    _renderer = new EntityRenderer(e, World);
                     _renderer.Next.Click += new EventHandler(Next_Click);
                     _renderer.Previous.Click += new EventHandler(Previous_Click);
                 }
@@ -191,17 +188,17 @@ namespace IsoECS.Systems.UI
                 return;
 
             Entity entity = _renderer.Data;
-            int index = EntityManager.Instance.Entities.IndexOf(entity);
-            int previous = (index - 1 < 0) ? EntityManager.Instance.Entities.Count - 1 : index - 1;
+            int index = World.Entities.IndexOf(entity);
+            int previous = (index - 1 < 0) ? World.Entities.Count - 1 : index - 1;
 
             while (previous != index)
             {
-                if (!string.IsNullOrWhiteSpace(EntityManager.Instance.Entities[previous].UniqueID))
+                if (!string.IsNullOrWhiteSpace(World.Entities[previous].PrototypeID))
                 {
                     // do the check
-                    if (EntityManager.Instance.Entities[previous].UniqueID.Equals(entity.UniqueID))
+                    if (World.Entities[previous].PrototypeID.Equals(entity.PrototypeID))
                     {
-                        _renderer.Update(EntityManager.Instance.Entities[previous]);
+                        _renderer.Update(World.Entities[previous]);
                         return;
                     }
                 }
@@ -210,7 +207,7 @@ namespace IsoECS.Systems.UI
                 previous--;
 
                 if (previous < 0)
-                    previous = EntityManager.Instance.Entities.Count - 1;
+                    previous = World.Entities.Count - 1;
             }
         }
 
@@ -225,17 +222,17 @@ namespace IsoECS.Systems.UI
             // citizen -> citizen
 
             Entity entity = _renderer.Data;
-            int index = EntityManager.Instance.Entities.IndexOf(entity);
-            int next = (index + 1 >= EntityManager.Instance.Entities.Count) ? 0 : index + 1;
+            int index = World.Entities.IndexOf(entity);
+            int next = (index + 1 >= World.Entities.Count) ? 0 : index + 1;
 
             while (next != index)
             {
-                if (!string.IsNullOrWhiteSpace(EntityManager.Instance.Entities[next].UniqueID))
+                if (!string.IsNullOrWhiteSpace(World.Entities[next].PrototypeID))
                 {
                     // do the check
-                    if (EntityManager.Instance.Entities[next].UniqueID.Equals(entity.UniqueID))
+                    if (World.Entities[next].PrototypeID.Equals(entity.PrototypeID))
                     {
-                        _renderer.Update(EntityManager.Instance.Entities[next]);
+                        _renderer.Update(World.Entities[next]);
                         return;
                     }
                 }
@@ -243,7 +240,7 @@ namespace IsoECS.Systems.UI
                 // increment the index
                 next++;
 
-                if (next >= EntityManager.Instance.Entities.Count)
+                if (next >= World.Entities.Count)
                     next = 0;
             }
         }

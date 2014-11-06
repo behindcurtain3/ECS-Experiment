@@ -1,6 +1,7 @@
 {
-  "Entities" : [
+  "Prototypes" : [
     {
+		"PrototypeID": "buildable-farm-wheat",
 		"Components": [
 			{
 				"Type": "BuildableComponent",

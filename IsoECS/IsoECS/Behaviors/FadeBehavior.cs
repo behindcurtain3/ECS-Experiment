@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using IsoECS.Components;
+﻿using IsoECS.Components;
 using IsoECS.DataStructures;
-using IsoECS.Entities;
+using IsoECS.GamePlay;
+using TecsDotNet;
 
 namespace IsoECS.Behaviors
 {
     public class FadeBehavior : Behavior
     {
-        public int FadeTime { get; set; }
-        public int FadeCounter { get; set; }
+        public double FadeTime { get; set; }
+        public double FadeCounter { get; set; }
         public bool FadeIn { get; set; }
         public bool Skip { get; private set; }
 
@@ -16,19 +16,19 @@ namespace IsoECS.Behaviors
         {
             Skip = false;
             FadeIn = true;
-            FadeTime = 750;
+            FadeTime = 0.75;
             FadeCounter = FadeTime;
         }
 
-        public override void Init(Entity self)
+        public override void Init(GameWorld world, Entity self)
         {
-            base.Init(self);
+            base.Init(world, self);
 
             DrawableComponent drawable = self.Get<DrawableComponent>();
 
             if (FadeIn)
             {
-                foreach (IGameDrawable d in drawable.Get("Foreground"))
+                foreach (GameDrawable d in drawable.Get("Foreground"))
                 {
                     if (d is DrawableSprite)
                         if (d.Alpha >= 1.0f)
@@ -38,7 +38,7 @@ namespace IsoECS.Behaviors
                 }
             }
 
-            foreach (IGameDrawable d in drawable.Get("Foreground"))
+            foreach (GameDrawable d in drawable.Get("Foreground"))
             {
                 if(FadeIn)
                     FadeCounter = FadeTime - (int)(d.Alpha * FadeTime);
@@ -48,7 +48,7 @@ namespace IsoECS.Behaviors
             }
         }
 
-        public override BehaviorStatus Update(Entity self, int dt)
+        public override BehaviorStatus Update(Entity self, double dt)
         {
             BehaviorStatus status = base.Update(self, dt);
 
@@ -59,7 +59,7 @@ namespace IsoECS.Behaviors
 
             DrawableComponent drawable = self.Get<DrawableComponent>();
 
-            foreach (IGameDrawable d in drawable.Get("Foreground"))
+            foreach (GameDrawable d in drawable.Get("Foreground"))
             {
                 if (d is DrawableSprite)
                 {
@@ -74,7 +74,7 @@ namespace IsoECS.Behaviors
             {
                 if (!FadeIn)
                 {
-                    foreach (IGameDrawable d in drawable.Get("Foreground"))
+                    foreach (GameDrawable d in drawable.Get("Foreground"))
                     {
                         if(d is DrawableSprite)
                             d.Visible = false;

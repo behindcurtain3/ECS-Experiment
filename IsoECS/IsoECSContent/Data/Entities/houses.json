@@ -1,7 +1,7 @@
 {
-	"Entities" : [
+	"Prototypes" : [
 		{
-			"UniqueID": "house-pleb-plot",
+			"PrototypeID": "buildable-house-pleb-plot",
 			"Components": [
 				{
 					"Type": "BuildableComponent",
@@ -23,7 +23,7 @@
 					"Category": "Urban",
 					"MaxOccupants": 10,
 					"Rent": 6,
-					"UpgradesTo": "house-pleb-small-insula",
+					"UpgradesTo": "buildable-house-pleb-small-insula",
 					"UpgradeRequirements": {
 						"MinimumOccupants": 1
 					}
@@ -61,7 +61,7 @@
 			]
 		},
 		{
-			"UniqueID": "house-pleb-small-insula",
+			"PrototypeID": "buildable-house-pleb-small-insula",
 			"Components": [
 				{
 					"Type": "BuildableComponent",

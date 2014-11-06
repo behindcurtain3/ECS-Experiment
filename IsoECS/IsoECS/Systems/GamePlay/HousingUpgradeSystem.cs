@@ -1,29 +1,37 @@
 ﻿using System.Collections.Generic;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
-using IsoECS.DataStructures;
-using IsoECS.Entities;
-using IsoECS.Util;
+using TecsDotNet;
+using TecsDotNet.Util;
 
 namespace IsoECS.Systems.GamePlay
 {
-    public class HousingUpgradeSystem : ISystem
+    public class HousingUpgradeSystem : GameSystem
     {
         private List<Entity> housingUnits = new List<Entity>();
 
-        public void Update(int dt)
+        public override void Update(double dt)
         {
         }
 
-        public void Init()
+        public override void Init()
         {
-            housingUnits.AddRange(EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); }));
+            base.Init();
+            housingUnits.AddRange(World.Entities.FindAll(delegate(Entity e) { return e.HasComponent<HousingComponent>(); }));
 
-            EntityManager.Instance.EntityAdded += new EntityManager.EntityEventHandler(Instance_EntityAdded);
-            EntityManager.Instance.EntityRemoved -= new EntityManager.EntityEventHandler(Instance_EntityRemoved);
+            World.Entities.EntityAdded += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityAdded);
+            World.Entities.EntityRemoved += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityRemoved);
+        }
+        
+        private void Entities_EntityRemoved(Entity e, World world)
+        {
+            if (e.HasComponent<HousingComponent>())
+                e.Get<HousingComponent>().TennantAdded -= Housing_TennantAdded;
+
+            housingUnits.Remove(e);
         }
 
-        private void Instance_EntityAdded(Entity e)
+        private void Entities_EntityAdded(Entity e, World world)
         {
             if (e.HasComponent<HousingComponent>())
             {
@@ -51,16 +59,18 @@ namespace IsoECS.Systems.GamePlay
                 }
             }
 
+            Entity entity = World.Entities.Find(delegate(Entity e) { return e.HasComponent<HousingComponent>() && e.Get<HousingComponent>().Equals(housing); });
+
             // swap out the HousingComponent with the upgraded version and the DrawableComponent
-            housing.BelongsTo.RemoveComponent(housing.BelongsTo.Get<DrawableComponent>());
-            housing.BelongsTo.RemoveComponent(housing.BelongsTo.Get<BuildableComponent>());
+            entity.RemoveComponent(entity.Get<DrawableComponent>());
+            entity.RemoveComponent(entity.Get<BuildableComponent>());
 
             // copy out the entity to upgrade to from the library
-            Entity upgradedEntity = Serialization.DeepCopy<Entity>(Prototype.Instance.Get(housing.UpgradesTo));
+            Entity upgradedEntity = (Entity)World.Prototypes[housing.UpgradesTo];
 
             // copy in the new components
-            housing.BelongsTo.AddComponent(Serialization.DeepCopy<DrawableComponent>(upgradedEntity.Get<DrawableComponent>()));
-            housing.BelongsTo.AddComponent(Serialization.DeepCopy<BuildableComponent>(upgradedEntity.Get<BuildableComponent>()));
+            entity.AddComponent(Serialization.DeepCopy<DrawableComponent>(upgradedEntity.Get<DrawableComponent>()));
+            entity.AddComponent(Serialization.DeepCopy<BuildableComponent>(upgradedEntity.Get<BuildableComponent>()));
 
             // make sure the housing tennant data is copied over
             HousingComponent replacement = Serialization.DeepCopy<HousingComponent>(upgradedEntity.Get<HousingComponent>());
@@ -72,18 +82,10 @@ namespace IsoECS.Systems.GamePlay
             housing.Upgrade(replacement.UpgradesTo);
 
             // copy over the unique id
-            housing.BelongsTo.UniqueID = upgradedEntity.UniqueID;
+            entity.PrototypeID = upgradedEntity.PrototypeID;
         }
 
-        private void Instance_EntityRemoved(Entity e)
-        {
-            if (e.HasComponent<HousingComponent>())
-                e.Get<HousingComponent>().TennantAdded -= Housing_TennantAdded;
-
-            housingUnits.Remove(e);
-        }
-
-        public void Shutdown()
+        public override void Shutdown()
         {
             housingUnits.Clear();
         }

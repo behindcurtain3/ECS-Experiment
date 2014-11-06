@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using IsoECS.Entities;
-using System;
+﻿using System;
+using IsoECS.GamePlay;
+using TecsDotNet;
 
 namespace IsoECS.Behaviors
 {
@@ -19,24 +19,26 @@ namespace IsoECS.Behaviors
         public Behavior Child { get; set; }
         public Behavior Finished { get; set; }
         public bool Initialized { get; set; }
+        public GameWorld World { get; private set; }
 
         public Behavior()
         {
             Initialized = false;
         }
 
-        public virtual void Init(Entity self)
+        public virtual void Init(GameWorld world, Entity self)
         {
+            World = world;
             Initialized = true;
         }
 
         // called to update the behavior
-        public virtual BehaviorStatus Update(Entity self, int dt)
+        public virtual BehaviorStatus Update(Entity self, double dt)
         {
             if (Child != null)
             {
                 if (!Child.Initialized)
-                    Child.Init(self);
+                    Child.Init(World, self);
 
                 BehaviorStatus status = Child.Update(self, dt);
 

@@ -1,4 +1,5 @@
 ﻿using IsoECS.Components.GamePlay;
+using IsoECS.GamePlay;
 using Microsoft.Xna.Framework;
 using TomShane.Neoforce.Controls;
 
@@ -9,8 +10,8 @@ namespace IsoECS.DataRenderers
         private Label numberOfTennants;
         private Label rent;
 
-        public HousingRenderer(HousingComponent component, Manager manager)
-            : base(component, manager)
+        public HousingRenderer(HousingComponent component, GameWorld world)
+            : base(component, world)
         {
             Control = new Panel(Manager)
             {

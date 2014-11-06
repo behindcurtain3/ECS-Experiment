@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
-using IsoECS.Entities;
+using IsoECS.GamePlay;
 using Microsoft.Xna.Framework;
+using TecsDotNet;
 
 namespace IsoECS.Behaviors
 {
@@ -20,7 +21,7 @@ namespace IsoECS.Behaviors
         public int HaulerCapacity { get; set; }
         public string CurrentItem { get; set; }
 
-        public override BehaviorStatus Update(Entity self, int dt)
+        public override BehaviorStatus Update(Entity self, double dt)
         {
             BehaviorStatus status = base.Update(self, dt);
             CitizenComponent citizen;
@@ -37,7 +38,7 @@ namespace IsoECS.Behaviors
                         {
                             // make sure the citizen starts at the right position
                             PositionComponent position = self.Get<PositionComponent>();
-                            Vector2 startAt = EntityManager.Instance.Map.GetPositionFromIndex(exit.SelectedPath.Start.X, exit.SelectedPath.Start.Y);
+                            Vector2 startAt = World.Map.GetPositionFromIndex(exit.SelectedPath.Start.X, exit.SelectedPath.Start.Y);
                             position.X = startAt.X;
                             position.Y = startAt.Y;
                             position.Index = exit.SelectedPath.Start;
@@ -63,27 +64,27 @@ namespace IsoECS.Behaviors
                                 if (!string.IsNullOrWhiteSpace(CurrentItem) && selfInventory.Items[CurrentItem].Amount > 0)
                                 {
                                     citizen = self.Get<CitizenComponent>();
-                                    Inventory jobInventory = EntityManager.Instance.GetEntity(citizen.JobID).Get<Inventory>();
+                                    Inventory jobInventory = World.Entities.Get(citizen.JobID).Get<Inventory>();
 
                                     jobInventory.Add(CurrentItem, selfInventory.Items[CurrentItem].Amount);
                                     selfInventory.Set(CurrentItem, 0);
                                 }
 
                                 State = HaulerState.DELIVERING;
-                                AddChild(new IdleBehavior() { IdleTime = 200 });
+                                AddChild(new IdleBehavior() { IdleTime = 0.2 });
                             }
                             else if (State == HaulerState.DELIVERING)
                             {
                                 // Add the items in out inventory to the stockpile
                                 Inventory selfInventory = self.Get<Inventory>();
-                                Entity se = EntityManager.Instance.GetEntity(((GoToBehavior)Finished).TargetID);
+                                Entity se = World.Entities.Get(((GoToBehavior)Finished).TargetID);
                                 StockpileComponent stockpile = se.Get<StockpileComponent>();
 
                                 int movedAmount = stockpile.AddToItem(CurrentItem, selfInventory.Items[CurrentItem].Amount);
                                 selfInventory.Add(CurrentItem, -movedAmount);
 
                                 State = HaulerState.RETURNING;
-                                AddChild(new IdleBehavior() { IdleTime = 200 });
+                                AddChild(new IdleBehavior() { IdleTime = 0.2 });
                             }
                         }
                     }
@@ -98,12 +99,12 @@ namespace IsoECS.Behaviors
                     }
                     else if (State == HaulerState.DELIVERING)
                     {
-                        Inventory jobInventory = EntityManager.Instance.GetEntity(citizen.JobID).Get<Inventory>();
+                        Inventory jobInventory = World.Entities.Get(citizen.JobID).Get<Inventory>();
                         Inventory haulerInventory = self.Get<Inventory>();
 
                         if (jobInventory.Items.Values.ToList().Find(delegate(InventoryData d) { return (d.Output && d.Amount > 0); }) != null)
                         {
-                            List<Entity> stockpiles = EntityManager.Instance.GetBuildingsWithinWalkableDistance<StockpileComponent>(citizen.JobID, 30);
+                            List<Entity> stockpiles = World.GetBuildingsWithinWalkableDistance<StockpileComponent>(citizen.JobID, 30);
                 
                             foreach (Entity se in stockpiles)
                             {
@@ -129,7 +130,7 @@ namespace IsoECS.Behaviors
                         }
                 
                         // if no delivery sleep for a bit
-                        AddChild(new IdleBehavior() { IdleTime = (int)(EntityManager.Random.NextDouble() * 5000) });
+                        AddChild(new IdleBehavior());
                     }
                     break;
             }
@@ -137,9 +138,9 @@ namespace IsoECS.Behaviors
             return BehaviorStatus.WAIT;
         }
 
-        public override void Init(Entity self)
+        public override void Init(GameWorld world, Entity self)
         {
-            base.Init(self);
+            base.Init(world, self);
 
             State = HaulerState.RETURNING;
             HaulerCapacity = 50;

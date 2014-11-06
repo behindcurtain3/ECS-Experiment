@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using IsoECS.Behaviors;
+using TecsDotNet;
 
 namespace IsoECS.Components.GamePlay
 {
@@ -42,9 +43,9 @@ namespace IsoECS.Components.GamePlay
         private int motherID;
         private int age;
         private int money;
-        private int houseID;
-        private int jobID;
-        private int insideID;
+        private uint houseID;
+        private uint jobID;
+        private uint insideID;
         private bool isHauler;
 
         #endregion
@@ -121,7 +122,7 @@ namespace IsoECS.Components.GamePlay
             }
         }
 
-        public int HousingID
+        public uint HousingID
         {
             get { return houseID; }
             set
@@ -135,7 +136,7 @@ namespace IsoECS.Components.GamePlay
             }
         }
 
-        public int JobID
+        public uint JobID
         {
             get { return jobID; }
             set
@@ -149,7 +150,7 @@ namespace IsoECS.Components.GamePlay
             }
         }
 
-        public int InsideID
+        public uint InsideID
         {
             get { return insideID; }
             set
@@ -219,9 +220,9 @@ namespace IsoECS.Components.GamePlay
         {
             FatherID = -1;
             MotherID = -1;
-            HousingID = -1;
-            JobID = -1;
-            InsideID = -1;
+            HousingID = 0;
+            JobID = 0;
+            InsideID = 0;
             Gender = GamePlay.Gender.BOTH;
             IsHauler = false;
         }

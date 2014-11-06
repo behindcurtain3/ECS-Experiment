@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using IsoECS.Components;
+﻿using IsoECS.Components;
 using IsoECS.DataStructures;
-using IsoECS.Entities;
-using IsoECS.Util;
 using Microsoft.Xna.Framework;
+using TecsDotNet;
 
 namespace IsoECS.Behaviors
 {
@@ -12,7 +10,7 @@ namespace IsoECS.Behaviors
         public Path PathToFollow { get; set; }
         public float Speed { get; set; }
 
-        public override BehaviorStatus Update(Entity self, int dt)
+        public override BehaviorStatus Update(Entity self, double dt)
         {
             BehaviorStatus status = base.Update(self, dt);
 
@@ -28,8 +26,8 @@ namespace IsoECS.Behaviors
                     else
                     {
                         // move to the target
-                        Vector2 targetPos = EntityManager.Instance.Map.GetPositionFromIndex(PathToFollow.Waypoints[0].X, PathToFollow.Waypoints[0].Y);
-                        Vector2 arrivedAt = EntityManager.Instance.Map.MoveTowards(position.Position, Speed, targetPos);
+                        Vector2 targetPos = World.Map.GetPositionFromIndex(PathToFollow.Waypoints[0].X, PathToFollow.Waypoints[0].Y);
+                        Vector2 arrivedAt = World.Map.MoveTowards(position.Position, Speed, targetPos);
                         position.X = arrivedAt.X;
                         position.Y = arrivedAt.Y;
                 
@@ -44,7 +42,7 @@ namespace IsoECS.Behaviors
                                 Point nextWaypoint = PathToFollow.Waypoints[0];
 
                                 // if the next waypoint is blocked, clear the path
-                                if (EntityManager.Instance.Collisions.Map[nextWaypoint] == PathTypes.BLOCKED)
+                                if (World.Collisions.Map[nextWaypoint] == PathTypes.BLOCKED)
                                 {
                                     // TODO: alert some failure state? Recalculate the path?
                                     return BehaviorStatus.FAIL;

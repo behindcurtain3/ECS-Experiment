@@ -1,8 +1,8 @@
 ﻿using IsoECS.Components.GamePlay;
+using IsoECS.GamePlay;
+using IsoECS.Util;
 using Microsoft.Xna.Framework;
 using TomShane.Neoforce.Controls;
-using IsoECS.Util;
-using IsoECS.Entities;
 
 namespace IsoECS.DataRenderers
 {
@@ -12,8 +12,8 @@ namespace IsoECS.DataRenderers
         private Label money;
         private Label date;
 
-        public CityInformationRenderer(CityInformationComponent data, Manager manager)
-            : base(data, manager)
+        public CityInformationRenderer(CityInformationComponent data, GameWorld world)
+            : base(data, world)
         {
             Control = new Panel(Manager)
             {
@@ -29,7 +29,7 @@ namespace IsoECS.DataRenderers
 
             Data.PopulationChanged += new CityInformationComponent.CityInformationEventHandler(Data_PopulationChanged);
             Data.TreasuryChanged += new CityInformationComponent.CityInformationEventHandler(Data_TreasuryChanged);
-            EntityManager.Instance.Date.DayChanged += new GameDateComponent.GameDateEventHandler(Date_TimeChanged);
+            World.Date.DayChanged += new GameDateComponent.GameDateEventHandler(Date_TimeChanged);
         }
 
         public override Panel GetControl(Control parent)
@@ -73,7 +73,7 @@ namespace IsoECS.DataRenderers
 
             date = new Label(Manager)
             {
-                Text = string.Format("{0} of {1}, {2} C.E.", StringHelper.Ordinal(EntityManager.Instance.Date.Day), EntityManager.Instance.Date.MonthName, EntityManager.Instance.Date.Year),
+                Text = GetTimeText(),
                 Width = Manager.GraphicsDevice.Viewport.Width,
                 Alignment = Alignment.MiddleCenter,
                 Parent = Control
@@ -88,7 +88,7 @@ namespace IsoECS.DataRenderers
         {
             Data.PopulationChanged -= Data_PopulationChanged;
             Data.TreasuryChanged -= Data_TreasuryChanged;
-            EntityManager.Instance.Date.DayChanged -= Date_TimeChanged;
+            World.Date.DayChanged -= Date_TimeChanged;
 
             Manager.Remove(Control);
         }
@@ -105,7 +105,12 @@ namespace IsoECS.DataRenderers
 
         private void Date_TimeChanged(GameDateComponent sender)
         {
-            date.Text = string.Format("{0} of {1}, {2} C.E.", StringHelper.Ordinal(EntityManager.Instance.Date.Day), EntityManager.Instance.Date.MonthName, EntityManager.Instance.Date.Year);
+            date.Text = GetTimeText();
+        }
+
+        private string GetTimeText()
+        {
+            return string.Format("{0} of {1}, {2} C.E.", StringHelper.Ordinal(World.Date.Day), World.Date.MonthName, World.Date.Year);
         }
     }
 }

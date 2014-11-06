@@ -1,6 +1,7 @@
 {
-	"Entities" : [
+	"Prototypes" : [
 		{
+			"PrototypeID": "buildable-road-dirt",
 			"Components": [
 				{
 					"Type": "BuildableComponent",

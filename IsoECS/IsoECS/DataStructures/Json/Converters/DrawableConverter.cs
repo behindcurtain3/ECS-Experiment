@@ -3,9 +3,9 @@ using Newtonsoft.Json.Linq;
 
 namespace IsoECS.DataStructures.Json.Converters
 {
-    public class DrawableConverter : JsonCreationConverter<IGameDrawable>
+    public class DrawableConverter : JsonCreationConverter<GameDrawable>
     {
-        protected override IGameDrawable Create(Type objectType, JObject jObject)
+        protected override GameDrawable Create(Type objectType, JObject jObject)
         {
             if (FieldExists("SpriteSheet", jObject))
             {

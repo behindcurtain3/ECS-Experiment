@@ -2,16 +2,16 @@
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
-using IsoECS.Entities;
 using IsoECS.Systems.Threaded;
 using Microsoft.Xna.Framework;
+using TecsDotNet;
 
 namespace IsoECS.Behaviors
 {
     public class FindPathBehavior : Behavior
     {
         // the ID of the target entity to move towards
-        public int TargetID { get; set; }
+        public uint TargetID { get; set; }
 
         // if true just find a path to a road tile next to the target
         // if false find a path to the exact position
@@ -24,7 +24,7 @@ namespace IsoECS.Behaviors
 
         public PathRequest PathRequest { get; set; }
 
-        public override BehaviorStatus Update(Entity self, int dt)
+        public override BehaviorStatus Update(Entity self, double dt)
         {
             BehaviorStatus status = base.Update(self, dt);
 
@@ -35,7 +35,7 @@ namespace IsoECS.Behaviors
                     break;
 
                 case BehaviorStatus.RUN:
-                    Entity target = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.ID == TargetID; });
+                    Entity target = World.Entities.Find(delegate(Entity e) { return e.ID == TargetID; });
 
                     // if invalid target fail out
                     if (target == null)
@@ -51,7 +51,7 @@ namespace IsoECS.Behaviors
                         if (p == null)
                         {
                             // idle for a short bit
-                            AddChild(new IdleBehavior() { IdleTime = 100 });
+                            AddChild(new IdleBehavior() { IdleTime = 0.1 });
                             return BehaviorStatus.WAIT;
                         }
                         else
@@ -82,7 +82,7 @@ namespace IsoECS.Behaviors
                             PositionComponent sPosition = self.Get<PositionComponent>();
 
                             if (tPosition.Index == null || tPosition.Index == Point.Zero)
-                                tPosition.Index = EntityManager.Instance.Map.GetIndexFromPosition((int)tPosition.X, (int)tPosition.Y);
+                                tPosition.Index = World.Map.GetIndexFromPosition((int)tPosition.X, (int)tPosition.Y);
 
                             PathRequest = new PathRequest()
                             {
@@ -108,7 +108,7 @@ namespace IsoECS.Behaviors
                             FoundationComponent foundation = target.Get<FoundationComponent>();
 
                             // list to hold valid road tiles to move to
-                            List<Point> validLandings = EntityManager.Instance.GetValidExitsFromFoundation(target);
+                            List<Point> validLandings = World.GetValidExitsFromFoundation(target);
 
                             if (validLandings.Count == 0)
                             {
@@ -140,12 +140,12 @@ namespace IsoECS.Behaviors
 
         public bool AnyPathNotBlocked(Point current)
         {
-            return EntityManager.Instance.Collisions.Map[current] != PathTypes.BLOCKED;
+            return World.Collisions.Map[current] != PathTypes.BLOCKED;
         }
 
         public bool OnlyRoads(Point current)
         {
-            return EntityManager.Instance.Collisions.Map[current] == PathTypes.ROAD;
+            return World.Collisions.Map[current] == PathTypes.ROAD;
         }
     }
 }

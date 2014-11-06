@@ -2,19 +2,17 @@
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
-using IsoECS.Entities;
-using IsoECS.Util;
+using IsoECS.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using TecsDotNet;
+using TecsDotNet.Util;
 using TomShane.Neoforce.Controls;
-using IsoECS.Input;
 
 namespace IsoECS.Systems.GamePlay
 {
-    public class ConstructionSystem : ISystem
+    public class ConstructionSystem : GameSystem
     {
-        public List<Keys> HotKeys { get; set; }
-
         private string _category;
         private int _selection = -1;
 
@@ -24,25 +22,30 @@ namespace IsoECS.Systems.GamePlay
         private PositionComponent _camera;
 
         private List<Button> _buttons = new List<Button>();
-        private Manager _manager;
 
-        public void Init()
+        private double delay = 0.2;
+        private double delayCountdown;
+
+        public override void Init()
         {
-            HotKeys = new List<Keys>() { Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 };
-            _manager = EntityManager.Instance.UI;
-            _dataTracker = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
+            base.Init();
 
-            Entity inputEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
-            Entity cameraEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
+            _dataTracker = World.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
+
+            Entity inputEntity = World.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
+            Entity cameraEntity = World.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
 
             _camera = cameraEntity.Get<PositionComponent>();
 
             _db = new Dictionary<string, List<Entity>>();
 
-            List<Entity> allBuildables = Prototype.Instance.GetAll<BuildableComponent>();
+            List<Entity> allBuildables = World.Prototypes.GetAll<Entity>();
 
             foreach (Entity e in allBuildables)
             {
+                if (!e.HasComponent<BuildableComponent>())
+                    continue;
+
                 BuildableComponent bc = e.Get<BuildableComponent>();
 
                 if (!bc.AllowConstruction)
@@ -56,28 +59,28 @@ namespace IsoECS.Systems.GamePlay
 
             CreateCategoryButtons();
 
-            InputController.Instance.LeftClick += new InputController.MouseEventHandler(Instance_LeftClick);
-            InputController.Instance.LeftButtonDown += new InputController.MouseEventHandler(Instance_LeftButtonDown);
-            InputController.Instance.BuildBack.Event += new InputController.KeyboardEventHandler(BuildBack_Event);
-            InputController.Instance.BuildHotKey1.Event += new InputController.KeyboardEventHandler(BuildHotKey1_Event);
-            InputController.Instance.BuildHotKey2.Event += new InputController.KeyboardEventHandler(BuildHotKey2_Event);
-            InputController.Instance.BuildHotKey3.Event += new InputController.KeyboardEventHandler(BuildHotKey3_Event);
-            InputController.Instance.BuildHotKey4.Event += new InputController.KeyboardEventHandler(BuildHotKey4_Event);
-            InputController.Instance.BuildHotKey5.Event += new InputController.KeyboardEventHandler(BuildHotKey5_Event);
-            InputController.Instance.BuildHotKey6.Event += new InputController.KeyboardEventHandler(BuildHotKey6_Event);
-            InputController.Instance.BuildHotKey7.Event += new InputController.KeyboardEventHandler(BuildHotKey7_Event);
-            InputController.Instance.BuildHotKey8.Event += new InputController.KeyboardEventHandler(BuildHotKey8_Event);
-            InputController.Instance.BuildHotKey9.Event += new InputController.KeyboardEventHandler(BuildHotKey9_Event);
-            InputController.Instance.BuildHotKey0.Event += new InputController.KeyboardEventHandler(BuildHotKey0_Event);
+            World.Input.LeftClick += new InputController.MouseEventHandler(Instance_LeftClick);
+            World.Input.LeftButtonDown += new InputController.MouseEventHandler(Instance_LeftButtonDown);
+            World.Input.BuildBack.Event += new InputController.KeyboardEventHandler(BuildBack_Event);
+            World.Input.BuildHotKey1.Event += new InputController.KeyboardEventHandler(BuildHotKey1_Event);
+            World.Input.BuildHotKey2.Event += new InputController.KeyboardEventHandler(BuildHotKey2_Event);
+            World.Input.BuildHotKey3.Event += new InputController.KeyboardEventHandler(BuildHotKey3_Event);
+            World.Input.BuildHotKey4.Event += new InputController.KeyboardEventHandler(BuildHotKey4_Event);
+            World.Input.BuildHotKey5.Event += new InputController.KeyboardEventHandler(BuildHotKey5_Event);
+            World.Input.BuildHotKey6.Event += new InputController.KeyboardEventHandler(BuildHotKey6_Event);
+            World.Input.BuildHotKey7.Event += new InputController.KeyboardEventHandler(BuildHotKey7_Event);
+            World.Input.BuildHotKey8.Event += new InputController.KeyboardEventHandler(BuildHotKey8_Event);
+            World.Input.BuildHotKey9.Event += new InputController.KeyboardEventHandler(BuildHotKey9_Event);
+            World.Input.BuildHotKey0.Event += new InputController.KeyboardEventHandler(BuildHotKey0_Event);
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
 
-            foreach (List<IGameDrawable> d in drawable.Drawables.Values)
+            foreach (List<GameDrawable> d in drawable.Drawables.Values)
             {
-                foreach (IGameDrawable gd in d)
+                foreach (GameDrawable gd in d)
                 {
                     gd.Alpha = 1.0f;
                     gd.Visible = true;
@@ -87,19 +90,19 @@ namespace IsoECS.Systems.GamePlay
             drawable.Drawables.Clear();
             ClearButtons();
 
-            InputController.Instance.LeftClick -= Instance_LeftClick;
-            InputController.Instance.LeftButtonDown -= Instance_LeftButtonDown;
-            InputController.Instance.BuildBack.Event -= BuildBack_Event;
-            InputController.Instance.BuildHotKey1.Event -= BuildHotKey1_Event;
-            InputController.Instance.BuildHotKey2.Event -= BuildHotKey2_Event;
-            InputController.Instance.BuildHotKey3.Event -= BuildHotKey3_Event;
-            InputController.Instance.BuildHotKey4.Event -= BuildHotKey4_Event;
-            InputController.Instance.BuildHotKey5.Event -= BuildHotKey5_Event;
-            InputController.Instance.BuildHotKey6.Event -= BuildHotKey6_Event;
-            InputController.Instance.BuildHotKey7.Event -= BuildHotKey7_Event;
-            InputController.Instance.BuildHotKey8.Event -= BuildHotKey8_Event;
-            InputController.Instance.BuildHotKey9.Event -= BuildHotKey9_Event;
-            InputController.Instance.BuildHotKey0.Event -= BuildHotKey0_Event;
+            World.Input.LeftClick -= Instance_LeftClick;
+            World.Input.LeftButtonDown -= Instance_LeftButtonDown;
+            World.Input.BuildBack.Event -= BuildBack_Event;
+            World.Input.BuildHotKey1.Event -= BuildHotKey1_Event;
+            World.Input.BuildHotKey2.Event -= BuildHotKey2_Event;
+            World.Input.BuildHotKey3.Event -= BuildHotKey3_Event;
+            World.Input.BuildHotKey4.Event -= BuildHotKey4_Event;
+            World.Input.BuildHotKey5.Event -= BuildHotKey5_Event;
+            World.Input.BuildHotKey6.Event -= BuildHotKey6_Event;
+            World.Input.BuildHotKey7.Event -= BuildHotKey7_Event;
+            World.Input.BuildHotKey8.Event -= BuildHotKey8_Event;
+            World.Input.BuildHotKey9.Event -= BuildHotKey9_Event;
+            World.Input.BuildHotKey0.Event -= BuildHotKey0_Event;
         }
 
         private void BuildBack_Event(Keys key, InputEventArgs e)
@@ -192,7 +195,7 @@ namespace IsoECS.Systems.GamePlay
 
         private void BuildSelected(bool drag = false)
         {
-            if (string.IsNullOrWhiteSpace(_category) || _selection == -1)
+            if (string.IsNullOrWhiteSpace(_category) || _selection == -1 || delayCountdown > 0)
                 return;
 
             DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
@@ -206,39 +209,38 @@ namespace IsoECS.Systems.GamePlay
                 return;
 
             // set the starting coords
-            int x = InputController.Instance.CurrentMouse.X + (int)_camera.X;
-            int y = InputController.Instance.CurrentMouse.Y + (int)_camera.Y;
+            int x = World.Input.CurrentMouse.X + (int)_camera.X;
+            int y = World.Input.CurrentMouse.Y + (int)_camera.Y;
 
             // pick out the tile index that the screen coords intersect
-            Point index = EntityManager.Instance.Map.GetIndexFromPosition(x, y);
+            Point index = World.Map.GetIndexFromPosition(x, y);
 
             // translate the index into a screen position and up the position component
-            Vector2 dPositiion = EntityManager.Instance.Map.GetPositionFromIndex(index.X, index.Y);
+            Vector2 dPositiion = World.Map.GetPositionFromIndex(index.X, index.Y);
             drawablePosition.X = dPositiion.X;
             drawablePosition.Y = dPositiion.Y;
 
             bool spaceTaken = false;
             foreach (LocationValue lv in foundation.Plan)
             {
-                if (EntityManager.Instance.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
+                if (World.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
                 {
                     spaceTaken = true;
                     break;
                 }
             }
 
-            bool visible = EntityManager.Instance.Map.IsValidIndex(index.X, index.Y);
+            bool visible = World.Map.IsValidIndex(index.X, index.Y);
 
             if (!visible)
                 return;
 
             // don't build over a spot that is already taken, don't build if not enough money
             // TODO: the money check shouldn't even allow the building to be selected
-            if (spaceTaken || EntityManager.Instance.CityInformation.Treasury < selectedBuildable.Cost)
+            if (spaceTaken || World.CityInformation.Treasury < selectedBuildable.Cost)
                 return;
 
             Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
-            buildable.ResetID();
 
             if (buildable.HasComponent<PositionComponent>())
             {
@@ -255,12 +257,16 @@ namespace IsoECS.Systems.GamePlay
                 buildable.AddComponent(bPosition);
             }
 
-            EntityManager.Instance.AddEntity(buildable);
-            EntityManager.Instance.CityInformation.Treasury -= selectedBuildable.Cost;
+            World.Entities.Add(buildable);
+            World.CityInformation.Treasury -= selectedBuildable.Cost;
+            delayCountdown = delay;
         }
         
-        public void Update(int dt)
+        public override void Update(double dt)
         {
+            if (delayCountdown > 0)
+                delayCountdown -= dt;
+
             if(string.IsNullOrWhiteSpace(_category) || _selection == -1)
                 return;
 
@@ -272,38 +278,38 @@ namespace IsoECS.Systems.GamePlay
             FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
             
             // set the starting coords
-            int x = InputController.Instance.CurrentMouse.X + (int)_camera.X;
-            int y = InputController.Instance.CurrentMouse.Y + (int)_camera.Y;
+            int x = World.Input.CurrentMouse.X + (int)_camera.X;
+            int y = World.Input.CurrentMouse.Y + (int)_camera.Y;
 
             // pick out the tile index that the screen coords intersect
-            Point index = EntityManager.Instance.Map.GetIndexFromPosition(x, y);
+            Point index = World.Map.GetIndexFromPosition(x, y);
 
             // translate the index into a screen position and up the position component
-            Vector2 dPositiion = EntityManager.Instance.Map.GetPositionFromIndex(index.X, index.Y);
+            Vector2 dPositiion = World.Map.GetPositionFromIndex(index.X, index.Y);
             drawablePosition.X = dPositiion.X;
             drawablePosition.Y = dPositiion.Y;
 
             bool spaceTaken = false;
             foreach (LocationValue lv in foundation.Plan)
             {
-                if (EntityManager.Instance.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
+                if (World.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
                 {
                     spaceTaken = true;
                     break;
                 }
             }
 
-            bool visible = EntityManager.Instance.Map.IsValidIndex(index.X, index.Y);
+            bool visible = World.Map.IsValidIndex(index.X, index.Y);
 
-            foreach (List<IGameDrawable> d in drawable.Drawables.Values)
+            foreach (List<GameDrawable> d in drawable.Drawables.Values)
             {
-                foreach (IGameDrawable gd in d)
+                foreach (GameDrawable gd in d)
                     gd.Visible = visible;
             }
 
-            foreach (List<IGameDrawable> d in drawable.Drawables.Values)
+            foreach (List<GameDrawable> d in drawable.Drawables.Values)
             {
-                foreach (IGameDrawable gd in d)
+                foreach (GameDrawable gd in d)
                     gd.Alpha = (spaceTaken) ? 0.5f : 0.85f;
             }            
         }
@@ -320,11 +326,11 @@ namespace IsoECS.Systems.GamePlay
 
             drawable.Drawables.Clear();
 
-            foreach (KeyValuePair<string, List<IGameDrawable>> kvp in selectedDrawable.Drawables)
+            foreach (KeyValuePair<string, List<GameDrawable>> kvp in selectedDrawable.Drawables)
             {
-                foreach (IGameDrawable gd in kvp.Value)
+                foreach (GameDrawable gd in kvp.Value)
                 {
-                    IGameDrawable nd = Serialization.DeepCopy<IGameDrawable>(gd);
+                    GameDrawable nd = Serialization.DeepCopy<GameDrawable>(gd);
                     drawable.Add(kvp.Key, nd);
                 }
             }
@@ -340,7 +346,7 @@ namespace IsoECS.Systems.GamePlay
         private void ClearButtons()
         {
             foreach (Button btn in _buttons)
-                _manager.Remove(btn);
+                World.UI.Remove(btn);
 
             _buttons.Clear();
         }
@@ -354,7 +360,7 @@ namespace IsoECS.Systems.GamePlay
                 btn.Click += new EventHandler(CategoryBtn_Click);
                 btn.Tag = category;
 
-                _manager.Add(btn);
+                World.UI.Add(btn);
                 _buttons.Add(btn);
             }
 
@@ -374,7 +380,7 @@ namespace IsoECS.Systems.GamePlay
                 btn.Click += new EventHandler(Selection_Click);
                 btn.Tag = _buttons.Count;
 
-                _manager.Add(btn);
+                World.UI.Add(btn);
                 _buttons.Add(btn);
             }
 
@@ -383,7 +389,7 @@ namespace IsoECS.Systems.GamePlay
 
         private Button CreateButton(string text)
         {
-            Button btn = new Button(_manager)
+            Button btn = new Button(World.UI)
             {
                 Text = string.Format("{0}. {1}", (_buttons.Count + 1), text),
                 Width = 125,

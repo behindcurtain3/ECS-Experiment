@@ -1,18 +1,16 @@
-﻿using System.Collections.Generic;
-using IsoECS.Entities;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using IsoECS.Components;
+﻿using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
-using IsoECS.Util;
+using IsoECS.GamePlay;
+using IsoECS.Systems;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using TecsDotNet;
 
-namespace IsoECS.Systems
+namespace IsoECS.RenderSystems
 {
-    public class IsometricMapSystem : IRenderSystem
+    public class IsometricMapSystem : RenderSystem
     {
-        public GraphicsDevice Graphics { get; set; }
-
         private Entity cameraEntity;
         private Entity mapEntity;
         private IsometricMapComponent map;
@@ -20,10 +18,12 @@ namespace IsoECS.Systems
         private int verticalTiles;
         private int horizontalTiles;
 
-        public void Init()
+        public override void Init()
         {
-            cameraEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
-            mapEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
+            base.Init();
+
+            cameraEntity = World.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
+            mapEntity = World.Entities.Find(delegate(Entity e) { return e.HasComponent<IsometricMapComponent>(); });
             map = mapEntity.Get<IsometricMapComponent>();
 
             if (map.Graphics == null)
@@ -36,11 +36,11 @@ namespace IsoECS.Systems
             horizontalTiles = (map.Graphics.Viewport.Width / map.PxTileWidth);
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
         }
 
-        public void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
+        public override void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
             if (mapEntity == null || cameraEntity == null)
                 return;

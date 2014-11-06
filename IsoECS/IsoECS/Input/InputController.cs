@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using IsoECS.Entities;
+using IsoECS.Systems;
 using Microsoft.Xna.Framework.Input;
 using TomShane.Neoforce.Controls;
 
@@ -39,7 +39,7 @@ namespace IsoECS.Input
     }
 
     [Serializable]
-    public sealed class InputController
+    public class InputController : GameSystem
     {
         #region Events
 
@@ -55,17 +55,11 @@ namespace IsoECS.Input
 
         #region Fields
 
-        private static readonly InputController _instance = new InputController();
         private List<KeyListener> _listeners;
 
         #endregion
 
         #region Properties
-
-        public static InputController Instance
-        {
-            get { return _instance; }
-        }
 
         public KeyboardState PrevKeyboard { get; set; }
         public KeyboardState CurrentKeyboard { get; set; }
@@ -99,14 +93,12 @@ namespace IsoECS.Input
 
         #endregion
 
-        private InputController()
-        {
-        }
-
         #region Methods
 
-        public void Init()
+        public override void Init()
         {
+            base.Init();
+
             _listeners = new List<KeyListener>();
 
             CameraUpListener = new KeyListener(true)
@@ -173,7 +165,7 @@ namespace IsoECS.Input
             _listeners.Add(BuildBack);
         }
 
-        public void Update(int dt)
+        public override void Update(double dt)
         {
             PrevKeyboard = CurrentKeyboard;
             CurrentKeyboard = Keyboard.GetState();
@@ -214,7 +206,7 @@ namespace IsoECS.Input
 
         private bool IsOverUI()
         {
-            foreach (Control c in EntityManager.Instance.UI.Controls)
+            foreach (Control c in World.UI.Controls)
             {
                 if (c.Passive || !c.Visible)
                     continue;

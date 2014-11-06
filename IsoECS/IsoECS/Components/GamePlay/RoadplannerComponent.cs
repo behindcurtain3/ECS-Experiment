@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using IsoECS.Entities;
+using System.Linq;
 using IsoECS.DataStructures;
 using IsoECS.Util;
+using Microsoft.Xna.Framework;
+using TecsDotNet;
+using IsoECS.GamePlay;
 
 namespace IsoECS.Components.GamePlay
 {
@@ -23,7 +24,7 @@ namespace IsoECS.Components.GamePlay
             return Built.ContainsKey(p);
         }
 
-        public void UpdateGfx(List<Entity> entities)
+        public void UpdateGfx(GameWorld world, List<Entity> entities)
         {
             // make sure the road has the right gfx & data
             foreach (Entity entity in entities)
@@ -41,16 +42,16 @@ namespace IsoECS.Components.GamePlay
                 {
                     if (road.Updateable)
                     {
-                        foreach (IGameDrawable sprite in drawable.Drawables["Foundation"].ToList())
+                        foreach (GameDrawable sprite in drawable.Drawables["Foundation"].ToList())
                         {
-                            if (sprite.UniqueID.Contains("road"))
+                            if (sprite.PrototypeID.Contains("road"))
                             {
                                 // remove old road drawables
                                 drawable.Drawables["Foundation"].Remove(sprite);
                             }
                         }
                         road.RoadType = Built[road.BuiltAt];
-                        drawable.Add("Foundation", Serialization.DeepCopy<IGameDrawable>(DrawableLibrary.Instance.Get(road.RoadType)));
+                        drawable.Add("Foundation", (GameDrawable)world.Prototypes[road.RoadType]);
                     }
                 }
             }

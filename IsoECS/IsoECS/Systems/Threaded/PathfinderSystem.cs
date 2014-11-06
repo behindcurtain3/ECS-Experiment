@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Threading;
+using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using Microsoft.Xna.Framework;
-using IsoECS.Util;
-using IsoECS.Components.GamePlay;
-using System.Threading;
-using IsoECS.Entities;
 
 namespace IsoECS.Systems.Threaded
 {

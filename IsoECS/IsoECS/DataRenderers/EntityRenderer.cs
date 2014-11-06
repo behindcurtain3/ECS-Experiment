@@ -1,6 +1,7 @@
 ﻿using IsoECS.Components.GamePlay;
-using IsoECS.Entities;
+using IsoECS.GamePlay;
 using Microsoft.Xna.Framework;
+using TecsDotNet;
 using TomShane.Neoforce.Controls;
 
 namespace IsoECS.DataRenderers
@@ -21,8 +22,8 @@ namespace IsoECS.DataRenderers
         private ProductionRenderer pr;
         private StockpileRenderer sr;
 
-        public EntityRenderer(Entity e, Manager manager)
-            : base(e, manager)
+        public EntityRenderer(Entity e, GameWorld world)
+            : base(e, world)
         {
             // Setup the window
             Control = new Dialog(Manager)
@@ -118,7 +119,7 @@ namespace IsoECS.DataRenderers
                 Control.Caption.Text = "Pleb";
                 Control.Description.Text = "A lower class citizen of the city.";
 
-                cr = new CitizenRenderer(Data.Get<CitizenComponent>(), Manager);
+                cr = new CitizenRenderer(Data.Get<CitizenComponent>(), World);
                 TabPage tab = tabs.AddPage("Info");
 
                 Panel cp = cr.GetControl(tab);
@@ -127,7 +128,7 @@ namespace IsoECS.DataRenderers
             // Get housing control
             if (Data.HasComponent<HousingComponent>())
             {
-                hr = new HousingRenderer(Data.Get<HousingComponent>(), Manager);
+                hr = new HousingRenderer(Data.Get<HousingComponent>(), World);
                 TabPage tab = tabs.AddPage("Housing");
 
                 Panel gp = hr.GetControl(tab);
@@ -136,7 +137,7 @@ namespace IsoECS.DataRenderers
             // Get production control
             if (Data.HasComponent<ProductionComponent>())
             {
-                pr = new ProductionRenderer(Data.Get<ProductionComponent>(), Manager);
+                pr = new ProductionRenderer(Data.Get<ProductionComponent>(), World);
                 TabPage tab = tabs.AddPage("Production");
                 Panel p = pr.GetControl(tab);
             }
@@ -144,7 +145,7 @@ namespace IsoECS.DataRenderers
             // Get stockpile
             if (Data.HasComponent<StockpileComponent>())
             {
-                sr = new StockpileRenderer(Data.Get<StockpileComponent>(), Manager);
+                sr = new StockpileRenderer(Data.Get<StockpileComponent>(), World);
                 TabPage tab = tabs.AddPage("Stockpile");
 
                 Table t = sr.GetControl(tab);
@@ -156,7 +157,7 @@ namespace IsoECS.DataRenderers
             // Get inventory
             if (Data.HasComponent<Inventory>())
             {
-                ir = new InventoryRenderer(Data.Get<Inventory>(), Manager);
+                ir = new InventoryRenderer(Data.Get<Inventory>(), World);
                 TabPage tab = tabs.AddPage("Inventory");
 
                 Table it = ir.GetControl(tab);

@@ -1,13 +1,14 @@
 ﻿using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
+using IsoECS.GamePlay;
 using TomShane.Neoforce.Controls;
 
 namespace IsoECS.DataRenderers
 {
     public class InventoryRenderer : DataRenderer<Inventory, Table>
     {
-        public InventoryRenderer(Inventory data, Manager manager)
-            : base(data, manager)
+        public InventoryRenderer(Inventory data, GameWorld world)
+            : base(data, world)
         {
             Control = new Table(Manager)
             {

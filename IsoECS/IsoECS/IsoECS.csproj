@@ -108,6 +108,9 @@
     <Reference Include="System.Net">
       <Private>False</Private>
     </Reference>
+    <Reference Include="TecsDotNet">
+      <HintPath>..\..\..\TecsDotNet\TecsDotNet\bin\Release\TecsDotNet.dll</HintPath>
+    </Reference>
     <Reference Include="TomShane.Neoforce.Controls, Version=0.7.2407.1915, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Neoforce-XNA\Central\bin\x86\Release\TomShane.Neoforce.Controls.dll</HintPath>
@@ -125,7 +128,6 @@
     <Compile Include="Behaviors\HaulerBehavior.cs" />
     <Compile Include="Behaviors\IdleBehavior.cs" />
     <Compile Include="Components\Controls\CameraController.cs" />
-    <Compile Include="Components\Component.cs" />
     <Compile Include="Components\DrawableComponent.cs" />
     <Compile Include="Components\GamePlay\BuildableComponent.cs" />
     <Compile Include="Components\GamePlay\CitizenComponent.cs" />
@@ -139,9 +141,12 @@
     <Compile Include="Components\GamePlay\HousingComponent.cs" />
     <Compile Include="Components\GamePlay\ProductionComponent.cs" />
     <Compile Include="Components\GamePlay\Inventory.cs" />
+    <Compile Include="DataStructures\Json\Converters\CustomComponentConverter.cs" />
+    <Compile Include="DataStructures\Json\Converters\CustomEntityLoader.cs" />
+    <Compile Include="DataStructures\Json\Converters\DrawablesLoader.cs" />
+    <Compile Include="GamePlay\GameWorld.cs" />
     <Compile Include="Input\InputController.cs" />
     <Compile Include="Components\GamePlay\IsometricMapComponent.cs" />
-    <Compile Include="Components\GamePlay\MoveToTargetComponent.cs" />
     <Compile Include="Components\GamePlay\RoadComponent.cs" />
     <Compile Include="Components\GamePlay\RoadPlannerComponent.cs" />
     <Compile Include="Components\GamePlay\SpawnerComponent.cs" />
@@ -158,16 +163,14 @@
     <Compile Include="DataRenderers\InventoryRenderer.cs" />
     <Compile Include="DataRenderers\ProductionRenderer.cs" />
     <Compile Include="DataRenderers\StockpileRenderer.cs" />
-    <Compile Include="DataStructures\DrawableLibrary.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />
     <Compile Include="DataStructures\DrawableText.cs" />
-    <Compile Include="Entities\Prototype.cs" />
     <Compile Include="DataStructures\GameData.cs" />
     <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeInput.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeOutput.cs" />
     <Compile Include="DataStructures\GamePlay\UpgradeRequirements.cs" />
-    <Compile Include="DataStructures\IGameDrawable.cs" />
+    <Compile Include="DataStructures\GameDrawable.cs" />
     <Compile Include="DataStructures\Json\Converters\DrawableConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\JsonCreationConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\PointConverter.cs" />
@@ -181,8 +184,6 @@
     <Compile Include="DataStructures\Path.cs" />
     <Compile Include="DataStructures\PathWaypoint.cs" />
     <Compile Include="DataStructures\Textures.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\EntityManager.cs" />
     <Compile Include="GamePlay\Item.cs" />
     <Compile Include="GamePlay\IUnique.cs" />
     <Compile Include="GamePlay\Map\Tiles.cs" />
@@ -191,6 +192,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="RenderSystems\DefaultRenderSystem.cs" />
     <Compile Include="Systems\CameraSystem.cs" />
     <Compile Include="Systems\ControlSystem.cs" />
     <Compile Include="Systems\DebugSystem.cs" />
@@ -200,13 +202,12 @@
     <Compile Include="Systems\GamePlay\HousingUpgradeSystem.cs" />
     <Compile Include="Systems\GamePlay\ImmigrationSystem.cs" />
     <Compile Include="Systems\GamePlay\OverlaySystem.cs" />
-    <Compile Include="Systems\Renderers\FoundationOverlaySystem.cs" />
-    <Compile Include="Systems\Renderers\IRenderSystem.cs" />
-    <Compile Include="Systems\Renderers\IsometricMapSystem.cs" />
-    <Compile Include="Systems\ISystem.cs" />
+    <Compile Include="RenderSystems\DesireabilityOverlayRenderer.cs" />
+    <Compile Include="RenderSystems\FoundationOverlaySystem.cs" />
+    <Compile Include="RenderSystems\IsometricMapSystem.cs" />
+    <Compile Include="Systems\GameSystem.cs" />
     <Compile Include="Systems\GamePlay\ProductionSystem.cs" />
-    <Compile Include="Systems\Renderers\RenderSystem.cs" />
-    <Compile Include="Systems\SystemManager.cs" />
+    <Compile Include="RenderSystems\RenderSystem.cs" />
     <Compile Include="Systems\Threaded\PathfinderSystem.cs" />
     <Compile Include="Systems\UI\CityInformationSystem.cs" />
     <Compile Include="Systems\UI\InspectionSystem.cs" />
@@ -214,7 +215,6 @@
     <Compile Include="Util\MathHelper.cs" />
     <Compile Include="DataStructures\Pathfinder.cs" />
     <Compile Include="DataStructures\Pathwalker.cs" />
-    <Compile Include="Util\Serialization.cs" />
     <Compile Include="Util\StringHelper.cs" />
   </ItemGroup>
   <ItemGroup>

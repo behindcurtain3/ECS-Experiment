@@ -1,15 +1,15 @@
-﻿using IsoECS.Components.GamePlay;
-using TomShane.Neoforce.Controls;
-using IsoECS.GamePlay;
+﻿using System.Collections.Generic;
+using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
-using System.Collections.Generic;
+using IsoECS.GamePlay;
+using TomShane.Neoforce.Controls;
 
 namespace IsoECS.DataRenderers
 {
     public class StockpileRenderer : DataRenderer<StockpileComponent, Table>
     {
-        public StockpileRenderer(StockpileComponent stockpile, Manager manager)
-            : base(stockpile, manager)
+        public StockpileRenderer(StockpileComponent stockpile, GameWorld world)
+            : base(stockpile, world)
         {
         }
 

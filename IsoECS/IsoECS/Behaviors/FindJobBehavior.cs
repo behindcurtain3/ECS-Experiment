@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using IsoECS.Components.GamePlay;
-using IsoECS.Entities;
-using Microsoft.Xna.Framework;
+using TecsDotNet;
 
 namespace IsoECS.Behaviors
 {
     public class FindJobBehavior : Behavior
     {
-        public override BehaviorStatus Update(Entity self, int dt)
+        public override BehaviorStatus Update(Entity self, double dt)
         {
             CitizenComponent citizen = self.Get<CitizenComponent>();
-            List<Entity> potentialJobs = EntityManager.Instance.GetBuildingsWithinWalkableDistance<ProductionComponent>(citizen.HousingID, 20);
+            List<Entity> potentialJobs = World.GetBuildingsWithinWalkableDistance<ProductionComponent>(citizen.HousingID, 20);
             
             foreach (Entity e in potentialJobs)
             {

@@ -1,16 +1,16 @@
 ﻿using IsoECS.Components.GamePlay;
-using IsoECS.Entities;
+using TecsDotNet;
 
 namespace IsoECS.Systems.GamePlay
 {
-    public class DateTimeSystem : ISystem
+    public class DateTimeSystem : GameSystem
     {
         // an update rate of 50ms mean for each real life second 20 in game seconds pass
-        private int _updateRate = 50;
-        private int _updateCountdown;
+        private double _updateRate = 0.05;
+        private double _updateCountdown;
         private Entity _dateEntity;
 
-        public void Update(int dt)
+        public override void Update(double dt)
         {
             _updateCountdown -= dt;
 
@@ -26,14 +26,12 @@ namespace IsoECS.Systems.GamePlay
             }
         }
 
-        public void Init()
+        public override void Init()
         {
-            _updateCountdown = _updateRate;
-            _dateEntity = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<GameDateComponent>(); });
-        }
+            base.Init();
 
-        public void Shutdown()
-        {
+            _updateCountdown = _updateRate;
+            _dateEntity = World.Entities.Find(delegate(Entity e) { return e.HasComponent<GameDateComponent>(); });
         }
     }
 }

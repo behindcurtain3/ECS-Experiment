@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using IsoECS.Entities;
+using TecsDotNet;
 
 namespace IsoECS.Components.GamePlay
 {
@@ -103,10 +103,10 @@ namespace IsoECS.Components.GamePlay
             if (employees.Count >= MaxEmployees)
                 return false;
 
-            if (employees.Contains(e.ID))
+            if (employees.Contains((int)e.ID))
                 return false;
 
-            employees.Add(e.ID);
+            employees.Add((int)e.ID);
 
             if (EmployeeAdded != null)
                 EmployeeAdded.Invoke(this, e);
@@ -116,7 +116,7 @@ namespace IsoECS.Components.GamePlay
 
         public void RemoveEmployee(Entity e)
         {
-            if (employees.Remove(e.ID))
+            if (employees.Remove((int)e.ID))
             {
                 if (EmployeeRemoved != null)
                     EmployeeRemoved.Invoke(this, e);
@@ -128,10 +128,10 @@ namespace IsoECS.Components.GamePlay
             if (haulers.Count >= MaxHaulers)
                 return false;
 
-            if (haulers.Contains(e.ID))
+            if (haulers.Contains((int)e.ID))
                 return false;
 
-            haulers.Add(e.ID);
+            haulers.Add((int)e.ID);
 
             if (HaulerAdded != null)
                 HaulerAdded.Invoke(this, e);
@@ -141,7 +141,7 @@ namespace IsoECS.Components.GamePlay
 
         public void RemoveHauler(Entity e)
         {
-            if (haulers.Remove(e.ID))
+            if (haulers.Remove((int)e.ID))
             {
                 if (HaulerRemoved != null)
                     HaulerRemoved.Invoke(this, e);

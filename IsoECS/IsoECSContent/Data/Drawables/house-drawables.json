@@ -1,20 +1,16 @@
 {
-	"DrawableComponents": [
+	"Drawables": [
 		{
-			"Drawables": {
-				"Foreground": [
-					{
-						"UniqueID": "house-pleb-plot",
-						"SpriteSheet": "house-pleb-plot",
-						"ID": "default"
-					},
-					{
-						"UniqueID": "house-pleb-small-insula",
-						"SpriteSheet": "small-insula",
-						"ID": "default"
-					}
-				]
-			}
+			"PrototypeID": "house-pleb-plot",
+			"SpriteSheet": "house-pleb-plot",
+			"ID": "default",
+			"Layer": "Foreground"
+		},
+		{
+			"PrototypeID": "house-pleb-small-insula",
+			"SpriteSheet": "small-insula",
+			"ID": "default",
+			"Layer": "Foreground"
 		}
 	]
 }

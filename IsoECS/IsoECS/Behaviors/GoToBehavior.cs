@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using IsoECS.Entities;
-using IsoECS.Components.GamePlay;
+﻿using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
+using TecsDotNet;
 
 namespace IsoECS.Behaviors
 {
     public class GoToBehavior : Behavior
     {
-        public int TargetID { get; set; }
+        public uint TargetID { get; set; }
         public bool FollowRoadsOnly { get; set; }
         public Path GeneratedPath { get; set; }
 
@@ -17,7 +16,7 @@ namespace IsoECS.Behaviors
             FollowRoadsOnly = true;
         }
 
-        public override BehaviorStatus Update(Entity self, int dt)
+        public override BehaviorStatus Update(Entity self, double dt)
         {
             BehaviorStatus status = base.Update(self, dt);
 

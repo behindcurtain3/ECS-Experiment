@@ -1,9 +1,10 @@
 ﻿using IsoECS.Components.GamePlay;
-using Microsoft.Xna.Framework;
-using TomShane.Neoforce.Controls;
-using IsoECS.GamePlay;
 using IsoECS.DataStructures;
 using IsoECS.DataStructures.GamePlay;
+using IsoECS.GamePlay;
+using Microsoft.Xna.Framework;
+using TecsDotNet;
+using TomShane.Neoforce.Controls;
 
 namespace IsoECS.DataRenderers
 {
@@ -13,8 +14,8 @@ namespace IsoECS.DataRenderers
         private Label currentStage;
         private ProgressBar workDoneProgress;
 
-        public ProductionRenderer(ProductionComponent data, Manager manager)
-            : base(data, manager)
+        public ProductionRenderer(ProductionComponent data, GameWorld world)
+            : base(data, world)
         {
             Control = new Panel(Manager)
             {
@@ -166,7 +167,7 @@ namespace IsoECS.DataRenderers
             base.Shutdown();
         }
 
-        private void Data_EmployeesChanged(ProductionComponent sender, Entities.Entity employee)
+        private void Data_EmployeesChanged(ProductionComponent sender, Entity employee)
         {
             numberOfEmployees.Text = GetEmployeeText();
         }

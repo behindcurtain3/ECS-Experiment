@@ -1,28 +1,32 @@
 ﻿using System.Collections.Generic;
 using IsoECS.Behaviors;
 using IsoECS.Components.GamePlay;
-using IsoECS.Entities;
+using TecsDotNet;
 
 namespace IsoECS.Systems.GamePlay
 {
-    public class BehaviorSystem : ISystem
+    public class BehaviorSystem : GameSystem
     {
         private List<Entity> brains = new List<Entity>();
 
-        public void Init()
+        public override void Init()
         {
-            brains.AddRange(EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); }));
+            base.Init();
+            brains.AddRange(World.Entities.FindAll(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); }));
 
-            EntityManager.Instance.EntityAdded += new EntityManager.EntityEventHandler(Instance_EntityAdded);
-            EntityManager.Instance.EntityRemoved += new EntityManager.EntityEventHandler(Instance_EntityRemoved);
+            World.Entities.EntityAdded += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityAdded);
+            World.Entities.EntityRemoved += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityRemoved);
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
             brains.Clear();
+
+            World.Entities.EntityAdded -= Entities_EntityAdded;
+            World.Entities.EntityRemoved -= Entities_EntityRemoved;
         }
 
-        public void Update(int dt)
+        public override void Update(double dt)
         {
             foreach (Entity e in brains)
             {
@@ -31,19 +35,20 @@ namespace IsoECS.Systems.GamePlay
                 if (citizen.Brain == null)
                 {
                     citizen.Brain = new DefaultBehavior();
-                    citizen.Brain.Init(e);
+                    citizen.Brain.Init(World, e);
                 }
 
                 citizen.Brain.Update(e, dt);
             }
         }
 
-        private void Instance_EntityRemoved(Entity e)
+
+        private void Entities_EntityRemoved(Entity e, World world)
         {
             brains.Remove(e);
         }
 
-        void Instance_EntityAdded(Entity e)
+        private void Entities_EntityAdded(Entity e, World world)
         {
             if (e.HasComponent<CitizenComponent>())
                 brains.Add(e);

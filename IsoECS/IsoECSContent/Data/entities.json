@@ -1,6 +1,6 @@
 {
-  "Name" : "Entity List",
-  "List" : [
+  "Name" : "Entity File List",
+  "Files" : [
     "Content/Data/Entities/roads.json",
 	"Content/Data/Entities/farms.json",
 	"Content/Data/Entities/houses.json",

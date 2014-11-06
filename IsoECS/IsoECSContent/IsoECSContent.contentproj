@@ -113,6 +113,10 @@
       <Name>alpha</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Sprites\overlay-marker.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>overlay-marker</Name>
+    </None>
     <None Include="Data\Sprites\foundation-overlay.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>foundation-overlay</Name>
@@ -263,6 +267,13 @@
   <ItemGroup>
     <Compile Include="Data\Sprites\foundation-overlay.png">
       <Name>foundation-overlay</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Sprites\overlay-marker.png">
+      <Name>overlay-marker</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

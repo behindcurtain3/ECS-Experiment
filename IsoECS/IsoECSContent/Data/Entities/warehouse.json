@@ -1,6 +1,7 @@
 {
-  "Entities" : [
+  "Prototypes" : [
     {
+		"PrototypeID": "buildable-warehouse",
 		"Components": [
 			{
 				"Type": "BuildableComponent",

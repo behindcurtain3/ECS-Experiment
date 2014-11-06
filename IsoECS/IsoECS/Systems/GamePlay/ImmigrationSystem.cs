@@ -2,18 +2,16 @@
 using System.Linq;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
-using IsoECS.DataStructures;
-using IsoECS.Entities;
-using IsoECS.Util;
+using TecsDotNet;
 
 namespace IsoECS.Systems.GamePlay
 {
-    public class ImmigrationSystem : ISystem
+    public class ImmigrationSystem : GameSystem
     {
         private List<Entity> _spawners;
-        private int _spawnCountdown;
+        private double _spawnCountdown;
 
-        public void Update(int dt)
+        public override void Update(double dt)
         {
             _spawnCountdown -= dt;
             if (_spawnCountdown <= 0)
@@ -21,21 +19,20 @@ namespace IsoECS.Systems.GamePlay
                 ResetCountdown();
 
                 // get the total number of citizens
-                int vacanies = CountVacanies(EntityManager.Instance.Entities);
-                int population = EntityManager.Instance.CityInformation.Population;
-                int maxPopulation = MaxPopulation(EntityManager.Instance.Entities);
+                int vacanies = CountVacanies(World.Entities);
+                int population = World.CityInformation.Population;
+                int maxPopulation = MaxPopulation(World.Entities);
 
                 // TODO: don't just fill vacancies, check to see if the city is "good" enough for immigrants
                 if (population < maxPopulation && vacanies > 0)
                 {
-                    int spawnIndex = EntityManager.Random.Next(0, _spawners.Count);
+                    int spawnIndex = World.Random.Next(0, _spawners.Count);
                     SpawnerComponent spawner = _spawners[spawnIndex].Get<SpawnerComponent>();
                     PositionComponent position = _spawners[spawnIndex].Get<PositionComponent>();
 
-                    string spawnID = spawner.Spawns[EntityManager.Random.Next(0, spawner.Spawns.Count)];
+                    string spawnID = spawner.Spawns[World.Random.Next(0, spawner.Spawns.Count)];
 
-                    Entity spawned = Serialization.DeepCopy<Entity>(Prototype.Instance.Get(spawnID));
-                    spawned.ResetID();
+                    Entity spawned = (Entity)World.Prototypes[spawnID];
 
                     if (spawned.HasComponent<PositionComponent>())
                     {
@@ -51,25 +48,26 @@ namespace IsoECS.Systems.GamePlay
                         spawned.AddComponent(bPosition);
                     }
 
-                    EntityManager.Instance.AddEntity(spawned);
+                    World.Entities.Add(spawned);
                 }
             }
         }
 
-        public void Init()
+        public override void Init()
         {
-            _spawners = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<SpawnerComponent>(); }).ToList();
+            base.Init();
+            _spawners = World.Entities.FindAll(delegate(Entity e) { return e.HasComponent<SpawnerComponent>(); }).ToList();
             ResetCountdown();
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
             _spawners.Clear();
         }
 
         private void ResetCountdown()
         {
-            _spawnCountdown = EntityManager.Random.Next(2, 6) * 100;
+            _spawnCountdown = World.Random.NextDouble();
         }
 
         private int CountVacanies(List<Entity> entities)

@@ -1,6 +1,6 @@
 {
   "Name" : "Drawables",
-  "List" : [
+  "Files" : [
     "Content/Data/Drawables/farm-drawables.json",
 	"Content/Data/Drawables/road-drawables.json",
 	"Content/Data/Drawables/house-drawables.json",

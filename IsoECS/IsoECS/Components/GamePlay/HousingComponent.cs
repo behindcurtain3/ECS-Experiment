@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using IsoECS.DataStructures.GamePlay;
-using IsoECS.Entities;
+using TecsDotNet;
 
 namespace IsoECS.Components.GamePlay
 {
@@ -26,10 +26,10 @@ namespace IsoECS.Components.GamePlay
         #region Fields
 
         // The entity ID's for the occupants of this domicile
-        private List<int> tennants { get; set; }
+        private List<uint> tennants { get; set; }
 
         // Any entities who have reserved a spot in this house
-        private List<int> prospectiveTennants { get; set; }
+        private List<uint> prospectiveTennants { get; set; }
 
         private int rent;
         private int maxOccupants;
@@ -62,12 +62,12 @@ namespace IsoECS.Components.GamePlay
             }
         }
 
-        public int[] Tennants
+        public uint[] Tennants
         {
             get { return tennants.ToArray(); }
         }
 
-        public int[] Prospects
+        public uint[] Prospects
         {
             get { return prospectiveTennants.ToArray(); }
         }
@@ -97,13 +97,13 @@ namespace IsoECS.Components.GamePlay
 
         public HousingComponent()
         {
-            tennants = new List<int>();
-            prospectiveTennants = new List<int>();
+            tennants = new List<uint>();
+            prospectiveTennants = new List<uint>();
         }
 
         #region Methods
 
-        public bool AddTennant(int id)
+        public bool AddTennant(uint id)
         {
             if (tennants.Count >= MaxOccupants)
                 return false;
@@ -133,7 +133,7 @@ namespace IsoECS.Components.GamePlay
             }
         }
 
-        public bool AddProspect(int id)
+        public bool AddProspect(uint id)
         {
             if (tennants.Count + prospectiveTennants.Count >= MaxOccupants)
                 return false;

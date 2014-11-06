@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using IsoECS.Components;
 using IsoECS.Components.GamePlay;
-using IsoECS.Entities;
-using IsoECS.Components;
-using IsoECS.Util;
 using Microsoft.Xna.Framework;
+using TecsDotNet;
 
 namespace IsoECS.Behaviors
 {
@@ -16,7 +14,7 @@ namespace IsoECS.Behaviors
             PreviousBehavior = new IdleBehavior();
         }
 
-        public override BehaviorStatus Update(Entity self, int dt)
+        public override BehaviorStatus Update(Entity self, double dt)
         {
             BehaviorStatus status = base.Update(self, dt);
 
@@ -30,7 +28,7 @@ namespace IsoECS.Behaviors
 
                         // make sure the citizen starts at the right position
                         PositionComponent position = self.Get<PositionComponent>();
-                        Vector2 startAt = EntityManager.Instance.Map.GetPositionFromIndex(exit.SelectedPath.Start.X, exit.SelectedPath.Start.Y);
+                        Vector2 startAt = World.Map.GetPositionFromIndex(exit.SelectedPath.Start.X, exit.SelectedPath.Start.Y);
                         position.X = startAt.X;
                         position.Y = startAt.Y;
                         position.Index = exit.SelectedPath.Start;
@@ -56,18 +54,18 @@ namespace IsoECS.Behaviors
                     // these top-level behaviors will manage the needs and invoke appropriate sub-behaviors
 
                     // the citizen is homeless, find them a home!
-                    if (citizen.HousingID == -1 && PreviousBehavior.GetType() != typeof(FindHomeBehavior))
+                    if (citizen.HousingID == 0 && PreviousBehavior.GetType() != typeof(FindHomeBehavior))
                     {
                         AddChild(new FindHomeBehavior());
                     }
-                    else if (citizen.JobID == -1 && citizen.HousingID != -1 && PreviousBehavior.GetType() != typeof(FindJobBehavior))
+                    else if (citizen.JobID == 0 && citizen.HousingID != 0 && PreviousBehavior.GetType() != typeof(FindJobBehavior))
                     {
                         AddChild(new FindJobBehavior());
                     }
                     else
                     {
                         // do the hauling job
-                        if (citizen.IsHauler && citizen.JobID != -1)
+                        if (citizen.IsHauler && citizen.JobID != 0)
                         {
                             AddChild(new HaulerBehavior());
                         }
@@ -78,7 +76,7 @@ namespace IsoECS.Behaviors
                         //    PreviousBehavior = state.Peek();
                         //}
                         // go home
-                        else if (citizen.HousingID != -1 && PreviousBehavior.GetType() == typeof(IdleBehavior) && citizen.InsideID != citizen.HousingID)
+                        else if (citizen.HousingID != 0 && PreviousBehavior.GetType() == typeof(IdleBehavior) && citizen.InsideID != citizen.HousingID)
                         {
                             AddChild(new ExitBuildingBehavior() { ExitID = citizen.InsideID, TargetID = citizen.HousingID });
                         }

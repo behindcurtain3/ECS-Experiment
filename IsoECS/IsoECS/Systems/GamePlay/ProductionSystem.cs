@@ -3,36 +3,37 @@ using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using IsoECS.DataStructures.GamePlay;
-using IsoECS.Entities;
 using IsoECS.GamePlay;
+using TecsDotNet;
 
 namespace IsoECS.Systems
 {
-    public class ProductionSystem : ISystem
+    public class ProductionSystem : GameSystem
     {
         private long lastUpdate;
 
-        public void Init()
+        public override void Init()
         {
-            lastUpdate = EntityManager.Instance.Date.Time;
-            EntityManager.Instance.Date.TimeChanged += new GameDateComponent.GameDateEventHandler(Date_TimeChanged);
+            base.Init();
+            lastUpdate = World.Date.Time;
+            World.Date.TimeChanged += new GameDateComponent.GameDateEventHandler(Date_TimeChanged);
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
-            EntityManager.Instance.Date.TimeChanged -= Date_TimeChanged;
+            World.Date.TimeChanged -= Date_TimeChanged;
         }
 
-        public void Update(int dt)
+        public override void Update(double dt)
         {   
         }
 
         private void Date_TimeChanged(GameDateComponent sender)
         {
-            long elapsed = EntityManager.Instance.Date.MinutesElapsed(lastUpdate);
-            lastUpdate = EntityManager.Instance.Date.Time;
+            long elapsed = World.Date.MinutesElapsed(lastUpdate);
+            lastUpdate = World.Date.Time;
 
-            List<Entity> producers = EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<ProductionComponent>(); });
+            List<Entity> producers = World.Entities.FindAll(delegate(Entity e) { return e.HasComponent<ProductionComponent>(); });
 
             foreach (Entity e in producers)
             {
@@ -77,13 +78,13 @@ namespace IsoECS.Systems
                     // remove
                     foreach (string str in stage.RemoveFromDrawableComponent)
                     {
-                        drawable.RemoveByUniqueID(str);
+                        drawable.RemoveByPrototypeID(str);
                     }
 
                     // add
                     foreach (string str in stage.AddToDrawableComponent)
                     {
-                        IGameDrawable igd = DrawableLibrary.Instance.Get(str);
+                        GameDrawable igd = (GameDrawable)World.Prototypes[str];
 
                         drawable.Add(igd.Layer, igd);
                     }

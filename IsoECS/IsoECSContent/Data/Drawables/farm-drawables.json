@@ -1,37 +1,34 @@
 {
-	"DrawableComponents": [
+	"Drawables": [
 		{
-			"Drawables": {
-				"Foundation": [
-					{
-						"UniqueID": "wheat-farm-foundation",
-						"SpriteSheet": "wheat-farm-foundation",
-						"ID": "default"
-					}
-				],
-				"Foreground": [
-					{
-						"UniqueID": "wheat-farm-foreground-stage1",
-						"SpriteSheet": "wheat-farm-foreground",
-						"ID": "stage1"
-					},
-					{
-						"UniqueID": "wheat-farm-foreground-stage2",
-						"SpriteSheet": "wheat-farm-foreground",
-						"ID": "stage2"
-					},
-					{
-						"UniqueID": "wheat-farm-foreground-stage3",
-						"SpriteSheet": "wheat-farm-foreground",
-						"ID": "stage3"
-					},
-					{
-						"UniqueID": "wheat-farm-foreground-stage4",
-						"SpriteSheet": "wheat-farm-foreground",
-						"ID": "stage4"
-					}
-				]
-			}
+			"PrototypeID": "wheat-farm-foundation",
+			"SpriteSheet": "wheat-farm-foundation",
+			"ID": "default",
+			"Layer": "Foundation"
+		},
+		{
+			"PrototypeID": "wheat-farm-foreground-stage1",
+			"SpriteSheet": "wheat-farm-foreground",
+			"ID": "stage1",
+			"Layer": "Foreground"
+		},
+		{
+			"PrototypeID": "wheat-farm-foreground-stage2",
+			"SpriteSheet": "wheat-farm-foreground",
+			"ID": "stage2",
+			"Layer": "Foreground"
+		},
+		{
+			"PrototypeID": "wheat-farm-foreground-stage3",
+			"SpriteSheet": "wheat-farm-foreground",
+			"ID": "stage3",
+			"Layer": "Foreground"
+		},
+		{
+			"PrototypeID": "wheat-farm-foreground-stage4",
+			"SpriteSheet": "wheat-farm-foreground",
+			"ID": "stage4",
+			"Layer": "Foreground"
 		}
 	]
 }

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Microsoft.Xna.Framework;
 using IsoECS.GamePlay.Map;
+using TecsDotNet;
 
 namespace IsoECS.Components.GamePlay
 {

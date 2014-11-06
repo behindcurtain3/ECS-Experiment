@@ -1,4 +1,5 @@
 ﻿using TomShane.Neoforce.Controls;
+using IsoECS.GamePlay;
 
 namespace IsoECS.DataRenderers
 {
@@ -7,11 +8,13 @@ namespace IsoECS.DataRenderers
         public virtual T Data { get; set; }
         public virtual S Control { get; set; }
         public Manager Manager { get; private set; }
+        public GameWorld World { get; private set; }
 
-        public DataRenderer(T data, Manager manager)
+        public DataRenderer(T data, GameWorld world)
         {
             Data = data;
-            Manager = manager;
+            World = world;
+            Manager = world.UI;
         }
 
         public virtual S GetControl(Control parent)

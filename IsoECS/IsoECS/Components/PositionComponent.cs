@@ -2,6 +2,7 @@
 using IsoECS.DataStructures.Json.Converters;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using TecsDotNet;
 
 namespace IsoECS.Components
 {

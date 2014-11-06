@@ -5,21 +5,13 @@ using Microsoft.Xna.Framework.Graphics;
 namespace IsoECS.DataStructures
 {
     [Serializable]
-    public class DrawableSprite : IGameDrawable
+    public class DrawableSprite : GameDrawable
     {
-        public string UniqueID { get; set; }
         public string SpriteSheet { get; set; }
         public string ID { get; set; }
 
-        public string Layer { get; set; }
-        public bool Visible { get; set; }
-        public Color Color { get; set; }
-        public float Alpha { get; set; }
         public float Rotation { get; set; }
         public SpriteEffects Effects { get; set; }
-
-        // does this move when the camera moves?
-        public bool Static { get; set; }
 
         public DrawableSprite()
         {
@@ -29,7 +21,7 @@ namespace IsoECS.DataStructures
             Alpha = 1.0f;
         }
 
-        public void Draw(GraphicsDevice graphics, SpriteBatch spriteBatch, SpriteFont font, float positionX, float positionY)
+        public override void Draw(GraphicsDevice graphics, SpriteBatch spriteBatch, SpriteFont font, float positionX, float positionY)
         {
 
             // update the destination on the drawable

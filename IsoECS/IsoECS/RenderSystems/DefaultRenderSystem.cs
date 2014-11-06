@@ -1,50 +1,53 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework.Graphics;
+using TecsDotNet;
 using IsoECS.Components;
 using IsoECS.DataStructures;
-using IsoECS.Entities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace IsoECS.Systems
+namespace IsoECS.RenderSystems
 {
     public struct DrawData
     {
-        public IGameDrawable Drawable;
+        public GameDrawable Drawable;
+        public Entity Entity;
         public PositionComponent Position;
     }
 
-    public class RenderSystem : IRenderSystem
+    public class DefaultRenderSystem : RenderSystem
     {
         private string[] supportedLayers = new string[] { "Background", "Foundation", "Foreground", "Text" };
-
-        public GraphicsDevice Graphics { get; set; }
-        public Color ClearColor { get; set; }
 
         protected Dictionary<string, List<DrawData>> drawData = new Dictionary<string, List<DrawData>>();
         protected List<Entity> drawables = new List<Entity>();
         protected PositionComponent cameraPosition;
 
-        public void Init()
+        public override void Init()
         {
+            base.Init();
+
             // Get the list of drawable text entities from the main list
-            drawables.AddRange(EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); }));
+            drawables.AddRange(World.Entities.FindAll(delegate(Entity e) { return e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>(); }));
             foreach (string layer in supportedLayers)
             {
                 drawData.Add(layer, new List<DrawData>());
             }
-            
-            cameraPosition = EntityManager.Instance.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
 
-            EntityManager.Instance.EntityAdded += new EntityManager.EntityEventHandler(Instance_EntityAdded);
-            EntityManager.Instance.EntityRemoved += new EntityManager.EntityEventHandler(Instance_EntityRemoved);
+            cameraPosition = World.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>() && e.HasComponent<PositionComponent>(); }).Get<PositionComponent>();
+
+            World.Entities.EntityAdded += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityAdded);
+            World.Entities.EntityRemoved += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityRemoved);
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
             drawables.Clear();
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
+        public override void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
         {
             // Setup the scene
             Graphics.Clear(ClearColor);
@@ -53,11 +56,11 @@ namespace IsoECS.Systems
             // clear the layers
             foreach (KeyValuePair<string, List<DrawData>> kpv in drawData)
                 kpv.Value.Clear();
-            
+
             // add the drawables
-            foreach(Entity e in drawables)
+            foreach (Entity e in drawables)
             {
-                foreach(KeyValuePair<string, List<DrawData>> layer in drawData)
+                foreach (KeyValuePair<string, List<DrawData>> layer in drawData)
                     AddToDrawables(layer.Value, layer.Key, e);
             }
 
@@ -76,9 +79,10 @@ namespace IsoECS.Systems
         protected void AddToDrawables(List<DrawData> addTo, string layer, Entity e)
         {
             DrawData dd;
-            foreach (IGameDrawable d in e.Get<DrawableComponent>().Get(layer))
+            foreach (GameDrawable d in e.Get<DrawableComponent>().Get(layer))
             {
                 dd = new DrawData();
+                dd.Entity = e;
                 dd.Position = e.Get<PositionComponent>();
                 dd.Drawable = d;
                 addTo.Add(dd);
@@ -107,12 +111,12 @@ namespace IsoECS.Systems
                 dd.Drawable.Draw(Graphics, spriteBatch, spriteFont, (int)(dd.Position.X - cameraPosition.X), (int)(dd.Position.Y - cameraPosition.Y));
         }
 
-        private void Instance_EntityRemoved(Entity e)
+        private void Entities_EntityRemoved(Entity e, World world)
         {
-            drawables.Remove(e);
+            drawables.Remove(e);   
         }
 
-        private void Instance_EntityAdded(Entity e)
+        private void Entities_EntityAdded(Entity e, World world)
         {
             if (e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>())
             {

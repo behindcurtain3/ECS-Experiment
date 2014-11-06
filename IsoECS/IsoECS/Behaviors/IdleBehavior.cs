@@ -1,29 +1,28 @@
-﻿using System.Collections.Generic;
-using IsoECS.Entities;
-using IsoECS.Util;
+﻿using IsoECS.GamePlay;
+using TecsDotNet;
 
 namespace IsoECS.Behaviors
 {
     public class IdleBehavior : Behavior
     {
-        public int IdleTime { get; set; }
-        public int IdleCountdown { get; set; }
+        public double IdleTime { get; set; }
+        public double IdleCountdown { get; set; }
 
         public IdleBehavior()
         {
             IdleTime = -1;
         }
 
-        public override void Init(Entity self)
+        public override void Init(GameWorld world, Entity self)
         {
-            base.Init(self);
+            base.Init(world, self);
 
-            if(IdleTime == -1)
-                IdleTime = EntityManager.Random.Next(5, 25) * 1000;
+            if (IdleTime <= 0)
+                IdleTime = World.Random.NextDouble();
             IdleCountdown = IdleTime;
         }
 
-        public override BehaviorStatus Update(Entity self, int dt)
+        public override BehaviorStatus Update(Entity self, double dt)
         {
             BehaviorStatus status = base.Update(self, dt);
 

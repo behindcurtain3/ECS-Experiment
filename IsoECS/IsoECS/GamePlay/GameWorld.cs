@@ -4,30 +4,25 @@ using System.Linq;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
-using IsoECS.Util;
+using IsoECS.RenderSystems;
 using Microsoft.Xna.Framework;
+using TecsDotNet;
 using TomShane.Neoforce.Controls;
-using Component = IsoECS.Components.Component;
+using Component = TecsDotNet.Component;
+using IsoECS.Input;
 
-namespace IsoECS.Entities
+namespace IsoECS.GamePlay
 {
-    public sealed class EntityManager
+    public class GameWorld : World
     {
-        public delegate void EntityEventHandler(Entity e);
-        public event EntityEventHandler EntityAdded;
-        public event EntityEventHandler EntityRemoved;
+        #region Properties
 
-        private static readonly EntityManager _instance = new EntityManager();
+        public RenderSystem Renderer { get; set; }
+        public Random Random { get; private set; }
 
-        public static EntityManager Instance
-        {
-            get { return _instance; }
-        }
-
-        public static Random Random { get; set; }
-
-        public List<Entity> Entities { get; private set; }
         public Manager UI { get; set; }
+        public InputController Input { get; set; }
+
         public IsometricMapComponent Map { get; private set; }
         public RoadPlannerComponent Roads { get; private set; }
         public FoundationPlannerComponent Foundations { get; private set; }
@@ -36,52 +31,28 @@ namespace IsoECS.Entities
         public GameDateComponent Date { get; set; }
         public CityServicesComponent CityServices { get; private set; }
 
-        private EntityManager()
+        #endregion
+
+        public GameWorld()
+            : base()
         {
-            Entities = new List<Entity>();
+            Input = new InputController();
+            Random = new System.Random();
+
+            Entities.EntityAdded += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityAdded);
+            Entities.EntityRemoved += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityRemoved);
         }
 
-        public void RemoveEntity(Entity entity)
+        private void Entities_EntityRemoved(Entity e, World world)
         {
-            if (Entities.Remove(entity))
-            {
-
-                Point index = entity.Get<PositionComponent>().Index;
-
-                // MASSIVE TODO: all the remove & add entity case by case code should be handled in a system that
-                // subscribes to the add or remove entity events
-                
-                foreach (Component c in entity.Components.Values.ToList())
-                {
-                    switch (c.GetType().Name)
-                    {
-                        case "FoundationComponent":
-                            FoundationComponent foundation = (FoundationComponent)c;
-
-                            // remove any foundations from the planner
-                            foreach (LocationValue lv in foundation.Plan)
-                            {
-                                Point update = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
-                                if (Foundations.SpaceTaken.ContainsKey(update))
-                                    Foundations.SpaceTaken.Remove(update);
-                            }
-                            break;
-                    }
-                }
-
-                if (EntityRemoved != null)
-                    EntityRemoved.Invoke(entity);
-            }
         }
 
-        public void AddEntity(Entity entity)
+        private void Entities_EntityAdded(Entity e, World world)
         {
-            Point index = entity.Get<PositionComponent>().Index;
-
-            Entities.Add(entity);
+            Point index = e.Get<PositionComponent>().Index;
 
             // update the game data
-            foreach (Component c in entity.Components.Values.ToList())
+            foreach (Component c in e.Components.Values.ToList())
             {
                 switch (c.GetType().Name)
                 {
@@ -89,34 +60,34 @@ namespace IsoECS.Entities
                         CitizenComponent citizen = (CitizenComponent)c;
 
                         // fill in the data if it doesn't already exist
-                        if (String.IsNullOrWhiteSpace(citizen.Name))
+                        if (string.IsNullOrWhiteSpace(citizen.Name))
                         {
                             // generate name
                             string[] names = { "Steve", "John", "Bill" };
-                            citizen.Name = names[EntityManager.Random.Next(0, names.Length)];
+                            citizen.Name = names[Random.Next(0, names.Length)];
                         }
 
-                        if (String.IsNullOrWhiteSpace(citizen.Surname))
+                        if (string.IsNullOrWhiteSpace(citizen.Surname))
                         {
                             // generate family name
                             string[] names = { "Johnson", "Miller", "Smith" };
-                            citizen.Surname = names[EntityManager.Random.Next(0, names.Length)];
+                            citizen.Surname = names[Random.Next(0, names.Length)];
                         }
 
                         if (citizen.Gender == Gender.BOTH)
                         {
-                            citizen.Gender = (Gender)EntityManager.Random.Next(1, 3);
+                            citizen.Gender = (Gender)Random.Next(1, 3);
                         }
 
                         if (citizen.Age == 0)
                         {
                             // generate age
-                            citizen.Age = EntityManager.Random.Next(14, 46);
+                            citizen.Age = Random.Next(14, 46);
                         }
 
                         if (citizen.Money == 0)
                         {
-                            citizen.Money = EntityManager.Random.Next(20, 100);
+                            citizen.Money = Random.Next(20, 100);
                         }
                         break;
 
@@ -151,11 +122,28 @@ namespace IsoECS.Entities
                     case "FoundationComponent":
                         FoundationComponent floor = (FoundationComponent)c;
 
+                        switch (floor.PlanType)
+                        {
+                            case "Fill":
+                                Point start = floor.Plan[0].Offset;
+                                Point end = floor.Plan[1].Offset;
+
+                                floor.Plan.Clear(); // clear the plan, the for loops will fill it
+                                for (int xx = start.X; xx <= end.X; xx++)
+                                {
+                                    for (int yy = start.Y; yy <= end.Y; yy++)
+                                    {
+                                        floor.Plan.Add(new LocationValue() { Offset = new Point(xx, yy) });
+                                    }
+                                }
+                                break;
+                        } 
+
                         // update the floor planner
                         foreach (LocationValue lv in floor.Plan)
                         {
                             Point update = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
-                            Foundations.SpaceTaken.Add(update, entity.ID);
+                            Foundations.SpaceTaken.Add(update, e.ID);
                         }
                         break;
 
@@ -168,15 +156,15 @@ namespace IsoECS.Entities
                         break;
 
                     case "IsometricMapComponent":
-                        Map = entity.Get<IsometricMapComponent>();
+                        Map = e.Get<IsometricMapComponent>();
 
                         if (Map.Terrain == null)
                         {
                             Map.CreateMap(Map.SpriteSheetName, Map.TxWidth, Map.TxHeight, Map.PxTileWidth, Map.PxTileHeight);
 
                             // replace the map
-                            entity.RemoveComponent(entity.Get<IsometricMapComponent>());
-                            entity.AddComponent(Map);
+                            e.RemoveComponent(e.Get<IsometricMapComponent>());
+                            e.AddComponent(Map);
                         }
                         break;
 
@@ -192,39 +180,39 @@ namespace IsoECS.Entities
                             {
                                 // random
                                 case "Edge":
-                                    int side = EntityManager.Random.Next(4);
+                                    int side = Random.Next(4);
 
                                     switch (side)
                                     {
                                         case 0:
                                             // northwest
                                             xIndex = 0;
-                                            yIndex = EntityManager.Random.Next(1, Map.TxHeight);
+                                            yIndex = Random.Next(1, Map.TxHeight);
                                             break;
                                         case 1:
                                             // northeast
-                                            xIndex = EntityManager.Random.Next(1, Map.TxWidth);
+                                            xIndex = Random.Next(1, Map.TxWidth);
                                             yIndex = 0;
                                             break;
                                         case 2:
                                             // southeast
                                             xIndex = Map.TxWidth - 1;
-                                            yIndex = EntityManager.Random.Next(1, Map.TxHeight);
+                                            yIndex = Random.Next(1, Map.TxHeight);
                                             break;
                                         default:
                                             // southwest
-                                            xIndex = EntityManager.Random.Next(1, Map.TxWidth);
+                                            xIndex = Random.Next(1, Map.TxWidth);
                                             yIndex = Map.TxHeight - 1;
                                             break;
                                     }
                                     break;
                                 case "NoEdge":
-                                    xIndex = EntityManager.Random.Next(1, Map.TxWidth - 1);
-                                    yIndex = EntityManager.Random.Next(1, Map.TxHeight - 1);
+                                    xIndex = Random.Next(1, Map.TxWidth - 1);
+                                    yIndex = Random.Next(1, Map.TxHeight - 1);
                                     break;
                                 default:
-                                    xIndex = EntityManager.Random.Next(0, Map.TxWidth);
-                                    yIndex = EntityManager.Random.Next(0, Map.TxHeight);
+                                    xIndex = Random.Next(0, Map.TxWidth);
+                                    yIndex = Random.Next(0, Map.TxHeight);
                                     break;
                             }
 
@@ -247,8 +235,8 @@ namespace IsoECS.Entities
                         Roads.AddOrUpdate(Map, road.BuiltAt, true);
 
                         // update the other roads
-                        List<Entity> roadEntities = Entities.FindAll(delegate(Entity e) { return e.HasComponent<RoadComponent>(); });
-                        Roads.UpdateGfx(roadEntities);
+                        List<Entity> roadEntities = Entities.FindAll(delegate(Entity entity) { return entity.HasComponent<RoadComponent>(); });
+                        Roads.UpdateGfx(this, roadEntities);
                         break;
 
                     case "RoadPlannerComponent":
@@ -259,9 +247,6 @@ namespace IsoECS.Entities
                         break;
                 }
             }
-
-            if (EntityAdded != null)
-                EntityAdded.Invoke(entity);
         }
 
         public List<Point> GetValidExitsFromFoundation(Entity entity)
@@ -296,10 +281,10 @@ namespace IsoECS.Entities
             return validLandings;
         }
 
-        public List<Entity> GetBuildingsWithinWalkableDistance<T>(int startID, int distance)
+        public List<Entity> GetBuildingsWithinWalkableDistance<T>(uint startID, int distance)
         {
             List<Entity> entitiesWithinRange = new List<Entity>();
-            Entity startEntity = GetEntity(startID);
+            Entity startEntity = Entities.Get(startID);
 
             if (startEntity == null)
                 return entitiesWithinRange;
@@ -311,7 +296,7 @@ namespace IsoECS.Entities
                 // walk the "road path" until distance is reached
                 List<Point> roads = Pathwalker.GetRoadsWithinDistance(Roads, exit, distance);
 
-                foreach(Point road in roads)
+                foreach (Point road in roads)
                 {
                     for (int x = -1; x < 2; x++)
                     {
@@ -325,21 +310,16 @@ namespace IsoECS.Entities
 
                             if (Foundations.SpaceTaken.ContainsKey(p))
                             {
-                                Entity e = GetEntity(Foundations.SpaceTaken[p]);
+                                Entity e = Entities.Get(Foundations.SpaceTaken[p]);
                                 if (e != null && e.HasComponent<T>() && !entitiesWithinRange.Contains(e))
                                     entitiesWithinRange.Add(e);
                             }
                         }
                     }
                 }
-            }            
+            }
 
             return entitiesWithinRange;
-        }
-
-        public Entity GetEntity(int id)
-        {
-            return Entities.Find(delegate(Entity e) { return e.ID == id; });
         }
     }
 }

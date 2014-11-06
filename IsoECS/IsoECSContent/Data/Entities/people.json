@@ -1,7 +1,7 @@
 {
-	"Entities" : [
+	"Prototypes" : [
 		{
-			"UniqueID": "immigrant",
+			"PrototypeID": "immigrant",
 			"Components": [
 				{
 					"Type": "DrawableComponent",
@@ -30,7 +30,7 @@
 			]
 		},
 		{
-			"UniqueID": "hauler",
+			"PrototypeID": "hauler",
 			"Components": [
 				{
 					"Type": "DrawableComponent",

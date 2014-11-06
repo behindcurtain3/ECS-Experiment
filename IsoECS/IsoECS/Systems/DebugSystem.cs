@@ -1,27 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IsoECS.Entities;
-using IsoECS.Components.GamePlay;
-using IsoECS.Components;
-using IsoECS.DataStructures;
+﻿using System.Collections.Generic;
 using IsoECS.Behaviors;
+using IsoECS.Components;
+using IsoECS.Components.GamePlay;
+using IsoECS.DataStructures;
+using TecsDotNet;
 
 namespace IsoECS.Systems
 {
-    public class DebugSystem : ISystem
+    public class DebugSystem : GameSystem
     {
         private List<Entity> brains = new List<Entity>();
 
-        public void Update(int dt)
+        public override void Update(double dt)
         {
             foreach (Entity e in brains)
             {
                 DrawableComponent drawable = e.Get<DrawableComponent>();
                 CitizenComponent citizen = e.Get<CitizenComponent>();
 
-                foreach (IGameDrawable d in drawable.Get("Text"))
+                foreach (GameDrawable d in drawable.Get("Text"))
                 {
                     d.Visible = true;
                     if (d is DrawableText)
@@ -41,35 +38,38 @@ namespace IsoECS.Systems
             }
         }
 
-        public void Init()
+        public override void Init()
         {
-            brains.AddRange(EntityManager.Instance.Entities.FindAll(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); }));
+            base.Init();
+            brains.AddRange(World.Entities.FindAll(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); }));
 
-            EntityManager.Instance.EntityAdded += new EntityManager.EntityEventHandler(Instance_EntityAdded);
-            EntityManager.Instance.EntityRemoved += new EntityManager.EntityEventHandler(Instance_EntityRemoved);
+            World.Entities.EntityAdded += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityAdded);
+            World.Entities.EntityRemoved += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityRemoved);
         }
 
-        void Instance_EntityRemoved(Entity e)
+        private void Entities_EntityRemoved(Entity e, World world)
         {
             brains.Remove(e);
         }
 
-        void Instance_EntityAdded(Entity e)
+        private void Entities_EntityAdded(Entity e, World world)
         {
             if (e.HasComponent<CitizenComponent>())
                 brains.Add(e);
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
-            EntityManager.Instance.EntityRemoved -= Instance_EntityRemoved;
-            EntityManager.Instance.EntityAdded -= Instance_EntityAdded;
+            base.Shutdown();
+
+            World.Entities.EntityAdded -= Entities_EntityAdded;
+            World.Entities.EntityRemoved -= Entities_EntityRemoved;
 
             foreach (Entity e in brains)
             {
                 DrawableComponent drawable = e.Get<DrawableComponent>();
 
-                foreach (IGameDrawable d in drawable.Get("Text"))
+                foreach (GameDrawable d in drawable.Get("Text"))
                 {
                     d.Visible = false;
                 }

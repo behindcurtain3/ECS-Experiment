@@ -1,7 +1,8 @@
 ﻿using IsoECS.Components.GamePlay;
+using IsoECS.GamePlay;
 using Microsoft.Xna.Framework;
+using TecsDotNet;
 using TomShane.Neoforce.Controls;
-using IsoECS.Entities;
 
 namespace IsoECS.DataRenderers
 {
@@ -12,8 +13,8 @@ namespace IsoECS.DataRenderers
         private Label job;
         private Label housing;
 
-        public CitizenRenderer(CitizenComponent data, Manager manager)
-            : base(data, manager)
+        public CitizenRenderer(CitizenComponent data, GameWorld world)
+            : base(data, world)
         {
             Control = new Panel(Manager)
             {
@@ -89,7 +90,7 @@ namespace IsoECS.DataRenderers
 
             housing = new Label(Manager)
             {
-                Text = GetBuildableText(Data.HousingID),
+                Text = GetBuildableText((int)Data.HousingID),
                 Left = lbl.Left,
                 Top = lbl.Top,
                 Width = lbl.Width,
@@ -109,7 +110,7 @@ namespace IsoECS.DataRenderers
 
             job = new Label(Manager)
             {
-                Text = GetBuildableText(Data.JobID),
+                Text = GetBuildableText((int)Data.JobID),
                 Left = lbl.Left,
                 Top = lbl.Top,
                 Width = lbl.Width,
@@ -133,10 +134,10 @@ namespace IsoECS.DataRenderers
 
         private string GetBuildableText(int id)
         {
-            if (id == -1)
+            if (id == 0)
                 return "None";
 
-            Entity e = EntityManager.Instance.GetEntity(id);
+            Entity e = World.Entities.Get((uint)id);
 
             if (e != null)
             {
@@ -152,12 +153,12 @@ namespace IsoECS.DataRenderers
         
         private void Data_HousingChanged(CitizenComponent sender)
         {
-            housing.Text = GetBuildableText(Data.HousingID);
+            housing.Text = GetBuildableText((int)Data.HousingID);
         }
 
         private void Data_JobChanged(CitizenComponent sender)
         {
-            job.Text = GetBuildableText(Data.JobID);
+            job.Text = GetBuildableText((int)Data.JobID);
         }
 
         private void Data_MoneyChanged(CitizenComponent sender)

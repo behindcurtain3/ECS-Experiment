@@ -1,57 +1,52 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using IsoECS.Components.GamePlay;
-using IsoECS.Entities;
-using IsoECS.Systems.Threaded;
-using IsoECS.Util;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using TomShane.Neoforce.Controls;
 using IsoECS.DataRenderers;
+using TecsDotNet;
+using TomShane.Neoforce.Controls;
 
 namespace IsoECS.Systems.UI
 {
-    public class CityInformationSystem : ISystem
+    public class CityInformationSystem : GameSystem
     {
         private CityInformationRenderer cir;
 
-        public void Init()
+        public override void Init()
         {
-            cir = new CityInformationRenderer(EntityManager.Instance.CityInformation, EntityManager.Instance.UI);
+            cir = new CityInformationRenderer(World.CityInformation, World);
 
             Panel cirp = cir.GetControl(null);
 
-            EntityManager.Instance.EntityAdded += new EntityManager.EntityEventHandler(Instance_EntityAdded);
-            EntityManager.Instance.EntityRemoved += new EntityManager.EntityEventHandler(Instance_EntityRemoved);
+            World.Entities.EntityAdded += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityAdded);
+            World.Entities.EntityRemoved += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityRemoved);
 
-            int pop = EntityManager.Instance.Entities.Count(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); });
+            int pop = World.Entities.Count(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); });
 
-            EntityManager.Instance.CityInformation.Population = pop;
+            World.CityInformation.Population = pop;
         }
 
-        public void Update(int dt)
+        private void Entities_EntityRemoved(Entity e, World world)
+        {
+            if (e.HasComponent<CitizenComponent>())
+                World.CityInformation.Population--;
+        }
+
+        private void Entities_EntityAdded(Entity e, World world)
+        {
+            if (e.HasComponent<CitizenComponent>())
+                World.CityInformation.Population++;
+        }
+
+        public override void Update(double dt)
         {
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
             if(cir != null)
                 cir.Shutdown();
 
-            EntityManager.Instance.EntityAdded -= Instance_EntityAdded;
-            EntityManager.Instance.EntityRemoved -= Instance_EntityAdded;
-        }
-
-        private void Instance_EntityRemoved(Entity e)
-        {
-            if (e.HasComponent<CitizenComponent>())
-                EntityManager.Instance.CityInformation.Population--;
-        }
-
-        private void Instance_EntityAdded(Entity e)
-        {
-            if (e.HasComponent<CitizenComponent>())
-                EntityManager.Instance.CityInformation.Population++;
+            World.Entities.EntityAdded -= Entities_EntityAdded;
+            World.Entities.EntityRemoved -= Entities_EntityRemoved;
         }
     }
 }

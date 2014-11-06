@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
-using Microsoft.Xna.Framework.Graphics;
 using IsoECS.DataStructures;
 using Microsoft.Xna.Framework;
-using IsoECS.Entities;
+using Microsoft.Xna.Framework.Graphics;
+using TecsDotNet;
 
-namespace IsoECS.Systems.Renderers
+namespace IsoECS.RenderSystems
 {
-    public class FoundationOverlaySystem : RenderSystem
+    public class FoundationOverlaySystem : DefaultRenderSystem
     {
         private string spriteSheet = "foundation-overlay";
         private string source = "overlay";
-
+        
         protected override void DrawLayer(string layer, SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> layerData)
         {
             if (layer.Equals("Foundation") || layer.Equals("Foreground") || layer.Equals("Text"))
@@ -25,23 +25,23 @@ namespace IsoECS.Systems.Renderers
                 base.DrawLayer(layer, spriteBatch, spriteFont, camera, layerData);
             }
         }
-
+        
         protected virtual void DrawOverlay(string layer, SpriteBatch spriteBatch, SpriteFont spriteFont, PositionComponent camera, List<DrawData> layerData)
         {
             // if the drawable is a building draw the foundation placeholder, otherwise just draw it
             if(layer.Equals("Foundation"))
             {
-                foreach (var space in EntityManager.Instance.Foundations.SpaceTaken)
+                foreach (var space in World.Foundations.SpaceTaken)
                 {
-                    Entity e = EntityManager.Instance.GetEntity(space.Value);
-                    DrawData dd = layerData.Find(delegate(DrawData d) { return d.Position.BelongsTo.ID == e.ID; });
+                    Entity e = World.Entities.Get(space.Value);
+                    DrawData dd = layerData.Find(delegate(DrawData d) { return d.Entity.ID == e.ID; });
 
                     if (e == null)
                         continue;
 
                     if (IsEntityValid(e))
                     {
-                        Vector2 p = EntityManager.Instance.Map.GetPositionFromIndex(space.Key.X, space.Key.Y);
+                        Vector2 p = World.Map.GetPositionFromIndex(space.Key.X, space.Key.Y);
                         p.X -= cameraPosition.X;
                         p.Y -= cameraPosition.Y;
 
@@ -58,7 +58,7 @@ namespace IsoECS.Systems.Renderers
             {
                 foreach (DrawData dd in layerData)
                 {
-                    if (!IsEntityValid(dd.Position.BelongsTo))
+                    if (!IsEntityValid(dd.Entity))
                     {
                         Draw(spriteBatch, spriteFont, dd, camera);
                     }
