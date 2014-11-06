@@ -1,13 +1,13 @@
 {
-	"Items": [
+	"Prototypes": [
 		{
-			"UniqueID": "grain",
+			"PrototypeID": "grain",
 			"Name": "Grain",
 			"Description": "",
 			"Value": 1.0
 		},
 		{
-			"UniqueID": "alpha-fertilizer",
+			"PrototypeID": "alpha-fertilizer",
 			"Name": "Fertilizer",
 			"Description": "",
 			"Value": 0.1

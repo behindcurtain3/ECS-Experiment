@@ -1,7 +1,7 @@
 {
-	"Recipes": [
+	"Prototypes": [
 		{
-			"UniqueID": "alpha-wheat",
+			"PrototypeID": "alpha-wheat",
 			"Name": "Wheat Production",
 			"Description": "",
 			"Stages": [

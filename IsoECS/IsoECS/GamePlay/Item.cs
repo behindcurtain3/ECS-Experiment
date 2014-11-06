@@ -1,11 +1,11 @@
 ﻿using System;
+using TecsDotNet;
 
 namespace IsoECS.GamePlay
 {
     [Serializable]
-    public class Item : IUnique
+    public class Item : Prototype
     {
-        public string UniqueID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 

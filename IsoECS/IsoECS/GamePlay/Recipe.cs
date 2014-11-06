@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using IsoECS.DataStructures.GamePlay;
+using TecsDotNet;
 
 namespace IsoECS.GamePlay
 {
     [Serializable]
-    public class Recipe : IUnique
+    public class Recipe : Prototype
     {
-        public string UniqueID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 

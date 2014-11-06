@@ -128,8 +128,17 @@ namespace IsoECS
                 true);
                 
             // load scenario data
-            GameData.Instance.LoadItemsFromJson(scenario.Items, true);
-            GameData.Instance.LoadRecipesFromJson(scenario.Recipes, true);
+            world.Prototypes.LoadFromFile(
+                new DataLoader<Item>(),
+                scenario.Items,
+                true);
+
+            world.Prototypes.LoadFromFile(
+                new DataLoader<Recipe>(),
+                scenario.Recipes,
+                true);
+            //GameData.Instance.LoadItemsFromJson(scenario.Items, true);
+            //GameData.Instance.LoadRecipesFromJson(scenario.Recipes, true);
 
             CustomEntityLoader cel = new CustomEntityLoader()
             {

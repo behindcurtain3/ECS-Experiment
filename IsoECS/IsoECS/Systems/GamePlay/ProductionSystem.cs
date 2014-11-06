@@ -48,7 +48,7 @@ namespace IsoECS.Systems
 
                 p.WorkDone += (elapsed * workerPercentage);
 
-                Recipe r = GameData.Instance.GetRecipe(p.Recipe);
+                Recipe r = (Recipe)World.Prototypes[p.Recipe];
                 if (p.WorkDone >= r.Stages[p.CurrentStage].WorkRequired)
                 {
                     // TODO: check the inputs and modify or elminate the output based on the amount of inputs present

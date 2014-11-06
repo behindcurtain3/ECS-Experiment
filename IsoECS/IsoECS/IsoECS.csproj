@@ -143,6 +143,7 @@
     <Compile Include="Components\GamePlay\Inventory.cs" />
     <Compile Include="DataStructures\Json\Converters\CustomComponentConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\CustomEntityLoader.cs" />
+    <Compile Include="DataStructures\Json\Converters\DataLoader.cs" />
     <Compile Include="DataStructures\Json\Converters\DrawablesLoader.cs" />
     <Compile Include="GamePlay\GameWorld.cs" />
     <Compile Include="Input\InputController.cs" />
@@ -165,14 +166,12 @@
     <Compile Include="DataRenderers\StockpileRenderer.cs" />
     <Compile Include="DataStructures\DrawableSprite.cs" />
     <Compile Include="DataStructures\DrawableText.cs" />
-    <Compile Include="DataStructures\GameData.cs" />
     <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeInput.cs" />
     <Compile Include="DataStructures\GamePlay\RecipeOutput.cs" />
     <Compile Include="DataStructures\GamePlay\UpgradeRequirements.cs" />
     <Compile Include="DataStructures\GameDrawable.cs" />
     <Compile Include="DataStructures\Json\Converters\DrawableConverter.cs" />
-    <Compile Include="DataStructures\Json\Converters\JsonCreationConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\PointConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\RectangleConverter.cs" />
     <Compile Include="DataStructures\Json\Converters\VectorConverter.cs" />

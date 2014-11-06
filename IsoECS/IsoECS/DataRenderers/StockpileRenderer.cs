@@ -25,7 +25,7 @@ namespace IsoECS.DataRenderers
             Control.Init();
 
             // get a list of all items in the game
-            List<Item> items = GameData.Instance.GetAllItems();
+            List<Item> items = World.Prototypes.GetAll<Item>();
             Control.AddColumns(new string[] { "Item", "Amount", "Minimum", "Maximum" });
 
             foreach (Item item in items)
@@ -35,7 +35,7 @@ namespace IsoECS.DataRenderers
 
                 Button btn = new Button(Manager)
                 {
-                    Name = string.Format("{0}-toggle", item.UniqueID),
+                    Name = string.Format("{0}-toggle", item.PrototypeID),
                     Text = item.Name,
                     Height = 20,
                     Width = 100,
@@ -47,11 +47,11 @@ namespace IsoECS.DataRenderers
                 btn.Click += new EventHandler(ToggleStockPileItem);
 
                 currentRow.AddToRowAt(0, btn, true);
-                Control.AddAt(1, Control.RowsCount - 1, Data.Amount(item.UniqueID).ToString());
+                Control.AddAt(1, Control.RowsCount - 1, Data.Amount(item.PrototypeID).ToString());
 
                 SetupMinimumMaximum(item, currentRow);
 
-                Data.Get(item.UniqueID).OnAmountChanged += new StockPileData.StockpileEventHandler(StockpileRenderer_OnAmountChanged);
+                Data.Get(item.PrototypeID).OnAmountChanged += new StockPileData.StockpileEventHandler(StockpileRenderer_OnAmountChanged);
             }
             
             return base.GetControl(parent);
@@ -72,7 +72,7 @@ namespace IsoECS.DataRenderers
             TableRow row = (TableRow)btn.Parent;
             Item item = (Item)btn.Tag;
             
-            Data.ToggleAccepting(item.UniqueID);
+            Data.ToggleAccepting(item.PrototypeID);
 
             SetupMinimumMaximum(item, row);
         }
@@ -80,7 +80,7 @@ namespace IsoECS.DataRenderers
         private void SetupMinimumMaximum(Item item, TableRow row)
         {
             // the spin boxes are on
-            if (Data.IsAccepting(item.UniqueID))
+            if (Data.IsAccepting(item.PrototypeID))
             {
                 SpinBox spinner = GetSpinner(item, true);
                 row.AddToRowAt(2, spinner);
@@ -109,8 +109,8 @@ namespace IsoECS.DataRenderers
         {
             SpinBox spinner = new SpinBox(Control.Manager, SpinBoxMode.Range)
             {
-                Name = string.Format("{0}-{1}", item.UniqueID, (minimum) ? "minimum" : "maximum"),
-                Value = (minimum) ? Data.Minimum(item.UniqueID) : Data.Maximum(item.UniqueID),
+                Name = string.Format("{0}-{1}", item.PrototypeID, (minimum) ? "minimum" : "maximum"),
+                Value = (minimum) ? Data.Minimum(item.PrototypeID) : Data.Maximum(item.PrototypeID),
                 Width = 75,
                 Rounding = 0,
                 Minimum = 0,
@@ -121,7 +121,7 @@ namespace IsoECS.DataRenderers
             };
             spinner.Init();
             // spinner is bugged if Text is set above so do it here
-            spinner.Text = (minimum) ? Data.Minimum(item.UniqueID).ToString() : Data.Maximum(item.UniqueID).ToString();
+            spinner.Text = (minimum) ? Data.Minimum(item.PrototypeID).ToString() : Data.Maximum(item.PrototypeID).ToString();
 
             if(minimum)
                 spinner.TextChanged += new EventHandler(Spinner_MinimumTextChanged);
@@ -136,7 +136,7 @@ namespace IsoECS.DataRenderers
             SpinBox spinner = (SpinBox)sender;
             Item item = (Item)spinner.Tag;
 
-            Data.SetMinimum(item.UniqueID, (int)spinner.Value);
+            Data.SetMinimum(item.PrototypeID, (int)spinner.Value);
         }
 
         private void Spinner_MaximumTextChanged(object sender, EventArgs e)
@@ -144,7 +144,7 @@ namespace IsoECS.DataRenderers
             SpinBox spinner = (SpinBox)sender;
             Item item = (Item)spinner.Tag;
 
-            Data.SetMaximum(item.UniqueID, (int)spinner.Value);
+            Data.SetMaximum(item.PrototypeID, (int)spinner.Value);
         }
 
         private void StockpileRenderer_OnAmountChanged(StockPileData sender)
@@ -154,7 +154,7 @@ namespace IsoECS.DataRenderers
             {
                 Item item = (Item)row.Tag;
 
-                if (item.UniqueID.Equals(sender.Item))
+                if (item.PrototypeID.Equals(sender.Item))
                 {
                     row.AddToRowAt(1, new Label(Control.Manager)
                     {

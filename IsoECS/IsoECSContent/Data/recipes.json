@@ -1,6 +1,6 @@
 {
   "Name" : "Recipes",
-  "List" : [
+  "Files" : [
     "Content/Data/Recipes/farm_recipes.json"
   ]
 }

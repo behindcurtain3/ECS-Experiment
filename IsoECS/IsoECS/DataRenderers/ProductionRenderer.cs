@@ -32,7 +32,7 @@ namespace IsoECS.DataRenderers
 
         public override Panel GetControl(Control parent)
         {
-            Recipe recipe = GameData.Instance.GetRecipe(Data.Recipe);
+            Recipe recipe = (Recipe)World.Prototypes[Data.Recipe];
 
             Control.Parent = parent;
             Control.Left = 0;
@@ -108,7 +108,7 @@ namespace IsoECS.DataRenderers
             {
                 foreach (RecipeInput input in stage.Inputs)
                 {
-                    Item item = GameData.Instance.GetItem(input.Item);
+                    Item item = (Item)World.Prototypes[input.Item];
                     string name = item.Name;
 
                     if (!input.Required)
@@ -122,7 +122,7 @@ namespace IsoECS.DataRenderers
 
                 foreach (RecipeOutput output in stage.Outputs)
                 {
-                    string name = GameData.Instance.GetItem(output.Item).Name;
+                    string name = ((Item)World.Prototypes[output.Item]).Name;
 
                     if (!string.IsNullOrWhiteSpace(outputsBox.Text))
                         outputsBox.Text += ", ";
@@ -181,7 +181,7 @@ namespace IsoECS.DataRenderers
         {
             currentStage.Text = GetStageText();
 
-            Recipe recipe = GameData.Instance.GetRecipe(Data.Recipe);
+            Recipe recipe = (Recipe)World.Prototypes[Data.Recipe];
 
             if(Data.CurrentStage < recipe.Stages.Count)
                 workDoneProgress.Range = (int)recipe.Stages[Data.CurrentStage].WorkRequired;
@@ -194,7 +194,7 @@ namespace IsoECS.DataRenderers
 
         private string GetStageText()
         {
-            Recipe recipe = GameData.Instance.GetRecipe(Data.Recipe);
+            Recipe recipe = (Recipe)World.Prototypes[Data.Recipe];
 
             return string.Format("{0}/{1}", Data.CurrentStage + 1, recipe.Stages.Count);
         }

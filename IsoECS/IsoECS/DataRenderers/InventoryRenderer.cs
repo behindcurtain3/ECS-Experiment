@@ -61,7 +61,7 @@ namespace IsoECS.DataRenderers
                     TableRow currentRow = Control.AddRow();
                     currentRow.Tag = item;
 
-                    string name = GameData.Instance.GetItem(item.Item).Name;
+                    string name = ((Item)World.Prototypes[item.Item]).Name;
                     Control.AddAt(0, Control.RowsCount - 1, name);
                     Control.AddAt(1, Control.RowsCount - 1, item.Amount.ToString());
 
