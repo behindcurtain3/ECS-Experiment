@@ -23,11 +23,11 @@ namespace IsoECS.GamePlay
         public Manager UI { get; set; }
         public InputController Input { get; set; }
 
+        public City City { get; set; }
         public IsometricMapComponent Map { get; private set; }
         public RoadPlannerComponent Roads { get; private set; }
         public FoundationPlannerComponent Foundations { get; private set; }
         public CollisionMapComponent Collisions { get; private set; }
-        public CityInformationComponent CityInformation { get; private set; }
         public GameDateComponent Date { get; set; }
         public CityServicesComponent CityServices { get; private set; }
 
@@ -89,12 +89,6 @@ namespace IsoECS.GamePlay
                         {
                             citizen.Money = Random.Next(20, 100);
                         }
-                        break;
-
-                    case "CityInformationComponent":
-                        CityInformation = (CityInformationComponent)c;
-                        if (CityInformation.Treasury == 0)
-                            CityInformation.Treasury = 1000;
                         break;
 
                     case "CityServicesComponent":

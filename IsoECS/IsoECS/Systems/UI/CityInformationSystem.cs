@@ -12,7 +12,7 @@ namespace IsoECS.Systems.UI
 
         public override void Init()
         {
-            cir = new CityInformationRenderer(World.CityInformation, World);
+            cir = new CityInformationRenderer(World.City, World);
 
             Panel cirp = cir.GetControl(null);
 
@@ -21,19 +21,19 @@ namespace IsoECS.Systems.UI
 
             int pop = World.Entities.Count(delegate(Entity e) { return e.HasComponent<CitizenComponent>(); });
 
-            World.CityInformation.Population = pop;
+            World.City.Population = pop;
         }
 
         private void Entities_EntityRemoved(Entity e, World world)
         {
             if (e.HasComponent<CitizenComponent>())
-                World.CityInformation.Population--;
+                World.City.Population--;
         }
 
         private void Entities_EntityAdded(Entity e, World world)
         {
             if (e.HasComponent<CitizenComponent>())
-                World.CityInformation.Population++;
+                World.City.Population++;
         }
 
         public override void Update(double dt)

@@ -6,13 +6,13 @@ using TomShane.Neoforce.Controls;
 
 namespace IsoECS.DataRenderers
 {
-    public class CityInformationRenderer : DataRenderer<CityInformationComponent, Panel>
+    public class CityInformationRenderer : DataRenderer<City, Panel>
     {
         private Label population;
         private Label money;
         private Label date;
 
-        public CityInformationRenderer(CityInformationComponent data, GameWorld world)
+        public CityInformationRenderer(City data, GameWorld world)
             : base(data, world)
         {
             Control = new Panel(Manager)
@@ -27,8 +27,8 @@ namespace IsoECS.DataRenderers
             Control.Width = Manager.GraphicsDevice.Viewport.Width;
             Control.Height = Manager.GraphicsDevice.Viewport.Height;
 
-            Data.PopulationChanged += new CityInformationComponent.CityInformationEventHandler(Data_PopulationChanged);
-            Data.TreasuryChanged += new CityInformationComponent.CityInformationEventHandler(Data_TreasuryChanged);
+            Data.PopulationChanged += new City.CityEventHandler(Data_PopulationChanged);
+            Data.FundsChanged += new City.CityEventHandler(Data_FundsChanged);
             World.Date.DayChanged += new GameDateComponent.GameDateEventHandler(Date_TimeChanged);
         }
 
@@ -64,7 +64,7 @@ namespace IsoECS.DataRenderers
 
             money = new Label(Manager)
             {
-                Text = Data.Treasury.ToString("c0"),
+                Text = Data.Funds.ToString("c0"),
                 Top = 15,
                 Alignment = Alignment.MiddleRight,
                 Width = columnWidth,
@@ -87,18 +87,18 @@ namespace IsoECS.DataRenderers
         public override void Shutdown()
         {
             Data.PopulationChanged -= Data_PopulationChanged;
-            Data.TreasuryChanged -= Data_TreasuryChanged;
+            Data.FundsChanged -= Data_FundsChanged;
             World.Date.DayChanged -= Date_TimeChanged;
 
             Manager.Remove(Control);
         }
 
-        private void Data_TreasuryChanged(CityInformationComponent sender)
+        private void Data_FundsChanged(City sender)
         {
-            money.Text = Data.Treasury.ToString("c0");
+            money.Text = Data.Funds.ToString("c0");
         }
 
-        private void Data_PopulationChanged(CityInformationComponent sender)
+        private void Data_PopulationChanged(City sender)
         {
             population.Text = Data.Population.ToString();
         }
@@ -110,7 +110,7 @@ namespace IsoECS.DataRenderers
 
         private string GetTimeText()
         {
-            return string.Format("{0} of {1}, {2} C.E.", StringHelper.Ordinal(World.Date.Day), World.Date.MonthName, World.Date.Year);
+            return string.Format("{0}, {1} of {2}, Year {3}", Data.Name, StringHelper.Ordinal(World.Date.Day), World.Date.MonthName, World.Date.Year);
         }
     }
 }

@@ -120,6 +120,7 @@ namespace IsoECS
                 scenario.Drawables,
                 true);
 
+            world.City = scenario.City;
 
             // Load in entities
             world.Prototypes.LoadFromFile(

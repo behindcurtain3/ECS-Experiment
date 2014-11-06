@@ -8,6 +8,13 @@
 	"Items": "Content/Data/items.json",
 	"Recipes": "Content/Data/recipes.json",
 
+	"City": {
+		"Name": "Alphavilla",
+		"Description": "A blank testing canvas",
+		"Population": 0,
+		"Funds": 1000
+	},
+
 	"DefaultEntities" : [
 		{
 			"Components": [
@@ -36,12 +43,6 @@
 						"Fall",
 						"Winter"
 					]
-				},
-				{
-					"Type": "CityInformationComponent",
-					"Name": "Alphaville",
-					"Money": 1000,
-					"Population": 0
 				},
 				{
 					"Type": "PositionComponent"

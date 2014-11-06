@@ -237,7 +237,7 @@ namespace IsoECS.Systems.GamePlay
 
             // don't build over a spot that is already taken, don't build if not enough money
             // TODO: the money check shouldn't even allow the building to be selected
-            if (spaceTaken || World.CityInformation.Treasury < selectedBuildable.Cost)
+            if (spaceTaken || World.City.Funds < selectedBuildable.Cost)
                 return;
 
             Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
@@ -258,7 +258,7 @@ namespace IsoECS.Systems.GamePlay
             }
 
             World.Entities.Add(buildable);
-            World.CityInformation.Treasury -= selectedBuildable.Cost;
+            World.City.Funds -= selectedBuildable.Cost;
             delayCountdown = delay;
         }
         

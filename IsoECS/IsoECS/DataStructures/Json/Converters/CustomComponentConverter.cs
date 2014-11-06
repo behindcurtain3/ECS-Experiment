@@ -27,9 +27,6 @@ namespace IsoECS.DataStructures.Json.Converters
                 case "CitizenComponent":
                     return new CitizenComponent();
 
-                case "CityInformationComponent":
-                    return new CityInformationComponent();
-
                 case "CityServicesComponent":
                     return new CityServicesComponent();
 
@@ -41,41 +38,10 @@ namespace IsoECS.DataStructures.Json.Converters
 
                 case "DrawableComponent":
                     return new DrawableComponent();
-                    /*
-                    
-
-                    c = drawable;
-                    break;
-                     */
                     
                 case "FoundationComponent":
                     return new FoundationComponent();
-                    /*
-                    FoundationComponent floor = JsonConvert.DeserializeObject<FoundationComponent>(jObject.ToString());
                     
-                    switch (floor.PlanType)
-                    {
-                        case "Normal":
-                            // nothing
-                            break;
-                        case "Fill":
-                            Point start = floor.Plan[0].Offset;
-                            Point end = floor.Plan[1].Offset;
-
-                            floor.Plan.Clear(); // clear the plan, the for loops will fill it
-                            for (int xx = start.X; xx <= end.X; xx++)
-                            {
-                                for (int yy = start.Y; yy <= end.Y; yy++)
-                                {
-                                    //floor.Plan.Add(new LocationValue() { Offset = new Point(xx, yy) });
-                                }
-                            }
-
-                            break;
-                    } 
-                    c = floor;
-                    break;
-                    */
                 case "FoundationPlannerComponent":
                     return new FoundationPlannerComponent();
 

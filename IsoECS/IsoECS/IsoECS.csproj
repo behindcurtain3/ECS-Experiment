@@ -131,7 +131,6 @@
     <Compile Include="Components\DrawableComponent.cs" />
     <Compile Include="Components\GamePlay\BuildableComponent.cs" />
     <Compile Include="Components\GamePlay\CitizenComponent.cs" />
-    <Compile Include="Components\GamePlay\CityInformationComponent.cs" />
     <Compile Include="Components\GamePlay\CityServicesComponent.cs" />
     <Compile Include="Components\GamePlay\CollisionComponent.cs" />
     <Compile Include="Components\GamePlay\CollisionMapComponent.cs" />
@@ -145,6 +144,7 @@
     <Compile Include="DataStructures\Json\Converters\CustomEntityLoader.cs" />
     <Compile Include="DataStructures\Json\Converters\DataLoader.cs" />
     <Compile Include="DataStructures\Json\Converters\DrawablesLoader.cs" />
+    <Compile Include="GamePlay\City.cs" />
     <Compile Include="GamePlay\GameWorld.cs" />
     <Compile Include="Input\InputController.cs" />
     <Compile Include="Components\GamePlay\IsometricMapComponent.cs" />

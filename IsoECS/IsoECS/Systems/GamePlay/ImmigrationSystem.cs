@@ -20,7 +20,7 @@ namespace IsoECS.Systems.GamePlay
 
                 // get the total number of citizens
                 int vacanies = CountVacanies(World.Entities);
-                int population = World.CityInformation.Population;
+                int population = World.City.Population;
                 int maxPopulation = MaxPopulation(World.Entities);
 
                 // TODO: don't just fill vacancies, check to see if the city is "good" enough for immigrants
