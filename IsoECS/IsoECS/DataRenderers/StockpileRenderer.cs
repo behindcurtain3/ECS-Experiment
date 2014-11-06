@@ -43,6 +43,10 @@ namespace IsoECS.DataRenderers
                     Tag = item
                 };
                 btn.Init();
+                btn.ToolTip = new ToolTip(Manager)
+                {
+                    Text = "Enables or disables this item at the stockpile.\n\n" + item.Description
+                };
                 // Add event handler to listen for toggles on the button
                 btn.Click += new EventHandler(ToggleStockPileItem);
 

@@ -3,13 +3,13 @@
 		{
 			"PrototypeID": "grain",
 			"Name": "Grain",
-			"Description": "",
+			"Description": "Raw unprocessed grain, produced at a wheat farm.",
 			"Value": 1.0
 		},
 		{
 			"PrototypeID": "alpha-fertilizer",
 			"Name": "Fertilizer",
-			"Description": "",
+			"Description": "Fertilizer increases the crop yield when used at farms.\nProduced by pastures.",
 			"Value": 0.1
 		}
 	]
