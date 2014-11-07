@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
@@ -8,36 +9,43 @@ using Microsoft.Xna.Framework.Input;
 using TecsDotNet;
 using TecsDotNet.Util;
 using TomShane.Neoforce.Controls;
+using EventHandler = TomShane.Neoforce.Controls.EventHandler;
+using EventArgs = TomShane.Neoforce.Controls.EventArgs;
 
 namespace IsoECS.Systems.GamePlay
 {
     public class ConstructionSystem : GameSystem
     {
-        private string _category;
-        private int _selection = -1;
+        private string selectedCategory;
+        private int selectedEntityIndex = -1;
 
-        private Dictionary<string, List<Entity>> _db;
+        private Dictionary<string, List<Entity>> indexedBuildables;
 
-        private Entity _dataTracker;
-        private PositionComponent _camera;
+        private Entity dataTracker;
+        private PositionComponent camera;
 
-        private List<Button> _buttons = new List<Button>();
+        private List<Button> buttons = new List<Button>();
 
-        private double delay = 0.2;
+        private double delay = 0.1;
         private double delayCountdown;
+
+        private bool isDragging = false;
+        private Point dragStart;
+        private Point dragEnd;
+        private List<Entity> draggableEntities = new List<Entity>();
 
         public override void Init()
         {
             base.Init();
 
-            _dataTracker = World.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
+            dataTracker = World.Entities.Find(delegate(Entity e) { return e.HasComponent<RoadPlannerComponent>(); });
 
             Entity inputEntity = World.Entities.Find(delegate(Entity e) { return e.HasComponent<InputController>(); });
             Entity cameraEntity = World.Entities.Find(delegate(Entity e) { return e.HasComponent<CameraController>(); });
 
-            _camera = cameraEntity.Get<PositionComponent>();
+            camera = cameraEntity.Get<PositionComponent>();
 
-            _db = new Dictionary<string, List<Entity>>();
+            indexedBuildables = new Dictionary<string, List<Entity>>();
 
             List<Entity> allBuildables = World.Prototypes.GetAll<Entity>();
 
@@ -51,16 +59,15 @@ namespace IsoECS.Systems.GamePlay
                 if (!bc.AllowConstruction)
                     continue;
 
-                if (!_db.ContainsKey(bc.Category))
-                    _db.Add(bc.Category, new List<Entity>());
+                if (!indexedBuildables.ContainsKey(bc.Category))
+                    indexedBuildables.Add(bc.Category, new List<Entity>());
 
-                _db[bc.Category].Add(e);
+                indexedBuildables[bc.Category].Add(e);
             }
 
             CreateCategoryButtons();
 
             World.Input.LeftClick += new InputController.MouseEventHandler(Instance_LeftClick);
-            World.Input.LeftButtonDown += new InputController.MouseEventHandler(Instance_LeftButtonDown);
             World.Input.BuildBack.Event += new InputController.KeyboardEventHandler(BuildBack_Event);
             World.Input.BuildHotKey1.Event += new InputController.KeyboardEventHandler(BuildHotKey1_Event);
             World.Input.BuildHotKey2.Event += new InputController.KeyboardEventHandler(BuildHotKey2_Event);
@@ -76,7 +83,7 @@ namespace IsoECS.Systems.GamePlay
 
         public override void Shutdown()
         {
-            DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
+            DrawableComponent drawable = dataTracker.Get<DrawableComponent>();
 
             foreach (List<GameDrawable> d in drawable.Drawables.Values)
             {
@@ -91,7 +98,6 @@ namespace IsoECS.Systems.GamePlay
             ClearButtons();
 
             World.Input.LeftClick -= Instance_LeftClick;
-            World.Input.LeftButtonDown -= Instance_LeftButtonDown;
             World.Input.BuildBack.Event -= BuildBack_Event;
             World.Input.BuildHotKey1.Event -= BuildHotKey1_Event;
             World.Input.BuildHotKey2.Event -= BuildHotKey2_Event;
@@ -103,14 +109,17 @@ namespace IsoECS.Systems.GamePlay
             World.Input.BuildHotKey8.Event -= BuildHotKey8_Event;
             World.Input.BuildHotKey9.Event -= BuildHotKey9_Event;
             World.Input.BuildHotKey0.Event -= BuildHotKey0_Event;
+
+            ClearDragState();
         }
 
         private void BuildBack_Event(Keys key, InputEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(_category))
+            if (!string.IsNullOrWhiteSpace(selectedCategory))
             {
-                _category = null;
-                _selection = -1;
+                ClearDragState();
+                selectedCategory = null;
+                selectedEntityIndex = -1;
                 DeselectEntity();
                 ClearButtons();
                 CreateCategoryButtons();
@@ -172,94 +181,122 @@ namespace IsoECS.Systems.GamePlay
             BuildSelected();
         }
 
-        private void Instance_LeftButtonDown(InputEventArgs e)
-        {
-            BuildSelected(true);
-        }
-
         private void TriggerHotkey(int key)
         {
-            if (_buttons.Count > key)
+            if (buttons.Count > key)
             {
-                if (string.IsNullOrWhiteSpace(_category))
+                if (string.IsNullOrWhiteSpace(selectedCategory))
                 {
-                    DisplayCategory((string)_buttons[key].Tag);
+                    DisplayCategory((string)buttons[key].Tag);
                 }
                 else
                 {
-                    _selection = (int)_buttons[key].Tag;
+                    selectedEntityIndex = (int)buttons[key].Tag;
                     SelectEntity();
                 }
             }
         }
 
-        private void BuildSelected(bool drag = false)
+        private void BuildSelected()
         {
-            if (string.IsNullOrWhiteSpace(_category) || _selection == -1 || delayCountdown > 0)
+            if (string.IsNullOrWhiteSpace(selectedCategory) || selectedEntityIndex == -1 || delayCountdown > 0)
                 return;
-
-            DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
-            PositionComponent drawablePosition = _dataTracker.Get<PositionComponent>();
-
-            Entity selectedEntity = _db[_category][_selection];
+            
+            Entity selectedEntity = indexedBuildables[selectedCategory][selectedEntityIndex];
             BuildableComponent selectedBuildable = selectedEntity.Get<BuildableComponent>();
             FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
 
-            if (!selectedBuildable.DragBuildEnabled && drag)
-                return;
-
-            // set the starting coords
-            int x = World.Input.CurrentMouse.X + (int)_camera.X;
-            int y = World.Input.CurrentMouse.Y + (int)_camera.Y;
-
             // pick out the tile index that the screen coords intersect
-            Point index = World.Map.GetIndexFromPosition(x, y);
+            Point index = GetMouseIndex();
 
-            // translate the index into a screen position and up the position component
-            Vector2 dPositiion = World.Map.GetPositionFromIndex(index.X, index.Y);
-            drawablePosition.X = dPositiion.X;
-            drawablePosition.Y = dPositiion.Y;
-
-            bool spaceTaken = false;
-            foreach (LocationValue lv in foundation.Plan)
+            if (selectedBuildable.DragBuildEnabled)
             {
-                if (World.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
+                if (isDragging)
                 {
-                    spaceTaken = true;
-                    break;
+                    // actually do the build
+                    foreach (Entity e in draggableEntities)
+                    {
+                        Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
+
+                        if (buildable.HasComponent<PositionComponent>())
+                        {
+                            PositionComponent p = buildable.Get<PositionComponent>();
+                            p.X = e.Get<PositionComponent>().X;
+                            p.Y = e.Get<PositionComponent>().Y;
+                            p.Index = e.Get<PositionComponent>().Index;
+                            p.GenerateAt = string.Empty;
+                        }
+                        else
+                        {
+                            buildable.AddComponent(Serialization.DeepCopy<PositionComponent>(e.Get<PositionComponent>()));
+                        }
+
+                        World.Entities.Add(buildable);
+                        World.City.Funds -= selectedBuildable.Cost;
+                    }
+
+                    ClearDragState();
                 }
-            }
+                else
+                {
+                    isDragging = true;
+                    dragStart = index;
+                    dragEnd = new Point(-1, -1);
 
-            bool visible = World.Map.IsValidIndex(index.X, index.Y);
-
-            if (!visible)
-                return;
-
-            // don't build over a spot that is already taken, don't build if not enough money
-            // TODO: the money check shouldn't even allow the building to be selected
-            if (spaceTaken || World.City.Funds < selectedBuildable.Cost)
-                return;
-
-            Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
-
-            if (buildable.HasComponent<PositionComponent>())
-            {
-                PositionComponent aPosition = buildable.Get<PositionComponent>();
-                aPosition.X = drawablePosition.X;
-                aPosition.Y = drawablePosition.Y;
-                aPosition.Index = index;
-                aPosition.GenerateAt = string.Empty;
+                    UpdateDraggables();
+                }
             }
             else
             {
-                PositionComponent bPosition = new PositionComponent(drawablePosition.Position);
-                bPosition.Index = index;
-                buildable.AddComponent(bPosition);
-            }
+                DrawableComponent drawable = dataTracker.Get<DrawableComponent>();
+                PositionComponent drawablePosition = dataTracker.Get<PositionComponent>();
 
-            World.Entities.Add(buildable);
-            World.City.Funds -= selectedBuildable.Cost;
-            delayCountdown = delay;
+                // translate the index into a screen position and up the position component
+                Vector2 dPositiion = World.Map.GetPositionFromIndex(index.X, index.Y);
+                drawablePosition.X = dPositiion.X;
+                drawablePosition.Y = dPositiion.Y;
+
+                bool spaceTaken = false;
+                foreach (LocationValue lv in foundation.Plan)
+                {
+                    if (World.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
+                    {
+                        spaceTaken = true;
+                        break;
+                    }
+                }
+
+                bool visible = World.Map.IsValidIndex(index.X, index.Y);
+
+                if (!visible)
+                    return;
+
+                // don't build over a spot that is already taken, don't build if not enough money
+                // TODO: the money check shouldn't even allow the building to be selected
+                if (spaceTaken || World.City.Funds < selectedBuildable.Cost)
+                    return;
+
+                Entity buildable = Serialization.DeepCopy<Entity>(selectedEntity);
+
+                if (buildable.HasComponent<PositionComponent>())
+                {
+                    PositionComponent aPosition = buildable.Get<PositionComponent>();
+                    aPosition.X = drawablePosition.X;
+                    aPosition.Y = drawablePosition.Y;
+                    aPosition.Index = index;
+                    aPosition.GenerateAt = string.Empty;
+                }
+                else
+                {
+                    PositionComponent bPosition = new PositionComponent(drawablePosition.Position);
+                    bPosition.Index = index;
+                    buildable.AddComponent(bPosition);
+                }
+
+                World.Entities.Add(buildable);
+                World.City.Funds -= selectedBuildable.Cost;
+                delayCountdown = delay;
+            }
         }
         
         public override void Update(double dt)
@@ -267,59 +304,180 @@ namespace IsoECS.Systems.GamePlay
             if (delayCountdown > 0)
                 delayCountdown -= dt;
 
-            if(string.IsNullOrWhiteSpace(_category) || _selection == -1)
+            if(string.IsNullOrWhiteSpace(selectedCategory) || selectedEntityIndex == -1)
                 return;
 
-            DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
-            PositionComponent drawablePosition = _dataTracker.Get<PositionComponent>();
-
-            Entity selectedEntity = _db[_category][_selection];
-            BuildableComponent selectedBuildable = selectedEntity.Get<BuildableComponent>();
-            FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
-            
-            // set the starting coords
-            int x = World.Input.CurrentMouse.X + (int)_camera.X;
-            int y = World.Input.CurrentMouse.Y + (int)_camera.Y;
-
-            // pick out the tile index that the screen coords intersect
-            Point index = World.Map.GetIndexFromPosition(x, y);
-
-            // translate the index into a screen position and up the position component
-            Vector2 dPositiion = World.Map.GetPositionFromIndex(index.X, index.Y);
-            drawablePosition.X = dPositiion.X;
-            drawablePosition.Y = dPositiion.Y;
-
-            bool spaceTaken = false;
-            foreach (LocationValue lv in foundation.Plan)
+            if (isDragging)
             {
-                if (World.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
+                UpdateDraggables();
+            }
+            else
+            {
+
+                DrawableComponent drawable = dataTracker.Get<DrawableComponent>();
+                PositionComponent drawablePosition = dataTracker.Get<PositionComponent>();
+
+                Entity selectedEntity = indexedBuildables[selectedCategory][selectedEntityIndex];
+                BuildableComponent selectedBuildable = selectedEntity.Get<BuildableComponent>();
+                FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
+
+                // pick out the tile index that the screen coords intersect
+                Point index = GetMouseIndex();
+
+                // translate the index into a screen position and up the position component
+                Vector2 dPositiion = World.Map.GetPositionFromIndex(index.X, index.Y);
+                drawablePosition.X = dPositiion.X;
+                drawablePosition.Y = dPositiion.Y;
+
+                bool spaceTaken = false;
+                foreach (LocationValue lv in foundation.Plan)
                 {
-                    spaceTaken = true;
-                    break;
+                    if (World.Foundations.SpaceTaken.ContainsKey(new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y)))
+                    {
+                        spaceTaken = true;
+                        break;
+                    }
+                }
+
+                bool visible = World.Map.IsValidIndex(index.X, index.Y);
+
+                foreach (List<GameDrawable> d in drawable.Drawables.Values)
+                {
+                    foreach (GameDrawable gd in d)
+                        gd.Visible = visible;
+                }
+
+                foreach (List<GameDrawable> d in drawable.Drawables.Values)
+                {
+                    foreach (GameDrawable gd in d)
+                        gd.Alpha = (spaceTaken) ? 0.5f : 0.85f;
                 }
             }
+        }
 
-            bool visible = World.Map.IsValidIndex(index.X, index.Y);
+        private void ClearDragState()
+        {
+            isDragging = false;
 
-            foreach (List<GameDrawable> d in drawable.Drawables.Values)
+            // remove current draggableEntities from the world
+            foreach (Entity e in draggableEntities)
+                World.Entities.Remove(e);
+
+            // clear the list
+            draggableEntities.Clear();
+        }
+
+        private void UpdateDraggables()
+        {
+            Point currentIndex = GetMouseIndex();
+
+            // do the update
+            if (dragEnd != currentIndex)
             {
-                foreach (GameDrawable gd in d)
-                    gd.Visible = visible;
+                // remove current draggableEntities from the world
+                foreach (Entity e in draggableEntities)
+                    World.Entities.Remove(e);
+
+                // clear the list
+                draggableEntities.Clear();
+
+                dragEnd = currentIndex;
+                // 0 = same tile, 1 NW, 2 = NE, 3 = SE, 4 = SW, 5 = wtf to do
+                int xDiff = Math.Abs(dragStart.X - dragEnd.X);
+                int yDiff = Math.Abs(dragStart.Y - dragEnd.Y);
+                if(xDiff == yDiff)
+                    xDiff++;
+
+                int direction = 
+                    (dragStart == dragEnd) ? 0
+                    : (xDiff > yDiff && dragEnd.X < dragStart.X) ? 1
+                    : (yDiff > xDiff && dragEnd.Y < dragStart.Y) ? 2
+                    : (xDiff > yDiff && dragEnd.X > dragStart.X) ? 3
+                    : (yDiff > xDiff && dragEnd.Y > dragStart.Y) ? 4 : 5;
+                
+                int startX, startY, endX, endY;
+                switch (direction)
+                {
+                    case 0:
+                        AddDraggableAt(dragStart);
+                        break;
+
+                    case 1:
+                        startX = dragStart.X;
+                        endX = dragEnd.X;
+
+                        while (startX >= endX)
+                        {
+                            AddDraggableAt(new Point(startX, dragStart.Y));
+                            startX--;
+                        }
+                        break;
+
+                    case 2:
+                        startY = dragStart.Y;
+                        endY = dragEnd.Y;
+
+                        while (startY >= endY)
+                        {
+                            AddDraggableAt(new Point(dragStart.X, startY));
+                            startY--;
+                        }
+                        break;
+
+                    case 3:
+                        startX = dragStart.X;
+                        endX = dragEnd.X;
+
+                        while (startX <= endX)
+                        {
+                            AddDraggableAt(new Point(startX, dragStart.Y));
+                            startX++;
+                        }
+                        break;
+
+                    case 4:
+                        startY = dragStart.Y;
+                        endY = dragEnd.Y;
+
+                        while (startY <= endY)
+                        {
+                            AddDraggableAt(new Point(dragStart.X, startY));
+                            startY++;
+                        }
+                        break;
+                }
             }
+        }
 
-            foreach (List<GameDrawable> d in drawable.Drawables.Values)
-            {
-                foreach (GameDrawable gd in d)
-                    gd.Alpha = (spaceTaken) ? 0.5f : 0.85f;
-            }            
+        private void AddDraggableAt(Point index)
+        {
+            if (!World.Map.IsValidIndex(index.X, index.Y))
+                return;
+
+            if (World.Foundations.SpaceTaken.ContainsKey(index))
+                return;
+
+            Entity e = new Entity();
+            e.AddComponent(Serialization.DeepCopy<DrawableComponent>(dataTracker.Get<DrawableComponent>()));
+            e.AddComponent(Serialization.DeepCopy<PositionComponent>(dataTracker.Get<PositionComponent>()));
+
+            PositionComponent p = e.Get<PositionComponent>();
+            p.Index = new Point(index.X, index.Y);
+
+            Vector2 v = World.Map.GetPositionFromIndex(index.X, index.Y);
+            p.X = v.X;
+            p.Y = v.Y;
+
+            draggableEntities.Add(e);
+            World.Entities.Add(e);
         }
 
         // called when the selected entity changes
         private void SelectEntity()
         {
-            List<string> categories = new List<string>(_db.Keys);
-            DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
-            Entity selectedEntity = _db[_category][_selection];
+            List<string> categories = new List<string>(indexedBuildables.Keys);
+            DrawableComponent drawable = dataTracker.Get<DrawableComponent>();
+            Entity selectedEntity = indexedBuildables[selectedCategory][selectedEntityIndex];
             BuildableComponent selectedBuildable = selectedEntity.Get<BuildableComponent>();
             DrawableComponent selectedDrawable = selectedEntity.Get<DrawableComponent>();
             FoundationComponent foundation = selectedEntity.Get<FoundationComponent>();
@@ -338,30 +496,30 @@ namespace IsoECS.Systems.GamePlay
 
         private void DeselectEntity()
         {
-            DrawableComponent drawable = _dataTracker.Get<DrawableComponent>();
+            DrawableComponent drawable = dataTracker.Get<DrawableComponent>();
 
             drawable.Drawables.Clear();
         }
 
         private void ClearButtons()
         {
-            foreach (Button btn in _buttons)
+            foreach (Button btn in buttons)
                 World.UI.Remove(btn);
 
-            _buttons.Clear();
+            buttons.Clear();
         }
 
         private void CreateCategoryButtons()
         {
             Button btn;
-            foreach (string category in _db.Keys)
+            foreach (string category in indexedBuildables.Keys)
             {
                 btn = CreateButton(category);
                 btn.Click += new EventHandler(CategoryBtn_Click);
                 btn.Tag = category;
 
                 World.UI.Add(btn);
-                _buttons.Add(btn);
+                buttons.Add(btn);
             }
 
             PositionButtons();
@@ -369,7 +527,7 @@ namespace IsoECS.Systems.GamePlay
 
         private void CreateButtonsForCategory(string category)
         {
-            List<Entity> entities = _db[category];
+            List<Entity> entities = indexedBuildables[category];
             Button btn;
 
             foreach (Entity e in entities)
@@ -378,10 +536,10 @@ namespace IsoECS.Systems.GamePlay
 
                 btn = CreateButton(buildable.Name);
                 btn.Click += new EventHandler(Selection_Click);
-                btn.Tag = _buttons.Count;
+                btn.Tag = buttons.Count;
 
                 World.UI.Add(btn);
-                _buttons.Add(btn);
+                buttons.Add(btn);
             }
 
             PositionButtons();
@@ -391,7 +549,7 @@ namespace IsoECS.Systems.GamePlay
         {
             Button btn = new Button(World.UI)
             {
-                Text = string.Format("{0}. {1}", (_buttons.Count + 1), text),
+                Text = string.Format("{0}. {1}", (buttons.Count + 1), text),
                 Width = 125,
                 Height = 20,
                 Left = 5,
@@ -407,9 +565,9 @@ namespace IsoECS.Systems.GamePlay
             // TODO: height should be the graphics device viewport height
             int height = 400;
 
-            for (int i = 0; i < _buttons.Count; i++)
+            for (int i = 0; i < buttons.Count; i++)
             {
-                _buttons[i].Top = height - ((_buttons.Count - i) * _buttons[i].Height) + (i * 3);
+                buttons[i].Top = height - ((buttons.Count - i) * buttons[i].Height) + (i * 3);
             }
         }
 
@@ -423,7 +581,7 @@ namespace IsoECS.Systems.GamePlay
         private void Selection_Click(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
-            _selection = (int)btn.Tag;
+            selectedEntityIndex = (int)btn.Tag;
             SelectEntity();
         }
 
@@ -431,7 +589,17 @@ namespace IsoECS.Systems.GamePlay
         {
             ClearButtons();
             CreateButtonsForCategory(category);
-            _category = category;
+            selectedCategory = category;
+        }
+
+        private Point GetMouseIndex()
+        {
+            // set the starting coords
+            int x = World.Input.CurrentMouse.X + (int)camera.X;
+            int y = World.Input.CurrentMouse.Y + (int)camera.Y;
+
+            // pick out the tile index that the screen coords intersect
+            return World.Map.GetIndexFromPosition(x, y);
         }
     }
 }
