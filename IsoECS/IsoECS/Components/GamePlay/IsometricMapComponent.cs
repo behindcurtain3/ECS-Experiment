@@ -96,6 +96,11 @@ namespace IsoECS.Components.GamePlay
             return p;
         }
 
+        public bool IsValidIndex(Point p)
+        {
+            return IsValidIndex(p.X, p.Y);
+        }
+
         public bool IsValidIndex(int x, int y)
         {
             return (x >= 0 && x < TxWidth && y >= 0 && y < TxHeight);

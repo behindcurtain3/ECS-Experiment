@@ -220,15 +220,16 @@ namespace IsoECS.Systems.GamePlay
 
                         if (buildable.HasComponent<PositionComponent>())
                         {
-                            PositionComponent p = buildable.Get<PositionComponent>();
-                            p.X = e.Get<PositionComponent>().X;
-                            p.Y = e.Get<PositionComponent>().Y;
-                            p.Index = e.Get<PositionComponent>().Index;
-                            p.GenerateAt = string.Empty;
+                            PositionComponent ep = e.Get<PositionComponent>();
+                            PositionComponent bp = buildable.Get<PositionComponent>();
+                            bp.X = ep.X;
+                            bp.Y = ep.Y;
+                            bp.Index = ep.Index;
+                            bp.GenerateAt = string.Empty;
                         }
                         else
                         {
-                            buildable.AddComponent(Serialization.DeepCopy<PositionComponent>(e.Get<PositionComponent>()));
+                            buildable.AddComponent(e.Get<PositionComponent>());
                         }
 
                         World.Entities.Add(buildable);
@@ -459,7 +460,7 @@ namespace IsoECS.Systems.GamePlay
 
             Entity e = new Entity();
             e.AddComponent(Serialization.DeepCopy<DrawableComponent>(dataTracker.Get<DrawableComponent>()));
-            e.AddComponent(Serialization.DeepCopy<PositionComponent>(dataTracker.Get<PositionComponent>()));
+            e.AddComponent(new PositionComponent());
 
             PositionComponent p = e.Get<PositionComponent>();
             p.Index = new Point(index.X, index.Y);

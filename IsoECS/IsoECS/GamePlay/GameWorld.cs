@@ -226,11 +226,7 @@ namespace IsoECS.GamePlay
                         road.BuiltAt = index;
 
                         // update the planner
-                        Roads.AddOrUpdate(Map, road.BuiltAt, true);
-
-                        // update the other roads
-                        List<Entity> roadEntities = Entities.FindAll(delegate(Entity entity) { return entity.HasComponent<RoadComponent>(); });
-                        Roads.UpdateGfx(this, roadEntities);
+                        Roads.AddOrUpdate(this, e, true);
                         break;
 
                     case "RoadPlannerComponent":

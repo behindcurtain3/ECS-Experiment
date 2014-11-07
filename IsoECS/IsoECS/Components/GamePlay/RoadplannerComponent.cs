@@ -24,52 +24,35 @@ namespace IsoECS.Components.GamePlay
             return Built.ContainsKey(p);
         }
 
-        public void UpdateGfx(GameWorld world, List<Entity> entities)
+        public void AddOrUpdate(GameWorld world, Entity e, bool recursion = false)
         {
-            // make sure the road has the right gfx & data
-            foreach (Entity entity in entities)
-            {
-                RoadComponent road = entity.Get<RoadComponent>();
-                DrawableComponent drawable = entity.Get<DrawableComponent>();
-
-                // TODO: handle the removal of entity somewhere else
-                if (!Built.ContainsKey(road.BuiltAt))
-                {
-                    // remove the entity
-                    entities.Remove(entity);
-                }
-                else
-                {
-                    if (road.Updateable)
-                    {
-                        foreach (GameDrawable sprite in drawable.Drawables["Foundation"].ToList())
-                        {
-                            if (sprite.PrototypeID.Contains("road"))
-                            {
-                                // remove old road drawables
-                                drawable.Drawables["Foundation"].Remove(sprite);
-                            }
-                        }
-                        road.RoadType = Built[road.BuiltAt];
-                        drawable.Add("Foundation", (GameDrawable)world.Prototypes[road.RoadType]);
-                    }
-                }
-            }
-        }
-
-        public void AddOrUpdate(IsometricMapComponent map, Point location, bool recursion = false)
-        {
-            string value = "dirt-road-" + GetRoadValue(map, location);
+            RoadComponent road = e.Get<RoadComponent>();
+            string value = "dirt-road-" + GetRoadValue(world.Map, road.BuiltAt);
 
             // set the value of built into the roadPlanner
-            if (!Built.ContainsKey(location))
-                Built.Add(location, value);
+            if (!Built.ContainsKey(road.BuiltAt))
+                Built.Add(road.BuiltAt, value);
             else
-                Built[location] = value;
+                Built[road.BuiltAt] = value;
+
+            if (road.Updateable)
+            {
+                DrawableComponent drawable = e.Get<DrawableComponent>();
+                foreach (GameDrawable sprite in drawable.Drawables["Foundation"].ToList())
+                {
+                    if (sprite.PrototypeID.Contains("road"))
+                    {
+                        // remove old road drawables
+                        drawable.Drawables["Foundation"].Remove(sprite);
+                    }
+                }
+                road.RoadType = Built[road.BuiltAt];
+                drawable.Add("Foundation", (GameDrawable)world.Prototypes[road.RoadType]);
+            }
 
             if (recursion)
             {
-                UpdateNeighbors(map, location);
+                UpdateNeighbors(world, e);
             }
         }
 
@@ -78,23 +61,32 @@ namespace IsoECS.Components.GamePlay
             if (Built.ContainsKey(location))
                 Built.Remove(location);
 
-            UpdateNeighbors(map, location);
+            //UpdateNeighbors(map, location);
         }
 
-        private void UpdateNeighbors(IsometricMapComponent map, Point location)
+        private void UpdateNeighbors(GameWorld world, Entity e)
         {
+            RoadComponent road = e.Get<RoadComponent>();
+            Point location = new Point(road.BuiltAt.X - 1, road.BuiltAt.Y);
+
             // update the neighbors to account for this one
-            if (map.IsValidIndex(location.X - 1, location.Y) && Built.ContainsKey(new Point(location.X - 1, location.Y)))
-                AddOrUpdate(map, new Point(location.X - 1, location.Y));
+            if (world.Map.IsValidIndex(location) && IsRoadAt(location))
+                AddOrUpdate(world, GetRoadAtOffset(world, e, -1, 0));
 
-            if (map.IsValidIndex(location.X, location.Y - 1) && Built.ContainsKey(new Point(location.X, location.Y - 1)))
-                AddOrUpdate(map, new Point(location.X, location.Y - 1));
+            location = new Point(road.BuiltAt.X, road.BuiltAt.Y - 1);
 
-            if (map.IsValidIndex(location.X + 1, location.Y) && Built.ContainsKey(new Point(location.X + 1, location.Y)))
-                AddOrUpdate(map, new Point(location.X + 1, location.Y));
+            if (world.Map.IsValidIndex(location) && IsRoadAt(location))
+                AddOrUpdate(world, GetRoadAtOffset(world, e, 0, -1));
 
-            if (map.IsValidIndex(location.X, location.Y + 1) && Built.ContainsKey(new Point(location.X, location.Y + 1)))
-                AddOrUpdate(map, new Point(location.X, location.Y + 1));
+            location = new Point(road.BuiltAt.X + 1, road.BuiltAt.Y);
+
+            if (world.Map.IsValidIndex(location) && IsRoadAt(location))
+                AddOrUpdate(world, GetRoadAtOffset(world, e, 1, 0));
+
+            location = new Point(road.BuiltAt.X, road.BuiltAt.Y + 1);
+
+            if (world.Map.IsValidIndex(location) && IsRoadAt(location))
+                AddOrUpdate(world, GetRoadAtOffset(world, e, 0, 1));
         }
 
         private string GetRoadValue(IsometricMapComponent map, Point location)
@@ -158,6 +150,16 @@ namespace IsoECS.Components.GamePlay
             // 1 cobmo of 0
             else
                 return "single";
+        }
+
+        private Entity GetRoadAtOffset(GameWorld world, Entity e, int x, int y)
+        {
+            RoadComponent road = e.Get<RoadComponent>();
+            Point p = new Point(road.BuiltAt.X + x, road.BuiltAt.Y + y);
+
+            uint id = world.Foundations.SpaceTaken[p];
+
+            return world.Entities.Get(id);
         }
     }
 }
