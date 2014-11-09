@@ -83,12 +83,15 @@ namespace IsoECS.GamePlay
             }
         }
 
+        public Services Services { get; set; }
+
         #endregion
 
         #region Methods
 
         public City()
         {
+            Services = new Services();
         }
 
         #endregion

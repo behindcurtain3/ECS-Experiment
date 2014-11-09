@@ -27,9 +27,6 @@ namespace IsoECS.DataStructures.Json.Converters
                 case "CitizenComponent":
                     return new CitizenComponent();
 
-                case "CityServicesComponent":
-                    return new CityServicesComponent();
-
                 case "CollisionComponent":
                     return new CollisionComponent();
 

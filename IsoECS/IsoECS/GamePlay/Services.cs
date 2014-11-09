@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using TecsDotNet;
+using IsoECS.DataStructures;
 
-namespace IsoECS.Components.GamePlay
+namespace IsoECS.GamePlay
 {
     [Serializable]
     public class ServiceData
@@ -14,6 +15,10 @@ namespace IsoECS.Components.GamePlay
         // measures the desireability of the area
         public int Desireability { get; set; }
 
+        public string RoadType { get; set; }
+        public uint FoundationOwner { get; set; }
+        public PathTypes CollisionType { get; set; }
+
         public ServiceData()
         {
             WaterAvailability = 0;
@@ -22,13 +27,10 @@ namespace IsoECS.Components.GamePlay
     }
 
     [Serializable]
-    public class CityServicesComponent : Component
+    public class Services : Dictionary<Point, ServiceData>
     {
-        public Dictionary<Point, ServiceData> Data { get; set; }
-
-        public CityServicesComponent()
+        public Services()
         {
-            Data = new Dictionary<Point, ServiceData>();
         }
     }
 }

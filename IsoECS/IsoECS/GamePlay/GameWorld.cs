@@ -29,7 +29,6 @@ namespace IsoECS.GamePlay
         public FoundationPlannerComponent Foundations { get; private set; }
         public CollisionMapComponent Collisions { get; private set; }
         public GameDateComponent Date { get; set; }
-        public CityServicesComponent CityServices { get; private set; }
 
         #endregion
 
@@ -89,10 +88,6 @@ namespace IsoECS.GamePlay
                         {
                             citizen.Money = Random.Next(20, 100);
                         }
-                        break;
-
-                    case "CityServicesComponent":
-                        CityServices = (CityServicesComponent)c;
                         break;
 
                     case "CollisionComponent":
