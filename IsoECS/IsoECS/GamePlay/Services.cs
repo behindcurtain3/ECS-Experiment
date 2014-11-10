@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using TecsDotNet;
 using IsoECS.DataStructures;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.GamePlay
 {

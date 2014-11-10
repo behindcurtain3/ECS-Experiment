@@ -131,6 +131,7 @@
     <Compile Include="Components\DrawableComponent.cs" />
     <Compile Include="Components\GamePlay\BuildableComponent.cs" />
     <Compile Include="Components\GamePlay\CitizenComponent.cs" />
+    <Compile Include="Components\GamePlay\CollapsibleComponent.cs" />
     <Compile Include="GamePlay\Services.cs" />
     <Compile Include="Components\GamePlay\CollisionComponent.cs" />
     <Compile Include="Components\GamePlay\CollisionMapComponent.cs" />
