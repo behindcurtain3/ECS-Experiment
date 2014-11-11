@@ -197,6 +197,7 @@
     <Compile Include="Systems\ControlSystem.cs" />
     <Compile Include="Systems\DebugSystem.cs" />
     <Compile Include="Systems\GamePlay\BehaviorSystem.cs" />
+    <Compile Include="Systems\GamePlay\CollapsibleSystem.cs" />
     <Compile Include="Systems\GamePlay\ConstructionSystem.cs" />
     <Compile Include="Systems\GamePlay\DateTimeSystem.cs" />
     <Compile Include="Systems\GamePlay\HousingUpgradeSystem.cs" />

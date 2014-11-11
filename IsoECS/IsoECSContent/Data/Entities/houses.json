@@ -84,6 +84,9 @@
 					"Rent": 6
 				},
 				{
+					"Type": "CollapsibleComponent"
+				},
+				{
 					"Type": "FoundationComponent",
 					"PlanType": "Fill",
 					"Plan": [

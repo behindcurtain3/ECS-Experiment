@@ -77,7 +77,7 @@ namespace IsoECS
             world.Systems.Add(new CityInformationSystem());
             world.Systems.Add(new HousingUpgradeSystem());
             world.Systems.Add(new OverlaySystem() { Graphics = GraphicsDevice });
-            //world.Systems.Add(new DebugSystem());
+            world.Systems.Add(new CollapsibleSystem());
             world.Systems.Add(new IsometricMapSystem()
             {
                 Graphics = GraphicsDevice

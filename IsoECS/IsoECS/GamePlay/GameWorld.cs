@@ -90,6 +90,13 @@ namespace IsoECS.GamePlay
                         }
                         break;
 
+                    case "CollapsibleComponent":
+                        CollapsibleComponent collapsible = (CollapsibleComponent)c;
+
+                        if(collapsible.Value == 0)
+                            collapsible.Value = CollapsibleComponent.MAX;
+                        break;
+
                     case "CollisionComponent":
                         CollisionComponent collision = (CollisionComponent)c;
 

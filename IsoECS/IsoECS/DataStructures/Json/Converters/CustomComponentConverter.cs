@@ -27,6 +27,9 @@ namespace IsoECS.DataStructures.Json.Converters
                 case "CitizenComponent":
                     return new CitizenComponent();
 
+                case "CollapsibleComponent":
+                    return new CollapsibleComponent();
+
                 case "CollisionComponent":
                     return new CollisionComponent();
 
