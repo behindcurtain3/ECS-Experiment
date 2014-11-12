@@ -10,6 +10,8 @@ namespace IsoECS.Components.GamePlay
 
         public delegate void GameDateEventHandler(GameDateComponent sender);
         public event GameDateEventHandler TimeChanged;
+        public event GameDateEventHandler MinuteChanged;
+        public event GameDateEventHandler HourChanged;
         public event GameDateEventHandler DayChanged;
         public event GameDateEventHandler MonthChanged;
         public event GameDateEventHandler YearChanged;
@@ -19,6 +21,8 @@ namespace IsoECS.Components.GamePlay
         #region Fields
 
         private long time;
+        private int prevMinute = 0;
+        private int prevHour = 0;
         private int prevDay = 0;
         private int prevMonth = 0;
         private int prevYear = 0;
@@ -108,6 +112,20 @@ namespace IsoECS.Components.GamePlay
 
         private void GameDateComponent_TimeChanged(GameDateComponent sender)
         {
+            if (prevMinute != Minute)
+            {
+                prevMinute = Minute;
+                if (MinuteChanged != null)
+                    MinuteChanged.Invoke(this);
+            }
+
+            if (prevHour != Hour)
+            {
+                prevHour = Hour;
+                if (HourChanged != null)
+                    HourChanged.Invoke(this);
+            }
+
             if (prevDay != Day)
             {
                 prevDay = Day;

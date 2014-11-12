@@ -1,0 +1,11 @@
+{
+    "Texture": "Data/Sprites/engineer-guild",
+	"Name": "engineer-guild",
+    "Sources": [
+        {
+            "ID": "foreground",
+			"Source": {"x":0,"y":0,"width":32,"height":32},
+			"Origin": {"x":0,"y":16}
+        }
+	]
+}

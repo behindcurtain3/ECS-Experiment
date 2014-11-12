@@ -1,0 +1,10 @@
+{
+	"Drawables": [
+		{
+			"PrototypeID": "engineer-guild-foreground",
+			"SpriteSheet": "engineer-guild",
+			"ID": "foreground",
+			"Layer": "Foreground"
+		}
+	]
+}

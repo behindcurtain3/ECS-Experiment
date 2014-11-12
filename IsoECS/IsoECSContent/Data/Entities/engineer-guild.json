@@ -1,0 +1,42 @@
+{
+  "Prototypes" : [
+    {
+		"PrototypeID": "engineer-guild",
+		"Components": [
+			{
+				"Type": "BuildableComponent",
+				"Category": "Infrastructure",
+				"Name": "Engineer Guild",
+				"Description": "Engineers repair and maintain the structures in the city.",
+				"Cost": 50,
+				"DragBuildEnabled": false,
+				"AllowConstruction": true
+			},
+			{
+				"Type": "DrawableComponent",
+				"Sources": [
+					"engineer-guild-foreground"
+				]
+			},
+			{
+				"Type": "CollapsibleComponent"
+			},
+			{
+				"Type": "FoundationComponent",
+				"Plan": [
+					{ "Offset": {"x": 0,"y": 0} },
+				]
+			},
+			{
+				"Type": "CollisionComponent",
+				"Plan": [
+					{
+						"Value": -1,
+						"Offset": { "x": 0, "y": 0 }
+					}
+				]
+			}
+		]
+	}
+  ]
+}

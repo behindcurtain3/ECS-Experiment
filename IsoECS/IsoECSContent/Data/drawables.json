@@ -4,6 +4,7 @@
     "Content/Data/Drawables/farm-drawables.json",
 	"Content/Data/Drawables/road-drawables.json",
 	"Content/Data/Drawables/house-drawables.json",
-	"Content/Data/Drawables/warehouse-drawables.json"
+	"Content/Data/Drawables/warehouse-drawables.json",
+	"Content/Data/Drawables/engineer-guild-drawables.json"
   ]
 }

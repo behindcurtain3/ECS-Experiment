@@ -14,6 +14,7 @@
 	"Content/Data/Sprites/misc_textures.json",
 	"Content/Data/Sprites/debug.json",
 	"Content/Data/Sprites/foundation-overlay.json",
-	"Content/Data/Sprites/overlay-marker.json"
+	"Content/Data/Sprites/overlay-marker.json",
+	"Content/Data/Sprites/engineer-guild.json"
   ]
 }

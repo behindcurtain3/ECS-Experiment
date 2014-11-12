@@ -15,18 +15,19 @@ namespace IsoECS.Systems.GamePlay
 
             World.Entities.EntityAdded += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityAdded);
             World.Entities.EntityRemoved += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityRemoved);
-            World.Date.DayChanged += new GameDateComponent.GameDateEventHandler(Date_DayChanged);
+            World.Date.HourChanged += new GameDateComponent.GameDateEventHandler(Date_Changed);
         }
 
         public override void Shutdown()
-        {            
+        {
+            World.Date.HourChanged -= Date_Changed;
         }
 
         public override void Update(double dt)
         {            
         }
 
-        private void Date_DayChanged(GameDateComponent sender)
+        private void Date_Changed(GameDateComponent sender)
         {
             foreach (Entity e in collapsibles)
             {
