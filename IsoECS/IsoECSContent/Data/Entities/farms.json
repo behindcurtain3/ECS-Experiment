@@ -30,6 +30,9 @@
 				"MaxHaulers": 1
 			},
 			{
+				"Type": "CollapsibleComponent"
+			},
+			{
 				"Type": "FoundationComponent",
 				"PlanType": "Fill",
 				"Plan": [
