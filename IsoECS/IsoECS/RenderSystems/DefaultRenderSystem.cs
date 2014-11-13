@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Graphics;
-using TecsDotNet;
+﻿using System.Collections.Generic;
 using IsoECS.Components;
 using IsoECS.DataStructures;
-using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using TecsDotNet;
+using TecsDotNet.Managers;
 
 namespace IsoECS.RenderSystems
 {
@@ -111,16 +108,16 @@ namespace IsoECS.RenderSystems
                 dd.Drawable.Draw(Graphics, spriteBatch, spriteFont, (int)(dd.Position.X - cameraPosition.X), (int)(dd.Position.Y - cameraPosition.Y));
         }
 
-        private void Entities_EntityRemoved(Entity e, World world)
+        private void Entities_EntityRemoved(object sender, EntityEventArgs e)
         {
-            drawables.Remove(e);   
+            drawables.Remove(e.Entity);   
         }
 
-        private void Entities_EntityAdded(Entity e, World world)
+        private void Entities_EntityAdded(object sender, EntityEventArgs e)
         {
-            if (e.HasComponent<DrawableComponent>() && e.HasComponent<PositionComponent>())
+            if (e.Entity.HasComponent<DrawableComponent>() && e.Entity.HasComponent<PositionComponent>())
             {
-                drawables.Add(e);
+                drawables.Add(e.Entity);
             }
         }
     }

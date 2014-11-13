@@ -2,6 +2,7 @@
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using TecsDotNet;
+using TecsDotNet.Managers;
 using TecsDotNet.Util;
 
 namespace IsoECS.Systems.GamePlay
@@ -22,22 +23,22 @@ namespace IsoECS.Systems.GamePlay
             World.Entities.EntityAdded += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityAdded);
             World.Entities.EntityRemoved += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityRemoved);
         }
-        
-        private void Entities_EntityRemoved(Entity e, World world)
-        {
-            if (e.HasComponent<HousingComponent>())
-                e.Get<HousingComponent>().TennantAdded -= Housing_TennantAdded;
 
-            housingUnits.Remove(e);
+        private void Entities_EntityRemoved(object sender, EntityEventArgs e)
+        {
+            if (e.Entity.HasComponent<HousingComponent>())
+                e.Entity.Get<HousingComponent>().TennantAdded -= Housing_TennantAdded;
+
+            housingUnits.Remove(e.Entity);
         }
 
-        private void Entities_EntityAdded(Entity e, World world)
+        private void Entities_EntityAdded(object sender, EntityEventArgs e)
         {
-            if (e.HasComponent<HousingComponent>())
+            if (e.Entity.HasComponent<HousingComponent>())
             {
-                housingUnits.Add(e);
+                housingUnits.Add(e.Entity);
 
-                HousingComponent housing = e.Get<HousingComponent>();
+                HousingComponent housing = e.Entity.Get<HousingComponent>();
                 housing.TennantAdded += new HousingComponent.HousingEventHandler(Housing_TennantAdded);
             }
         }

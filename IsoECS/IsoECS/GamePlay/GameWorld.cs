@@ -4,12 +4,13 @@ using System.Linq;
 using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
+using IsoECS.Input;
 using IsoECS.RenderSystems;
 using Microsoft.Xna.Framework;
 using TecsDotNet;
+using TecsDotNet.Managers;
 using TomShane.Neoforce.Controls;
 using Component = TecsDotNet.Component;
-using IsoECS.Input;
 
 namespace IsoECS.GamePlay
 {
@@ -42,16 +43,16 @@ namespace IsoECS.GamePlay
             Entities.EntityRemoved += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityRemoved);
         }
 
-        private void Entities_EntityRemoved(Entity e, World world)
+        private void Entities_EntityRemoved(object sender, EntityEventArgs e)
         {
         }
 
-        private void Entities_EntityAdded(Entity e, World world)
+        private void Entities_EntityAdded(object sender, EntityEventArgs e)
         {
-            Point index = e.Get<PositionComponent>().Index;
+            Point index = e.Entity.Get<PositionComponent>().Index;
 
             // update the game data
-            foreach (Component c in e.Components.Values.ToList())
+            foreach (Component c in e.Entity.Components.Values.ToList())
             {
                 switch (c.GetType().Name)
                 {
@@ -139,7 +140,7 @@ namespace IsoECS.GamePlay
                         foreach (LocationValue lv in floor.Plan)
                         {
                             Point update = new Point(index.X + lv.Offset.X, index.Y + lv.Offset.Y);
-                            Foundations.SpaceTaken.Add(update, e.ID);
+                            Foundations.SpaceTaken.Add(update, e.Entity.ID);
                         }
                         break;
 
@@ -152,15 +153,15 @@ namespace IsoECS.GamePlay
                         break;
 
                     case "IsometricMapComponent":
-                        Map = e.Get<IsometricMapComponent>();
+                        Map = e.Entity.Get<IsometricMapComponent>();
 
                         if (Map.Terrain == null)
                         {
                             Map.CreateMap(Map.SpriteSheetName, Map.TxWidth, Map.TxHeight, Map.PxTileWidth, Map.PxTileHeight);
 
                             // replace the map
-                            e.RemoveComponent(e.Get<IsometricMapComponent>());
-                            e.AddComponent(Map);
+                            e.Entity.RemoveComponent(e.Entity.Get<IsometricMapComponent>());
+                            e.Entity.AddComponent(Map);
                         }
                         break;
 
@@ -228,7 +229,7 @@ namespace IsoECS.GamePlay
                         road.BuiltAt = index;
 
                         // update the planner
-                        Roads.AddOrUpdate(this, e, true);
+                        Roads.AddOrUpdate(this, e.Entity, true);
                         break;
 
                     case "RoadPlannerComponent":

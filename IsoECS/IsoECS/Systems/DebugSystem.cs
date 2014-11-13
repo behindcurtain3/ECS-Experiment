@@ -4,6 +4,7 @@ using IsoECS.Components;
 using IsoECS.Components.GamePlay;
 using IsoECS.DataStructures;
 using TecsDotNet;
+using TecsDotNet.Managers;
 
 namespace IsoECS.Systems
 {
@@ -47,15 +48,15 @@ namespace IsoECS.Systems
             World.Entities.EntityRemoved += new TecsDotNet.Managers.EntityManager.EntityEventHandler(Entities_EntityRemoved);
         }
 
-        private void Entities_EntityRemoved(Entity e, World world)
+        private void Entities_EntityRemoved(object sender, EntityEventArgs e)
         {
-            brains.Remove(e);
+            brains.Remove(e.Entity);
         }
 
-        private void Entities_EntityAdded(Entity e, World world)
+        private void Entities_EntityAdded(object sender, EntityEventArgs e)
         {
-            if (e.HasComponent<CitizenComponent>())
-                brains.Add(e);
+            if (e.Entity.HasComponent<CitizenComponent>())
+                brains.Add(e.Entity);
         }
 
         public override void Shutdown()

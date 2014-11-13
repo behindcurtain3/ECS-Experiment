@@ -2,6 +2,7 @@
 using IsoECS.Components.GamePlay;
 using IsoECS.DataRenderers;
 using TecsDotNet;
+using TecsDotNet.Managers;
 using TomShane.Neoforce.Controls;
 
 namespace IsoECS.Systems.UI
@@ -24,15 +25,15 @@ namespace IsoECS.Systems.UI
             World.City.Population = pop;
         }
 
-        private void Entities_EntityRemoved(Entity e, World world)
+        private void Entities_EntityRemoved(object sender, EntityEventArgs e)
         {
-            if (e.HasComponent<CitizenComponent>())
+            if (e.Entity.HasComponent<CitizenComponent>())
                 World.City.Population--;
         }
 
-        private void Entities_EntityAdded(Entity e, World world)
+        private void Entities_EntityAdded(object sender, EntityEventArgs e)
         {
-            if (e.HasComponent<CitizenComponent>())
+            if (e.Entity.HasComponent<CitizenComponent>())
                 World.City.Population++;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using IsoECS.Components.GamePlay;
 using TecsDotNet;
+using TecsDotNet.Managers;
 
 namespace IsoECS.Systems.GamePlay
 {
@@ -39,15 +40,15 @@ namespace IsoECS.Systems.GamePlay
             }
         }
 
-        private void Entities_EntityRemoved(Entity e, World world)
+        private void Entities_EntityRemoved(object sender, EntityEventArgs e)
         {
-            collapsibles.Remove(e);
+            collapsibles.Remove(e.Entity);
         }
 
-        private void Entities_EntityAdded(Entity e, World world)
+        private void Entities_EntityAdded(object sender, EntityEventArgs e)
         {
-            if (e.HasComponent<CollapsibleComponent>())
-                collapsibles.Add(e);
+            if (e.Entity.HasComponent<CollapsibleComponent>())
+                collapsibles.Add(e.Entity);
         }
     }
 }
