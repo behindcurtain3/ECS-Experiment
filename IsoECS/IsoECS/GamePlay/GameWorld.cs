@@ -119,23 +119,6 @@ namespace IsoECS.GamePlay
                     case "FoundationComponent":
                         FoundationComponent floor = (FoundationComponent)c;
 
-                        switch (floor.PlanType)
-                        {
-                            case "Fill":
-                                Point start = floor.Plan[0].Offset;
-                                Point end = floor.Plan[1].Offset;
-
-                                floor.Plan.Clear(); // clear the plan, the for loops will fill it
-                                for (int xx = start.X; xx <= end.X; xx++)
-                                {
-                                    for (int yy = start.Y; yy <= end.Y; yy++)
-                                    {
-                                        floor.Plan.Add(new LocationValue() { Offset = new Point(xx, yy) });
-                                    }
-                                }
-                                break;
-                        } 
-
                         // update the floor planner
                         foreach (LocationValue lv in floor.Plan)
                         {

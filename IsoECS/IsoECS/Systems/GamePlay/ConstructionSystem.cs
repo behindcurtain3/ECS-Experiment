@@ -345,13 +345,10 @@ namespace IsoECS.Systems.GamePlay
                 foreach (List<GameDrawable> d in drawable.Drawables.Values)
                 {
                     foreach (GameDrawable gd in d)
+                    {
                         gd.Visible = visible;
-                }
-
-                foreach (List<GameDrawable> d in drawable.Drawables.Values)
-                {
-                    foreach (GameDrawable gd in d)
                         gd.Alpha = (spaceTaken) ? 0.5f : 0.85f;
+                    }
                 }
             }
         }

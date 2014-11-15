@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TecsDotNet;
 using TecsDotNet.Json;
+using IsoECS.Components.GamePlay;
+using Microsoft.Xna.Framework;
 
 namespace IsoECS.DataStructures.Json.Converters
 {
@@ -39,6 +41,26 @@ namespace IsoECS.DataStructures.Json.Converters
                                 drawable.Add(kvp.Key, d);
                             }
                         }
+                    }
+                    break;
+
+                case "FoundationComponent":
+                    FoundationComponent floor = (FoundationComponent)c;
+                    switch (floor.PlanType)
+                    {
+                        case "Fill":
+                            Point start = floor.Plan[0].Offset;
+                            Point end = floor.Plan[1].Offset;
+
+                            floor.Plan.Clear(); // clear the plan, the for loops will fill it
+                            for (int xx = start.X; xx <= end.X; xx++)
+                            {
+                                for (int yy = start.Y; yy <= end.Y; yy++)
+                                {
+                                    floor.Plan.Add(new LocationValue() { Offset = new Point(xx, yy) });
+                                }
+                            }
+                            break;
                     }
                     break;
             }
